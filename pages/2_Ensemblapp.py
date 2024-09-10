@@ -1,9 +1,12 @@
+"""Ensembl Gene Information Retriever."""
+
 import streamlit as st
 import requests
 import pandas as pd
 import time
-from PIL import Image
 import re
+
+st.set_page_config(layout="wide")
 
 
 def get_ensembl_info(ensembl_list):
@@ -180,72 +183,63 @@ def get_uniprot_info(gene_list):
     return pd.DataFrame(result_list)
 
 
-def main():
-    # Add the logo
-    logo = Image.open("fraunhofer_ITMP-logo_900p.jpg")
-    st.image(logo, width=200)  # Adjust the width as needed
+st.markdown(
+    "<h1 style='text-align: center; color: #149372;'>Ensembl Gene Information Retriever</h1>",
+    unsafe_allow_html=True,
+)
 
-    st.markdown(
-        "<h1 style='text-align: center; color: green;'>Ensembl Gene Information Retriever</h1>",
-        unsafe_allow_html=True,
-    )
+st.header("Load Gene Information", anchor="ensembl-load-data", divider="grey")
+# Input for gene IDs or symbols
+input_text = st.text_area(
+    "Enter Ensembl IDs or HGNC symbols (one per line):",
+    "ENSG00000234186\nENSG00000184385\nIL10\nHDC\nENSG00000180251\nFAM216B\nDRD3\nENSG00000229590",
+)
 
-    # Input for gene IDs or symbols
-    input_text = st.text_area(
-        "Enter Ensembl IDs or HGNC symbols (one per line):",
-        "ENSG00000234186\nENSG00000184385\nIL10\nHDC\nENSG00000180251\nFAM216B\nDRD3\nENSG00000229590",
-    )
+st.header("Results", anchor="ensembl-results", divider="grey")
+if st.button("Retrieve Information"):
+    input_list = [id.strip() for id in input_text.split("\n") if id.strip()]
 
-    if st.button("Retrieve Information"):
-        input_list = [id.strip() for id in input_text.split("\n") if id.strip()]
+    if input_list:
+        # Separate ENSG IDs and HGNC symbols
+        ensembl_ids = [id for id in input_list if re.match(r"ENSG\d+", id)]
+        hgnc_symbols = [id for id in input_list if not re.match(r"ENSG\d+", id)]
 
-        if input_list:
-            # Separate ENSG IDs and HGNC symbols
-            ensembl_ids = [id for id in input_list if re.match(r"ENSG\d+", id)]
-            hgnc_symbols = [id for id in input_list if not re.match(r"ENSG\d+", id)]
+        ensembl_results = None
+        uniprot_results = None
 
-            ensembl_results = None
-            uniprot_results = None
+        if ensembl_ids:
+            with st.spinner("Retrieving information for Ensembl IDs..."):
+                ensembl_results = get_ensembl_info(ensembl_ids)
+                st.success(f"Retrieved information for {len(ensembl_ids)} Ensembl IDs")
+                st.dataframe(ensembl_results)
 
-            if ensembl_ids:
-                with st.spinner("Retrieving information for Ensembl IDs..."):
-                    ensembl_results = get_ensembl_info(ensembl_ids)
-                    st.success(
-                        f"Retrieved information for {len(ensembl_ids)} Ensembl IDs"
-                    )
-                    st.dataframe(ensembl_results)
+                # Option to download Ensembl results as CSV
+                csv_ensembl = ensembl_results.to_csv(index=False)
+                st.download_button(
+                    label="Download Ensembl data as CSV",
+                    data=csv_ensembl,
+                    file_name="ensembl_info.csv",
+                    mime="text/csv",
+                )
 
-                    # Option to download Ensembl results as CSV
-                    csv_ensembl = ensembl_results.to_csv(index=False)
-                    st.download_button(
-                        label="Download Ensembl data as CSV",
-                        data=csv_ensembl,
-                        file_name="ensembl_info.csv",
-                        mime="text/csv",
-                    )
+        if hgnc_symbols:
+            with st.spinner("Retrieving information for HGNC symbols..."):
+                uniprot_results = get_uniprot_info(hgnc_symbols)
+                st.success(
+                    f"Retrieved information for {len(hgnc_symbols)} HGNC symbols"
+                )
+                st.dataframe(uniprot_results)
 
-            if hgnc_symbols:
-                with st.spinner("Retrieving information for HGNC symbols..."):
-                    uniprot_results = get_uniprot_info(hgnc_symbols)
-                    st.success(
-                        f"Retrieved information for {len(hgnc_symbols)} HGNC symbols"
-                    )
-                    st.dataframe(uniprot_results)
+                # Option to download UniProt results as CSV
+                csv_uniprot = uniprot_results.to_csv(index=False)
+                st.download_button(
+                    label="Download UniProt data as CSV",
+                    data=csv_uniprot,
+                    file_name="uniprot_info.csv",
+                    mime="text/csv",
+                )
 
-                    # Option to download UniProt results as CSV
-                    csv_uniprot = uniprot_results.to_csv(index=False)
-                    st.download_button(
-                        label="Download UniProt data as CSV",
-                        data=csv_uniprot,
-                        file_name="uniprot_info.csv",
-                        mime="text/csv",
-                    )
-
-            if not ensembl_ids and not hgnc_symbols:
-                st.warning("No valid Ensembl IDs or HGNC symbols found.")
-        else:
-            st.warning("Please enter at least one Ensembl ID or HGNC symbol.")
-
-
-if __name__ == "__main__":
-    main()
+        if not ensembl_ids and not hgnc_symbols:
+            st.warning("No valid Ensembl IDs or HGNC symbols found.")
+    else:
+        st.warning("Please enter at least one Ensembl ID or HGNC symbol.")
