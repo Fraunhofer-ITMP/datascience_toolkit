@@ -10,3 +10,6 @@ Weights to be added may be needed.
 
 In case of HCS (high content screening) columns could be ten or hundreds, i.e. need a different selection tool.
 
+## Ensemble / Uniprot query
+This app might be useful to query ENSEMBLE or UNIPROT basic information on ENSG / HGNC names of protein target. It collects some information (to be enlarged) and allows download.
+
