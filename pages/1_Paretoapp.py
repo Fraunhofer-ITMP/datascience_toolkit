@@ -1,3 +1,5 @@
+"""App for Pareto analysis of multi-objective optimization problems."""
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -7,9 +9,12 @@ from rdkit import Chem
 from rdkit.Chem import Draw
 import io
 import base64
-from PIL import Image
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
+
+st.set_page_config(layout="wide")
+
+# Functions
 
 
 def is_numeric(col):
@@ -49,164 +54,166 @@ def get_molecule_image_src(smiles):
     return ""
 
 
-def main():
+def create_excel():
+    """Create Excel file to download."""
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Pareto Analysis Results"
 
-    logo = Image.open("fraunhofer_ITMP-logo_900p.jpg")
-    st.image(logo, width=200)  # Adjust the width as needed
+    for r in dataframe_to_rows(df, index=False, header=True):
+        ws.append(r)
 
-    st.markdown(
-        "<h1 style='text-align: center; color: green;'>Pareto Analysis App</h1>",
-        unsafe_allow_html=True,
+    excel_file = io.BytesIO()
+    wb.save(excel_file)
+    excel_file.seek(0)
+    return excel_file
+
+
+st.markdown(
+    "<h1 style='text-align: center; color: #149372;'>Pareto Analysis App</h1>",
+    unsafe_allow_html=True,
+)
+
+# File upload
+uploaded_file = st.file_uploader("Choose a CSV or Excel file", type=["csv", "xlsx"])
+
+if uploaded_file is None:
+    st.info("Please upload a CSV or Excel file to proceed!", icon="ℹ️")
+    st.stop()
+
+
+@st.fragment  # Prevents the app from running the code below all the time
+def load_dataset():
+    # File type and parameters
+    file_type = uploaded_file.name.split(".")[-1]
+
+    if file_type == "csv":
+        sep = st.text_input("Enter CSV separator", ",")
+        df = pd.read_csv(uploaded_file, sep=sep)
+    else:  # Excel
+        sheet_name = st.text_input("Enter sheet name (leave blank for first sheet)", "")
+        if not sheet_name:
+            sheet_name = 0
+
+        df = pd.read_excel(uploaded_file, sheet_name=sheet_name, engine="openpyxl")
+
+    # Convert SMILES column to string if it exists
+    if "SMILES" in df.columns:
+        df["SMILES"] = df["SMILES"].astype(str)
+        df["molecule_img"] = df["SMILES"].apply(get_molecule_image_src)
+
+    return df
+
+
+# Load dataset
+st.header("Dataset loading and preview", anchor="dataset-loading", divider="gray")
+try:
+    df = load_dataset()
+    st.write("Data Preview:")
+    st.dataframe(df.head())
+
+except Exception as e:
+    st.error(f"An error occurred: {str(e)}")
+    st.error("Please check your file format and try again.")
+
+# Select numerical columns
+st.header("Pareto parameterization", anchor="pareto-parameterization", divider="gray")
+numeric_cols = [col for col in df.columns if is_numeric(df[col])]
+selected_cols = st.multiselect(
+    "Select numerical columns for Pareto analysis",
+    numeric_cols,
+    max_selections=2,
+)
+
+# Optimization direction
+directions = {}
+for col in selected_cols:
+    direction = st.radio(f"Optimize {col}", ["Minimize", "Maximize"])
+    directions[col] = direction
+
+# Perform Pareto analysis
+st.header("Pareto analysis", anchor="pareto-analysis", divider="gray")
+if st.button("Perform Pareto Analysis"):
+    costs = df[selected_cols].values
+    for i, col in enumerate(selected_cols):
+        if directions[col] == "Maximize":
+            costs[:, i] = -costs[:, i]  # Invert for maximization
+
+    is_efficient = pareto_efficient(costs)
+
+    # Add Pareto efficiency column to the DataFrame
+    df["Pareto_Efficient"] = is_efficient
+
+    # Interactive plot with molecule visualization
+    st.write("Hover over points to see molecule structures:")
+
+    # Round the selected columns to 3 decimal places
+    for col in selected_cols:
+        df[col] = df[col].round(3)
+
+    df_efficient = df[is_efficient]
+    df_inefficient = df[~is_efficient]
+
+    source_efficient = ColumnDataSource(df_efficient)
+    source_inefficient = ColumnDataSource(df_inefficient)
+
+    p = figure(width=800, height=600, title="Interactive Pareto Front")
+
+    # Plot inefficient points
+    p.circle(
+        x=selected_cols[0],
+        y=selected_cols[1],
+        size=10,
+        color="gray",
+        alpha=0.5,
+        source=source_inefficient,
     )
-    # st.title("Pareto Analysis App")
 
-    # File upload
-    uploaded_file = st.file_uploader("Choose a CSV or Excel file", type=["csv", "xlsx"])
+    # Plot efficient points
+    p.circle(
+        x=selected_cols[0],
+        y=selected_cols[1],
+        size=15,
+        color="red",
+        alpha=0.8,
+        source=source_efficient,
+    )
 
-    if uploaded_file is not None:
-        # File type and parameters
-        file_type = uploaded_file.name.split(".")[-1]
+    # Create tooltip HTML
+    tooltip_html = """
+    <div>
+        <div>
+            <img src="@molecule_img" height="200" alt="@molecule_img" width="200">
+        </div>
+    """
 
-        try:
-            if file_type == "csv":
-                sep = st.text_input("Enter CSV separator", ",")
-                df = pd.read_csv(uploaded_file, sep=sep)
-            else:  # Excel
-                sheet_name = st.text_input(
-                    "Enter sheet name (leave blank for first sheet)", ""
-                )
-                if sheet_name:
-                    df = pd.read_excel(
-                        uploaded_file, sheet_name=sheet_name, engine="openpyxl"
-                    )
-                else:
-                    df = pd.read_excel(uploaded_file, engine="openpyxl")
+    for col in selected_cols:
+        tooltip_html += f"""
+        <div>
+            <span style="font-size: 12px; color: #666;">{col}: @{{{col}}}</span>
+        </div>
+        """
 
-            # Convert SMILES column to string if it exists
-            if "SMILES" in df.columns:
-                df["SMILES"] = df["SMILES"].astype(str)
-                df["molecule_img"] = df["SMILES"].apply(get_molecule_image_src)
+    tooltip_html += """
+        <div>
+            <span style="font-size: 12px; color: #666;">SMILES: @SMILES</span>
+        </div>
+    </div>
+    """
 
-            st.write("Data Preview:")
-            st.dataframe(df.head())
+    hover = HoverTool(tooltips=tooltip_html)
 
-            # Select numerical columns
-            numeric_cols = [col for col in df.columns if is_numeric(df[col])]
-            selected_cols = st.multiselect(
-                "Select numerical columns for Pareto analysis", numeric_cols
-            )
+    p.add_tools(hover)
+    p.xaxis.axis_label = selected_cols[0]
+    p.yaxis.axis_label = selected_cols[1]
 
-            if len(selected_cols) >= 2:
-                # Optimization direction
-                directions = {}
-                for col in selected_cols:
-                    direction = st.radio(f"Optimize {col}", ["Minimize", "Maximize"])
-                    directions[col] = direction
+    st.bokeh_chart(p, use_container_width=True)
 
-                # Perform Pareto analysis
-                if st.button("Perform Pareto Analysis"):
-                    costs = df[selected_cols].values
-                    for i, col in enumerate(selected_cols):
-                        if directions[col] == "Maximize":
-                            costs[:, i] = -costs[:, i]  # Invert for maximization
-
-                    is_efficient = pareto_efficient(costs)
-
-                    # Add Pareto efficiency column to the DataFrame
-                    df["Pareto_Efficient"] = is_efficient
-
-                    # Interactive plot with molecule visualization
-                    st.write("Hover over points to see molecule structures:")
-
-                    # Round the selected columns to 3 decimal places
-                    for col in selected_cols:
-                        df[col] = df[col].round(3)
-
-                    df_efficient = df[is_efficient]
-                    df_inefficient = df[~is_efficient]
-
-                    source_efficient = ColumnDataSource(df_efficient)
-                    source_inefficient = ColumnDataSource(df_inefficient)
-
-                    p = figure(width=800, height=600, title="Interactive Pareto Front")
-
-                    # Plot inefficient points
-                    p.circle(
-                        x=selected_cols[0],
-                        y=selected_cols[1],
-                        size=10,
-                        color="gray",
-                        alpha=0.5,
-                        source=source_inefficient,
-                    )
-
-                    # Plot efficient points
-                    p.circle(
-                        x=selected_cols[0],
-                        y=selected_cols[1],
-                        size=15,
-                        color="red",
-                        alpha=0.8,
-                        source=source_efficient,
-                    )
-
-                    # Create tooltip HTML
-                    tooltip_html = """
-                    <div>
-                        <div>
-                            <img src="@molecule_img" height="200" alt="@molecule_img" width="200">
-                        </div>
-                    """
-
-                    for col in selected_cols:
-                        tooltip_html += f"""
-                        <div>
-                            <span style="font-size: 12px; color: #666;">{col}: @{{{col}}}</span>
-                        </div>
-                        """
-
-                    tooltip_html += """
-                        <div>
-                            <span style="font-size: 12px; color: #666;">SMILES: @SMILES</span>
-                        </div>
-                    </div>
-                    """
-
-                    hover = HoverTool(tooltips=tooltip_html)
-
-                    p.add_tools(hover)
-                    p.xaxis.axis_label = selected_cols[0]
-                    p.yaxis.axis_label = selected_cols[1]
-
-                    st.bokeh_chart(p, use_container_width=True)
-
-                    # Create Excel file
-                    def create_excel():
-                        wb = Workbook()
-                        ws = wb.active
-                        ws.title = "Pareto Analysis Results"
-
-                        for r in dataframe_to_rows(df, index=False, header=True):
-                            ws.append(r)
-
-                        excel_file = io.BytesIO()
-                        wb.save(excel_file)
-                        excel_file.seek(0)
-                        return excel_file
-
-                    # Download button
-                    excel_file = create_excel()
-                    st.download_button(
-                        label="Download Excel file",
-                        data=excel_file,
-                        file_name="pareto_analysis_results.xlsx",
-                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    )
-
-        except Exception as e:
-            st.error(f"An error occurred: {str(e)}")
-            st.error("Please check your file format and try again.")
-
-
-if __name__ == "__main__":
-    main()
+    # Download button
+    excel_file = create_excel()
+    st.download_button(
+        label="Download Excel file",
+        data=excel_file,
+        file_name="pareto_analysis_results.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
