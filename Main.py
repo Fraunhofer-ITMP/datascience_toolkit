@@ -37,7 +37,11 @@ def load_logo(filepath):
 
 
 # Add cards for each app
-col1, col2 = st.columns(2)
+#col1, col2, col3, col4, col5, col6 = st.columns(6)
+
+col1, col2, col3 = st.columns(3)
+
+col4, col5, col6 = st.columns(3)
 
 with col1:
     hasClicked = card(
@@ -53,4 +57,36 @@ with col2:
         text="Some description",
         image=load_logo("images/gene_icon.png"),
         url="/Ensemblapp",
+    )
+
+with col3:
+    hasClicked = card(
+        title="KGG",
+        text="Automated workflow for disease-specific KGs",
+        image=load_logo("images/kg_2.png"),
+        url="/kgg",
+    )
+
+with col4:
+    hasClicked = card(
+        title="KGG workflow OV",
+        text="Test",
+        image=load_logo("images/kg_1.png"),
+        url="/kgg_user",
+    )
+
+with col5:
+    hasClicked = card(
+        title="KGG workflow test 1",
+        text="Test2Jupyter",
+        image=load_logo("images/kg_2.png"),
+        url="/kgg_user_2",
+    )
+
+with col6:
+    hasClicked = card(
+        title="KGG workflow test 2",
+        text="Test",
+        image=load_logo("images/kg_1.png"),
+        url="/kgg_user_3",
     )

@@ -1,0 +1,341 @@
+,approvedSymbol,approvedName,prefName,drugType,drugId,phase,ctIds,id,disease
+0,DRD4,dopamine receptor D4,APOMORPHINE HYDROCHLORIDE,Small molecule,CHEMBL5314363,4.0,[],MONDO_0021095,parkinsonian disorder
+1,GRIN2A,glutamate ionotropic receptor NMDA type subunit 2A,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+2,CHRM3,cholinergic receptor muscarinic 3,ATROPINE,Small molecule,CHEMBL517712,4.0,[],MONDO_0021095,parkinsonian disorder
+3,GRIN1,glutamate ionotropic receptor NMDA type subunit 1,MEMANTINE,Small molecule,CHEMBL807,4.0,"['NCT00646204', 'NCT01108029']",MONDO_0021095,parkinsonian disorder
+4,GRIN2D,glutamate ionotropic receptor NMDA type subunit 2D,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+5,GRIN2C,glutamate ionotropic receptor NMDA type subunit 2C,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+6,DDC,dopa decarboxylase,CARBIDOPA ANHYDROUS,Small molecule,CHEMBL1201236,4.0,"['NCT00174239', 'NCT00642356']",MONDO_0021095,parkinsonian disorder
+7,DRD3,dopamine receptor D3,BROMOCRIPTINE MESYLATE,Small molecule,CHEMBL1200503,4.0,[],MONDO_0021095,parkinsonian disorder
+8,GRIN2A,glutamate ionotropic receptor NMDA type subunit 2A,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,"['NCT04387773', 'NCT00632762']",MONDO_0021095,parkinsonian disorder
+9,SNAP25,synaptosome associated protein 25,ONABOTULINUMTOXINA,Unknown,CHEMBL1201574,4.0,['NCT00477802'],MONDO_0021095,parkinsonian disorder
+10,GABRB3,gamma-aminobutyric acid type A receptor subunit beta3,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+11,SCN3A,sodium voltage-gated channel alpha subunit 3,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+12,GRIN3B,glutamate ionotropic receptor NMDA type subunit 3B,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+13,CACNA1B,calcium voltage-gated channel subunit alpha1 B,LEVETIRACETAM,Small molecule,CHEMBL1286,4.0,['NCT00584025'],MONDO_0021095,parkinsonian disorder
+14,ADRA1A,adrenoceptor alpha 1A,DROXIDOPA,Small molecule,CHEMBL2103827,4.0,['NCT03115827'],MONDO_0021095,parkinsonian disorder
+15,SCN1A,sodium voltage-gated channel alpha subunit 1,ZONISAMIDE,Small molecule,CHEMBL750,4.0,['NCT03034538'],MONDO_0021095,parkinsonian disorder
+16,SLC6A2,solute carrier family 6 member 2,METHYLPHENIDATE,Small molecule,CHEMBL796,4.0,['NCT01244269'],MONDO_0021095,parkinsonian disorder
+17,DRD4,dopamine receptor D4,PERGOLIDE,Small molecule,CHEMBL531,4.0,[],MONDO_0021095,parkinsonian disorder
+18,SCN10A,sodium voltage-gated channel alpha subunit 10,ZONISAMIDE,Small molecule,CHEMBL750,4.0,['NCT03034538'],MONDO_0021095,parkinsonian disorder
+19,DDC,dopa decarboxylase,CARBIDOPA,Small molecule,CHEMBL1200748,4.0,"['NCT04952194', 'NCT06013956', 'NCT06236230']",MONDO_0021095,parkinsonian disorder
+20,GABRG2,gamma-aminobutyric acid type A receptor subunit gamma2,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+21,ADRA2A,adrenoceptor alpha 2A,DROXIDOPA,Small molecule,CHEMBL2103827,4.0,['NCT03115827'],MONDO_0021095,parkinsonian disorder
+22,GRIN3B,glutamate ionotropic receptor NMDA type subunit 3B,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+23,CHRNA4,cholinergic receptor nicotinic alpha 4 subunit,VARENICLINE,Small molecule,CHEMBL1076903,4.0,['NCT02473562'],MONDO_0021095,parkinsonian disorder
+24,GRIN3A,glutamate ionotropic receptor NMDA type subunit 3A,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+25,GABRD,gamma-aminobutyric acid type A receptor subunit delta,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+26,GRIN2A,glutamate ionotropic receptor NMDA type subunit 2A,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+27,GRIN3A,glutamate ionotropic receptor NMDA type subunit 3A,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,"['NCT04387773', 'NCT00632762']",MONDO_0021095,parkinsonian disorder
+28,SCN9A,sodium voltage-gated channel alpha subunit 9,ZONISAMIDE,Small molecule,CHEMBL750,4.0,['NCT03034538'],MONDO_0021095,parkinsonian disorder
+29,CHRM1,cholinergic receptor muscarinic 1,TRIHEXYPHENIDYL,Small molecule,CHEMBL1490,4.0,[],MONDO_0021095,parkinsonian disorder
+30,DRD4,dopamine receptor D4,BROMOCRIPTINE MESYLATE,Small molecule,CHEMBL1200503,4.0,[],MONDO_0021095,parkinsonian disorder
+31,CHRNB2,cholinergic receptor nicotinic beta 2 subunit,VARENICLINE,Small molecule,CHEMBL1076903,4.0,['NCT02473562'],MONDO_0021095,parkinsonian disorder
+32,GRIN2D,glutamate ionotropic receptor NMDA type subunit 2D,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+33,MAOB,monoamine oxidase B,SAFINAMIDE MESYLATE,Small molecule,CHEMBL48582,4.0,['NCT05312632'],MONDO_0021095,parkinsonian disorder
+34,GRIN1,glutamate ionotropic receptor NMDA type subunit 1,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+35,AVPR1A,arginine vasopressin receptor 1A,DESMOPRESSIN ACETATE,Protein,CHEMBL1200556,4.0,['NCT00806468'],MONDO_0021095,parkinsonian disorder
+36,GRIN3A,glutamate ionotropic receptor NMDA type subunit 3A,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+37,DRD3,dopamine receptor D3,BROMOCRIPTINE,Small molecule,CHEMBL493,4.0,"['NCT02233023', 'NCT01673724']",MONDO_0021095,parkinsonian disorder
+38,HRH1,histamine receptor H1,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+39,DRD3,dopamine receptor D3,BROMOCRIPTINE,Small molecule,CHEMBL493,4.0,[],MONDO_0021095,parkinsonian disorder
+40,DDC,dopa decarboxylase,CARBIDOPA,Small molecule,CHEMBL1200748,4.0,[],MONDO_0021095,parkinsonian disorder
+41,GABRG3,gamma-aminobutyric acid type A receptor subunit gamma3,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+42,DRD2,dopamine receptor D2,APOMORPHINE,Small molecule,CHEMBL53,4.0,"['NCT02688465', 'NCT02549573']",MONDO_0021095,parkinsonian disorder
+43,HRH1,histamine receptor H1,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+44,GRIN2A,glutamate ionotropic receptor NMDA type subunit 2A,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+45,DDC,dopa decarboxylase,CARBIDOPA ANHYDROUS,Small molecule,CHEMBL1201236,4.0,[],MONDO_0021095,parkinsonian disorder
+46,DRD3,dopamine receptor D3,LEVODOPA,Small molecule,CHEMBL1009,4.0,"['NCT00174239', 'NCT00642356']",MONDO_0021095,parkinsonian disorder
+47,GRIN1,glutamate ionotropic receptor NMDA type subunit 1,AMANTADINE,Small molecule,CHEMBL660,4.0,['NCT01313819'],MONDO_0021095,parkinsonian disorder
+48,DRD2,dopamine receptor D2,DOMPERIDONE,Small molecule,CHEMBL219916,4.0,['NCT03022201'],MONDO_0021095,parkinsonian disorder
+49,GRIN1,glutamate ionotropic receptor NMDA type subunit 1,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+50,DRD5,dopamine receptor D5,PERGOLIDE,Small molecule,CHEMBL531,4.0,[],MONDO_0021095,parkinsonian disorder
+51,DRD4,dopamine receptor D4,APOMORPHINE,Small molecule,CHEMBL53,4.0,"['NCT02549573', 'NCT02688465']",MONDO_0021095,parkinsonian disorder
+52,SCN3A,sodium voltage-gated channel alpha subunit 3,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+53,GABRG1,gamma-aminobutyric acid type A receptor subunit gamma1,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+54,GRIN3A,glutamate ionotropic receptor NMDA type subunit 3A,MEMANTINE,Small molecule,CHEMBL807,4.0,"['NCT00646204', 'NCT01108029']",MONDO_0021095,parkinsonian disorder
+55,GRIN2D,glutamate ionotropic receptor NMDA type subunit 2D,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+56,MTNR1A,melatonin receptor 1A,MELATONIN,Small molecule,CHEMBL45,4.0,"['NCT03258294', 'NCT02768077']",MONDO_0021095,parkinsonian disorder
+57,DRD2,dopamine receptor D2,QUETIAPINE,Small molecule,CHEMBL716,4.0,['NCT04373317'],MONDO_0021095,parkinsonian disorder
+58,DRD2,dopamine receptor D2,ROPINIROLE,Small molecule,CHEMBL589,4.0,[],MONDO_0021095,parkinsonian disorder
+59,GRIN2A,glutamate ionotropic receptor NMDA type subunit 2A,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+60,GRIN1,glutamate ionotropic receptor NMDA type subunit 1,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+61,MAOB,monoamine oxidase B,SAFINAMIDE MESYLATE,Small molecule,CHEMBL48582,4.0,[],MONDO_0021095,parkinsonian disorder
+62,DRD2,dopamine receptor D2,APOMORPHINE,Small molecule,CHEMBL53,4.0,['NCT04887467'],MONDO_0021095,parkinsonian disorder
+63,GABRA5,gamma-aminobutyric acid type A receptor subunit alpha5,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+64,MTNR1B,melatonin receptor 1B,MELATONIN,Small molecule,CHEMBL45,4.0,"['NCT02768077', 'NCT03258294']",MONDO_0021095,parkinsonian disorder
+65,GRIN2A,glutamate ionotropic receptor NMDA type subunit 2A,AMANTADINE,Small molecule,CHEMBL660,4.0,"['NCT04387773', 'NCT01313845', 'NCT01071395', 'NCT00632762']",MONDO_0021095,parkinsonian disorder
+66,HTR2A,5-hydroxytryptamine receptor 2A,PIMAVANSERIN,Small molecule,CHEMBL2111101,4.0,['NCT04373317'],MONDO_0021095,parkinsonian disorder
+67,GABRQ,gamma-aminobutyric acid type A receptor subunit theta,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+68,GRIN3A,glutamate ionotropic receptor NMDA type subunit 3A,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+69,GRIN3A,glutamate ionotropic receptor NMDA type subunit 3A,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+70,SCN5A,sodium voltage-gated channel alpha subunit 5,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+71,GRIN2C,glutamate ionotropic receptor NMDA type subunit 2C,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+72,DRD4,dopamine receptor D4,APOMORPHINE,Small molecule,CHEMBL53,4.0,"['NCT02940912', 'NCT01770145']",MONDO_0021095,parkinsonian disorder
+73,SCN8A,sodium voltage-gated channel alpha subunit 8,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+74,DRD1,dopamine receptor D1,PERGOLIDE,Small molecule,CHEMBL531,4.0,[],MONDO_0021095,parkinsonian disorder
+75,DDC,dopa decarboxylase,CARBIDOPA,Small molecule,CHEMBL1200748,4.0,"['NCT00219284', 'NCT00391898', 'NCT00906828', 'NCT00888186', 'NCT02480803', 'NCT00590122', 'NCT00143026', 'NCT03115827', 'NCT00141518', 'NCT00125567']",MONDO_0021095,parkinsonian disorder
+76,DRD3,dopamine receptor D3,APOMORPHINE HYDROCHLORIDE,Small molecule,CHEMBL5314363,4.0,['NCT02549573'],MONDO_0021095,parkinsonian disorder
+77,GRIN2B,glutamate ionotropic receptor NMDA type subunit 2B,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+78,CHRM1,cholinergic receptor muscarinic 1,METHIXENE,Small molecule,CHEMBL1201342,4.0,[],MONDO_0021095,parkinsonian disorder
+79,SCN8A,sodium voltage-gated channel alpha subunit 8,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+80,DRD2,dopamine receptor D2,ROTIGOTINE,Small molecule,CHEMBL1303,4.0,[],MONDO_0021095,parkinsonian disorder
+81,MAOB,monoamine oxidase B,RASAGILINE MESYLATE,Small molecule,CHEMBL1201142,4.0,['NCT00399477'],MONDO_0021095,parkinsonian disorder
+82,DRD2,dopamine receptor D2,PRAMIPEXOLE,Small molecule,CHEMBL301265,4.0,"['NCT00321854', 'NCT02233023', 'NCT01673724', 'NCT03521635', 'NCT02231905', 'NCT00402233']",MONDO_0021095,parkinsonian disorder
+83,DRD4,dopamine receptor D4,APOMORPHINE,Small molecule,CHEMBL53,4.0,[],MONDO_0021095,parkinsonian disorder
+84,GRIN2B,glutamate ionotropic receptor NMDA type subunit 2B,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+85,GRIN3B,glutamate ionotropic receptor NMDA type subunit 3B,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+86,DRD3,dopamine receptor D3,ROPINIROLE HYDROCHLORIDE,Small molecule,CHEMBL1200411,4.0,['NCT00485069'],MONDO_0021095,parkinsonian disorder
+87,DRD4,dopamine receptor D4,PRAMIPEXOLE,Small molecule,CHEMBL301265,4.0,['NCT01048229'],MONDO_0021095,parkinsonian disorder
+88,DRD2,dopamine receptor D2,APOMORPHINE,Small molecule,CHEMBL53,4.0,[],MONDO_0021095,parkinsonian disorder
+89,ADRA2B,adrenoceptor alpha 2B,DEXMEDETOMIDINE,Small molecule,CHEMBL778,4.0,['NCT05376761'],MONDO_0021095,parkinsonian disorder
+90,GABRA3,gamma-aminobutyric acid type A receptor subunit alpha3,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+91,DRD4,dopamine receptor D4,ROTIGOTINE,Small molecule,CHEMBL1303,4.0,[],MONDO_0021095,parkinsonian disorder
+92,ACHE,acetylcholinesterase (Yt blood group),RIVASTIGMINE,Small molecule,CHEMBL636,4.0,['NCT01856738'],MONDO_0021095,parkinsonian disorder
+93,DRD3,dopamine receptor D3,APOMORPHINE HYDROCHLORIDE,Small molecule,CHEMBL5314363,4.0,[],MONDO_0021095,parkinsonian disorder
+94,SCN5A,sodium voltage-gated channel alpha subunit 5,ZONISAMIDE,Small molecule,CHEMBL750,4.0,['NCT03034538'],MONDO_0021095,parkinsonian disorder
+95,BCHE,butyrylcholinesterase,RIVASTIGMINE,Small molecule,CHEMBL636,4.0,[],MONDO_0021095,parkinsonian disorder
+96,DRD3,dopamine receptor D3,PERGOLIDE,Small molecule,CHEMBL531,4.0,[],MONDO_0021095,parkinsonian disorder
+97,DDC,dopa decarboxylase,CARBIDOPA ANHYDROUS,Small molecule,CHEMBL1201236,4.0,[],MONDO_0021095,parkinsonian disorder
+98,COMT,catechol-O-methyltransferase,OPICAPONE,Small molecule,CHEMBL1089318,4.0,['NCT04821687'],MONDO_0021095,parkinsonian disorder
+99,GRIN1,glutamate ionotropic receptor NMDA type subunit 1,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+100,ACHE,acetylcholinesterase (Yt blood group),DONEPEZIL,Small molecule,CHEMBL502,4.0,"['NCT00030979', 'NCT01521117']",MONDO_0021095,parkinsonian disorder
+101,GRIN2C,glutamate ionotropic receptor NMDA type subunit 2C,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+102,DRD3,dopamine receptor D3,PRAMIPEXOLE DIHYDROCHLORIDE,Small molecule,CHEMBL3182733,4.0,['NCT02231905'],MONDO_0021095,parkinsonian disorder
+103,DRD3,dopamine receptor D3,APOMORPHINE,Small molecule,CHEMBL53,4.0,"['NCT02688465', 'NCT02549573']",MONDO_0021095,parkinsonian disorder
+104,DRD3,dopamine receptor D3,ROPINIROLE,Small molecule,CHEMBL589,4.0,"['NCT00485069', 'NCT01494532', 'NCT01485172', 'NCT00986245']",MONDO_0021095,parkinsonian disorder
+105,GRIN2C,glutamate ionotropic receptor NMDA type subunit 2C,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+106,AVPR2,arginine vasopressin receptor 2,DESMOPRESSIN,Protein,CHEMBL1429,4.0,['NCT00806468'],MONDO_0021095,parkinsonian disorder
+107,GRIN2A,glutamate ionotropic receptor NMDA type subunit 2A,AMANTADINE,Small molecule,CHEMBL660,4.0,['NCT01313819'],MONDO_0021095,parkinsonian disorder
+108,ACHE,acetylcholinesterase (Yt blood group),RIVASTIGMINE,Small molecule,CHEMBL636,4.0,[],MONDO_0021095,parkinsonian disorder
+109,DRD3,dopamine receptor D3,PRAMIPEXOLE,Small molecule,CHEMBL301265,4.0,['NCT01515774'],MONDO_0021095,parkinsonian disorder
+110,SCN3A,sodium voltage-gated channel alpha subunit 3,ZONISAMIDE,Small molecule,CHEMBL750,4.0,['NCT03034538'],MONDO_0021095,parkinsonian disorder
+111,MAOB,monoamine oxidase B,RASAGILINE,Small molecule,CHEMBL887,4.0,"['NCT00696215', 'NCT01385735', 'NCT01765257', 'NCT01007630']",MONDO_0021095,parkinsonian disorder
+112,CHRM1,cholinergic receptor muscarinic 1,ETHOPROPAZINE,Small molecule,CHEMBL1206,4.0,[],MONDO_0021095,parkinsonian disorder
+113,MAOB,monoamine oxidase B,RASAGILINE TARTRATE,Small molecule,CHEMBL5315052,4.0,[],MONDO_0021095,parkinsonian disorder
+114,DDC,dopa decarboxylase,BENSERAZIDE,Small molecule,CHEMBL1096979,4.0,['NCT02741947'],MONDO_0021095,parkinsonian disorder
+115,GRIN2B,glutamate ionotropic receptor NMDA type subunit 2B,AMANTADINE,Small molecule,CHEMBL660,4.0,['NCT01313819'],MONDO_0021095,parkinsonian disorder
+116,SCN11A,sodium voltage-gated channel alpha subunit 11,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+117,DRD3,dopamine receptor D3,LEVODOPA,Small molecule,CHEMBL1009,4.0,['NCT00601978'],MONDO_0021095,parkinsonian disorder
+118,GRIN1,glutamate ionotropic receptor NMDA type subunit 1,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+119,SCN4A,sodium voltage-gated channel alpha subunit 4,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+120,MAOB,monoamine oxidase B,RASAGILINE,Small molecule,CHEMBL887,4.0,[],MONDO_0021095,parkinsonian disorder
+121,DRD4,dopamine receptor D4,ROPINIROLE HYDROCHLORIDE,Small molecule,CHEMBL1200411,4.0,[],MONDO_0021095,parkinsonian disorder
+122,SCN2A,sodium voltage-gated channel alpha subunit 2,ZONISAMIDE,Small molecule,CHEMBL750,4.0,['NCT03034538'],MONDO_0021095,parkinsonian disorder
+123,GRIN1,glutamate ionotropic receptor NMDA type subunit 1,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+124,GRIN2D,glutamate ionotropic receptor NMDA type subunit 2D,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+125,ACHE,acetylcholinesterase (Yt blood group),RIVASTIGMINE TARTRATE,Small molecule,CHEMBL215645,4.0,[],MONDO_0021095,parkinsonian disorder
+126,HTR2A,5-hydroxytryptamine receptor 2A,PIMAVANSERIN TARTRATE,Small molecule,CHEMBL2448613,4.0,[],MONDO_0021095,parkinsonian disorder
+127,GRIN2C,glutamate ionotropic receptor NMDA type subunit 2C,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+128,GRIN2D,glutamate ionotropic receptor NMDA type subunit 2D,MEMANTINE,Small molecule,CHEMBL807,4.0,"['NCT01108029', 'NCT00646204']",MONDO_0021095,parkinsonian disorder
+129,DRD3,dopamine receptor D3,PRAMIPEXOLE,Small molecule,CHEMBL301265,4.0,"['NCT00321854', 'NCT00402233', 'NCT02231905', 'NCT02233023', 'NCT01673724', 'NCT03521635']",MONDO_0021095,parkinsonian disorder
+130,COMT,catechol-O-methyltransferase,OPICAPONE,Small molecule,CHEMBL1089318,4.0,"['NCT04986995', 'NCT04990284']",MONDO_0021095,parkinsonian disorder
+131,DRD3,dopamine receptor D3,LEVODOPA,Small molecule,CHEMBL1009,4.0,['NCT06115538'],MONDO_0021095,parkinsonian disorder
+132,CHRM1,cholinergic receptor muscarinic 1,PROCYCLIDINE,Small molecule,CHEMBL86715,4.0,[],MONDO_0021095,parkinsonian disorder
+133,GRIN2B,glutamate ionotropic receptor NMDA type subunit 2B,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+134,COMT,catechol-O-methyltransferase,TOLCAPONE,Small molecule,CHEMBL1324,4.0,[],MONDO_0021095,parkinsonian disorder
+135,CHRM1,cholinergic receptor muscarinic 1,ATROPINE,Small molecule,CHEMBL517712,4.0,[],MONDO_0021095,parkinsonian disorder
+136,DDC,dopa decarboxylase,CARBIDOPA ANHYDROUS,Small molecule,CHEMBL1201236,4.0,"['NCT00141518', 'NCT02480803', 'NCT00590122', 'NCT00143026', 'NCT03115827', 'NCT00888186', 'NCT00219284', 'NCT00906828', 'NCT00125567', 'NCT00391898']",MONDO_0021095,parkinsonian disorder
+137,ADRA2A,adrenoceptor alpha 2A,DEXMEDETOMIDINE,Small molecule,CHEMBL778,4.0,['NCT05376761'],MONDO_0021095,parkinsonian disorder
+138,DRD3,dopamine receptor D3,LEVODOPA,Small molecule,CHEMBL1009,4.0,['NCT04990284'],MONDO_0021095,parkinsonian disorder
+139,CHRM1,cholinergic receptor muscarinic 1,BENZTROPINE MESYLATE,Small molecule,CHEMBL1200383,4.0,[],MONDO_0021095,parkinsonian disorder
+140,GRIN2A,glutamate ionotropic receptor NMDA type subunit 2A,MEMANTINE,Small molecule,CHEMBL807,4.0,"['NCT01108029', 'NCT00646204']",MONDO_0021095,parkinsonian disorder
+141,DRD4,dopamine receptor D4,PRAMIPEXOLE DIHYDROCHLORIDE,Small molecule,CHEMBL3182733,4.0,['NCT01515774'],MONDO_0021095,parkinsonian disorder
+142,BCHE,butyrylcholinesterase,RIVASTIGMINE TARTRATE,Small molecule,CHEMBL215645,4.0,[],MONDO_0021095,parkinsonian disorder
+143,ADRA2B,adrenoceptor alpha 2B,DEXMEDETOMIDINE,Small molecule,CHEMBL778,4.0,['NCT02982512'],MONDO_0021095,parkinsonian disorder
+144,SCN7A,sodium voltage-gated channel alpha subunit 7,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+145,GRIN3A,glutamate ionotropic receptor NMDA type subunit 3A,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+146,SCN8A,sodium voltage-gated channel alpha subunit 8,ZONISAMIDE,Small molecule,CHEMBL750,4.0,['NCT03034538'],MONDO_0021095,parkinsonian disorder
+147,GRIN2A,glutamate ionotropic receptor NMDA type subunit 2A,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+148,SCN10A,sodium voltage-gated channel alpha subunit 10,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+149,GRIN2C,glutamate ionotropic receptor NMDA type subunit 2C,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,"['NCT04387773', 'NCT00632762']",MONDO_0021095,parkinsonian disorder
+150,GRIN2B,glutamate ionotropic receptor NMDA type subunit 2B,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+151,SLC6A3,solute carrier family 6 member 3,METHYLPHENIDATE,Small molecule,CHEMBL796,4.0,['NCT00526630'],MONDO_0021095,parkinsonian disorder
+152,GRIN2B,glutamate ionotropic receptor NMDA type subunit 2B,AMANTADINE,Small molecule,CHEMBL660,4.0,"['NCT01071395', 'NCT01313845', 'NCT04387773', 'NCT00632762']",MONDO_0021095,parkinsonian disorder
+153,GRIN1,glutamate ionotropic receptor NMDA type subunit 1,AMANTADINE,Small molecule,CHEMBL660,4.0,"['NCT00632762', 'NCT01071395', 'NCT04387773', 'NCT01313845']",MONDO_0021095,parkinsonian disorder
+154,HTR2C,5-hydroxytryptamine receptor 2C,METHIXENE,Small molecule,CHEMBL1201342,4.0,[],MONDO_0021095,parkinsonian disorder
+155,DRD2,dopamine receptor D2,PRAMIPEXOLE,Small molecule,CHEMBL301265,4.0,['NCT01515774'],MONDO_0021095,parkinsonian disorder
+156,DRD3,dopamine receptor D3,ROPINIROLE,Small molecule,CHEMBL589,4.0,[],MONDO_0021095,parkinsonian disorder
+157,DRD2,dopamine receptor D2,PRAMIPEXOLE,Small molecule,CHEMBL301265,4.0,[],MONDO_0021095,parkinsonian disorder
+158,DRD2,dopamine receptor D2,ROPINIROLE,Small molecule,CHEMBL589,4.0,"['NCT01485172', 'NCT00485069', 'NCT00986245', 'NCT01494532']",MONDO_0021095,parkinsonian disorder
+159,COMT,catechol-O-methyltransferase,TOLCAPONE,Small molecule,CHEMBL1324,4.0,['NCT00906828'],MONDO_0021095,parkinsonian disorder
+160,GRIN3A,glutamate ionotropic receptor NMDA type subunit 3A,AMANTADINE,Small molecule,CHEMBL660,4.0,"['NCT01313845', 'NCT00632762', 'NCT04387773', 'NCT01071395']",MONDO_0021095,parkinsonian disorder
+161,HTR2C,5-hydroxytryptamine receptor 2C,QUETIAPINE,Small molecule,CHEMBL716,4.0,['NCT04373317'],MONDO_0021095,parkinsonian disorder
+162,GRIN2B,glutamate ionotropic receptor NMDA type subunit 2B,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+163,CHRM3,cholinergic receptor muscarinic 3,ATROPINE SULFATE,Small molecule,CHEMBL2146146,4.0,[],MONDO_0021095,parkinsonian disorder
+164,CHRM2,cholinergic receptor muscarinic 2,ATROPINE SULFATE,Small molecule,CHEMBL2146146,4.0,[],MONDO_0021095,parkinsonian disorder
+165,DRD2,dopamine receptor D2,PRAMIPEXOLE,Small molecule,CHEMBL301265,4.0,['NCT01048229'],MONDO_0021095,parkinsonian disorder
+166,AVPR1B,arginine vasopressin receptor 1B,DESMOPRESSIN ACETATE,Protein,CHEMBL1200556,4.0,['NCT00806468'],MONDO_0021095,parkinsonian disorder
+167,GRIN2A,glutamate ionotropic receptor NMDA type subunit 2A,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+168,GRIN2D,glutamate ionotropic receptor NMDA type subunit 2D,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+169,DRD3,dopamine receptor D3,APOMORPHINE HYDROCHLORIDE,Small molecule,CHEMBL5314363,4.0,['NCT01770145'],MONDO_0021095,parkinsonian disorder
+170,DDC,dopa decarboxylase,CARBIDOPA,Small molecule,CHEMBL1200748,4.0,[],MONDO_0021095,parkinsonian disorder
+171,COMT,catechol-O-methyltransferase,OPICAPONE,Small molecule,CHEMBL1089318,4.0,[],MONDO_0021095,parkinsonian disorder
+172,AVPR1A,arginine vasopressin receptor 1A,DESMOPRESSIN,Protein,CHEMBL1429,4.0,['NCT00806468'],MONDO_0021095,parkinsonian disorder
+173,GABRE,gamma-aminobutyric acid type A receptor subunit epsilon,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+174,SV2A,synaptic vesicle glycoprotein 2A,LEVETIRACETAM,Small molecule,CHEMBL1286,4.0,['NCT00307450'],MONDO_0021095,parkinsonian disorder
+175,DRD4,dopamine receptor D4,ROPINIROLE,Small molecule,CHEMBL589,4.0,[],MONDO_0021095,parkinsonian disorder
+176,DRD2,dopamine receptor D2,APOMORPHINE HYDROCHLORIDE,Small molecule,CHEMBL5314363,4.0,['NCT01770145'],MONDO_0021095,parkinsonian disorder
+177,ADORA2A,adenosine A2a receptor,ISTRADEFYLLINE,Small molecule,CHEMBL431770,4.0,[],MONDO_0021095,parkinsonian disorder
+178,DRD2,dopamine receptor D2,BROMOCRIPTINE MESYLATE,Small molecule,CHEMBL1200503,4.0,[],MONDO_0021095,parkinsonian disorder
+179,DDC,dopa decarboxylase,CARBIDOPA ANHYDROUS,Small molecule,CHEMBL1201236,4.0,['NCT00601978'],MONDO_0021095,parkinsonian disorder
+180,SLC6A2,solute carrier family 6 member 2,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+181,GRIN1,glutamate ionotropic receptor NMDA type subunit 1,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+182,GRIN2B,glutamate ionotropic receptor NMDA type subunit 2B,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+183,GRIN3B,glutamate ionotropic receptor NMDA type subunit 3B,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+184,DRD3,dopamine receptor D3,APOMORPHINE,Small molecule,CHEMBL53,4.0,['NCT04887467'],MONDO_0021095,parkinsonian disorder
+185,GRIN2C,glutamate ionotropic receptor NMDA type subunit 2C,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+186,GRIN2D,glutamate ionotropic receptor NMDA type subunit 2D,AMANTADINE,Small molecule,CHEMBL660,4.0,['NCT01313819'],MONDO_0021095,parkinsonian disorder
+187,DRD2,dopamine receptor D2,ROTIGOTINE,Small molecule,CHEMBL1303,4.0,['NCT01519882'],MONDO_0021095,parkinsonian disorder
+188,GRIN2D,glutamate ionotropic receptor NMDA type subunit 2D,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+189,SCN11A,sodium voltage-gated channel alpha subunit 11,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+190,GRIN2D,glutamate ionotropic receptor NMDA type subunit 2D,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,"['NCT04387773', 'NCT00632762']",MONDO_0021095,parkinsonian disorder
+191,HTR2A,5-hydroxytryptamine receptor 2A,PIMAVANSERIN,Small molecule,CHEMBL2111101,4.0,[],MONDO_0021095,parkinsonian disorder
+192,GRIN3B,glutamate ionotropic receptor NMDA type subunit 3B,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+193,DRD4,dopamine receptor D4,APOMORPHINE,Small molecule,CHEMBL53,4.0,['NCT04887467'],MONDO_0021095,parkinsonian disorder
+194,SCN10A,sodium voltage-gated channel alpha subunit 10,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+195,GABRB1,gamma-aminobutyric acid type A receptor subunit beta1,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+196,GRIN3B,glutamate ionotropic receptor NMDA type subunit 3B,MEMANTINE,Small molecule,CHEMBL807,4.0,"['NCT00646204', 'NCT01108029']",MONDO_0021095,parkinsonian disorder
+197,DRD2,dopamine receptor D2,PRAMIPEXOLE DIHYDROCHLORIDE,Small molecule,CHEMBL3182733,4.0,['NCT01515774'],MONDO_0021095,parkinsonian disorder
+198,MAOB,monoamine oxidase B,RASAGILINE MESYLATE,Small molecule,CHEMBL1201142,4.0,[],MONDO_0021095,parkinsonian disorder
+199,CHRM1,cholinergic receptor muscarinic 1,BENZTROPINE,Small molecule,CHEMBL1201203,4.0,[],MONDO_0021095,parkinsonian disorder
+200,BCHE,butyrylcholinesterase,RIVASTIGMINE,Small molecule,CHEMBL636,4.0,"['NCT01340885', 'NCT03840837', 'NCT00988117']",MONDO_0021095,parkinsonian disorder
+201,COMT,catechol-O-methyltransferase,ENTACAPONE,Small molecule,CHEMBL953,4.0,"['NCT00247247', 'NCT00373087', 'NCT02847442', 'NCT00125567', 'NCT00219284', 'NCT00143026', 'NCT00391898', 'NCT00906828']",MONDO_0021095,parkinsonian disorder
+202,DRD4,dopamine receptor D4,ROPINIROLE,Small molecule,CHEMBL589,4.0,"['NCT00485069', 'NCT01485172', 'NCT00986245', 'NCT01494532']",MONDO_0021095,parkinsonian disorder
+203,SCN7A,sodium voltage-gated channel alpha subunit 7,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+204,DRD2,dopamine receptor D2,PRAMIPEXOLE DIHYDROCHLORIDE,Small molecule,CHEMBL3182733,4.0,[],MONDO_0021095,parkinsonian disorder
+205,DDC,dopa decarboxylase,CARBIDOPA,Small molecule,CHEMBL1200748,4.0,[],MONDO_0021095,parkinsonian disorder
+206,DRD4,dopamine receptor D4,PRAMIPEXOLE DIHYDROCHLORIDE,Small molecule,CHEMBL3182733,4.0,[],MONDO_0021095,parkinsonian disorder
+207,COMT,catechol-O-methyltransferase,OPICAPONE,Small molecule,CHEMBL1089318,4.0,['NCT04986982'],MONDO_0021095,parkinsonian disorder
+208,GRIN2C,glutamate ionotropic receptor NMDA type subunit 2C,MEMANTINE,Small molecule,CHEMBL807,4.0,"['NCT00646204', 'NCT01108029']",MONDO_0021095,parkinsonian disorder
+209,GRIN1,glutamate ionotropic receptor NMDA type subunit 1,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+210,SLC6A2,solute carrier family 6 member 2,METHYLPHENIDATE,Small molecule,CHEMBL796,4.0,['NCT00526630'],MONDO_0021095,parkinsonian disorder
+211,GRIN3B,glutamate ionotropic receptor NMDA type subunit 3B,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+212,SV2A,synaptic vesicle glycoprotein 2A,LEVETIRACETAM,Small molecule,CHEMBL1286,4.0,['NCT00584025'],MONDO_0021095,parkinsonian disorder
+213,VDR,vitamin D receptor,CHOLECALCIFEROL,Small molecule,CHEMBL1042,4.0,['NCT00571285'],MONDO_0021095,parkinsonian disorder
+214,MAOB,monoamine oxidase B,RASAGILINE,Small molecule,CHEMBL887,4.0,"['NCT01048229', 'NCT01178047']",MONDO_0021095,parkinsonian disorder
+215,DRD4,dopamine receptor D4,PRAMIPEXOLE DIHYDROCHLORIDE,Small molecule,CHEMBL3182733,4.0,['NCT02231905'],MONDO_0021095,parkinsonian disorder
+216,DRD4,dopamine receptor D4,BROMOCRIPTINE,Small molecule,CHEMBL493,4.0,[],MONDO_0021095,parkinsonian disorder
+217,ADRA2A,adrenoceptor alpha 2A,DEXMEDETOMIDINE,Small molecule,CHEMBL778,4.0,"['NCT01721460', 'NCT02256319', 'NCT01789385']",MONDO_0021095,parkinsonian disorder
+218,DRD2,dopamine receptor D2,BROMOCRIPTINE,Small molecule,CHEMBL493,4.0,[],MONDO_0021095,parkinsonian disorder
+219,ACHE,acetylcholinesterase (Yt blood group),RIVASTIGMINE,Small molecule,CHEMBL636,4.0,"['NCT01340885', 'NCT03840837', 'NCT00988117']",MONDO_0021095,parkinsonian disorder
+220,BCHE,butyrylcholinesterase,RIVASTIGMINE,Small molecule,CHEMBL636,4.0,['NCT01856738'],MONDO_0021095,parkinsonian disorder
+221,COMT,catechol-O-methyltransferase,ENTACAPONE,Small molecule,CHEMBL953,4.0,['NCT00601978'],MONDO_0021095,parkinsonian disorder
+222,HTR2A,5-hydroxytryptamine receptor 2A,QUETIAPINE,Small molecule,CHEMBL716,4.0,['NCT04373317'],MONDO_0021095,parkinsonian disorder
+223,DRD2,dopamine receptor D2,ROPINIROLE HYDROCHLORIDE,Small molecule,CHEMBL1200411,4.0,['NCT00485069'],MONDO_0021095,parkinsonian disorder
+224,DRD3,dopamine receptor D3,LEVODOPA,Small molecule,CHEMBL1009,4.0,"['NCT00888186', 'NCT00485069', 'NCT02769793', 'NCT00141518', 'NCT00399477', 'NCT00914134', 'NCT02741947', 'NCT00906828', 'NCT00125567', 'NCT00590122', 'NCT00219284', 'NCT00153972', 'NCT00391898', 'NCT02847442', 'NCT00272688', 'NCT00143026', 'NCT02480803', 'NCT01770145']",MONDO_0021095,parkinsonian disorder
+225,ADRB1,adrenoceptor beta 1,DOPAMINE,Small molecule,CHEMBL59,4.0,"['NCT00590122', 'NCT03151460', 'NCT02233023']",MONDO_0021095,parkinsonian disorder
+226,GRIN3B,glutamate ionotropic receptor NMDA type subunit 3B,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+227,GRIN2B,glutamate ionotropic receptor NMDA type subunit 2B,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,"['NCT04387773', 'NCT00632762']",MONDO_0021095,parkinsonian disorder
+228,SCN1A,sodium voltage-gated channel alpha subunit 1,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+229,AVPR2,arginine vasopressin receptor 2,DESMOPRESSIN ACETATE,Protein,CHEMBL1200556,4.0,['NCT00806468'],MONDO_0021095,parkinsonian disorder
+230,GRIN1,glutamate ionotropic receptor NMDA type subunit 1,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,"['NCT00632762', 'NCT04387773']",MONDO_0021095,parkinsonian disorder
+231,GABRA6,gamma-aminobutyric acid type A receptor subunit alpha6,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+232,DRD3,dopamine receptor D3,PRAMIPEXOLE,Small molecule,CHEMBL301265,4.0,[],MONDO_0021095,parkinsonian disorder
+233,MAOB,monoamine oxidase B,SAFINAMIDE,Small molecule,CHEMBL396778,4.0,"['NCT03843944', 'NCT03841604', 'NCT05312632']",MONDO_0021095,parkinsonian disorder
+234,ADRA2A,adrenoceptor alpha 2A,DEXMEDETOMIDINE,Small molecule,CHEMBL778,4.0,['NCT02982512'],MONDO_0021095,parkinsonian disorder
+235,GABRA2,gamma-aminobutyric acid type A receptor subunit alpha2,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+236,DRD3,dopamine receptor D3,PRAMIPEXOLE,Small molecule,CHEMBL301265,4.0,['NCT01048229'],MONDO_0021095,parkinsonian disorder
+237,GRIN3B,glutamate ionotropic receptor NMDA type subunit 3B,AMANTADINE,Small molecule,CHEMBL660,4.0,['NCT01313819'],MONDO_0021095,parkinsonian disorder
+238,SCN5A,sodium voltage-gated channel alpha subunit 5,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+239,ADRA2C,adrenoceptor alpha 2C,DEXMEDETOMIDINE,Small molecule,CHEMBL778,4.0,['NCT02982512'],MONDO_0021095,parkinsonian disorder
+240,GABRB2,gamma-aminobutyric acid type A receptor subunit beta2,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+241,ADRA1B,adrenoceptor alpha 1B,DROXIDOPA,Small molecule,CHEMBL2103827,4.0,['NCT03115827'],MONDO_0021095,parkinsonian disorder
+242,DRD4,dopamine receptor D4,APOMORPHINE HYDROCHLORIDE,Small molecule,CHEMBL5314363,4.0,['NCT01770145'],MONDO_0021095,parkinsonian disorder
+243,DRD4,dopamine receptor D4,PRAMIPEXOLE,Small molecule,CHEMBL301265,4.0,['NCT01515774'],MONDO_0021095,parkinsonian disorder
+244,ADRA2B,adrenoceptor alpha 2B,DEXMEDETOMIDINE,Small molecule,CHEMBL778,4.0,"['NCT01789385', 'NCT01721460', 'NCT02256319']",MONDO_0021095,parkinsonian disorder
+245,DRD4,dopamine receptor D4,ROPINIROLE HYDROCHLORIDE,Small molecule,CHEMBL1200411,4.0,['NCT00485069'],MONDO_0021095,parkinsonian disorder
+246,DRD3,dopamine receptor D3,ROTIGOTINE,Small molecule,CHEMBL1303,4.0,['NCT01519882'],MONDO_0021095,parkinsonian disorder
+247,SCN11A,sodium voltage-gated channel alpha subunit 11,ZONISAMIDE,Small molecule,CHEMBL750,4.0,['NCT03034538'],MONDO_0021095,parkinsonian disorder
+248,MAOB,monoamine oxidase B,SAFINAMIDE,Small molecule,CHEMBL396778,4.0,[],MONDO_0021095,parkinsonian disorder
+249,GABRA1,gamma-aminobutyric acid type A receptor subunit alpha1,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+250,DRD2,dopamine receptor D2,CABERGOLINE,Small molecule,CHEMBL1201087,4.0,['NCT00153972'],MONDO_0021095,parkinsonian disorder
+251,GRIN2D,glutamate ionotropic receptor NMDA type subunit 2D,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+252,ADRB3,adrenoceptor beta 3,MIRABEGRON,Small molecule,CHEMBL2095212,4.0,['NCT02092181'],MONDO_0021095,parkinsonian disorder
+253,SLC6A3,solute carrier family 6 member 3,METHYLPHENIDATE,Small molecule,CHEMBL796,4.0,['NCT01244269'],MONDO_0021095,parkinsonian disorder
+254,DRD2,dopamine receptor D2,ROPINIROLE HYDROCHLORIDE,Small molecule,CHEMBL1200411,4.0,[],MONDO_0021095,parkinsonian disorder
+255,DRD2,dopamine receptor D2,PERGOLIDE,Small molecule,CHEMBL531,4.0,[],MONDO_0021095,parkinsonian disorder
+256,MAOB,monoamine oxidase B,SELEGILINE,Small molecule,CHEMBL972,4.0,"['NCT00443872', 'NCT00640159', 'NCT04870372']",MONDO_0021095,parkinsonian disorder
+257,CHRM1,cholinergic receptor muscarinic 1,BIPERIDEN,Small molecule,CHEMBL1101,4.0,[],MONDO_0021095,parkinsonian disorder
+258,SCN4A,sodium voltage-gated channel alpha subunit 4,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+259,GRIN2A,glutamate ionotropic receptor NMDA type subunit 2A,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+260,DRD3,dopamine receptor D3,ROTIGOTINE,Small molecule,CHEMBL1303,4.0,"['NCT01744496', 'NCT00594464', 'NCT01782222', 'NCT01300819', 'NCT03103919', 'NCT01711866', 'NCT01523301']",MONDO_0021095,parkinsonian disorder
+261,CACNA1B,calcium voltage-gated channel subunit alpha1 B,LEVETIRACETAM,Small molecule,CHEMBL1286,4.0,['NCT00307450'],MONDO_0021095,parkinsonian disorder
+262,DRD4,dopamine receptor D4,APOMORPHINE HYDROCHLORIDE,Small molecule,CHEMBL5314363,4.0,['NCT02549573'],MONDO_0021095,parkinsonian disorder
+263,DDC,dopa decarboxylase,CARBIDOPA,Small molecule,CHEMBL1200748,4.0,['NCT00601978'],MONDO_0021095,parkinsonian disorder
+264,ADRB3,adrenoceptor beta 3,DROXIDOPA,Small molecule,CHEMBL2103827,4.0,['NCT03115827'],MONDO_0021095,parkinsonian disorder
+265,GRIN3B,glutamate ionotropic receptor NMDA type subunit 3B,AMANTADINE,Small molecule,CHEMBL660,4.0,"['NCT04387773', 'NCT00632762', 'NCT01071395', 'NCT01313845']",MONDO_0021095,parkinsonian disorder
+266,SCN2A,sodium voltage-gated channel alpha subunit 2,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+267,DRD3,dopamine receptor D3,ROPINIROLE HYDROCHLORIDE,Small molecule,CHEMBL1200411,4.0,[],MONDO_0021095,parkinsonian disorder
+268,DRD3,dopamine receptor D3,LEVODOPA,Small molecule,CHEMBL1009,4.0,"['NCT06234995', 'NCT06013956', 'NCT04952194', 'NCT06236230']",MONDO_0021095,parkinsonian disorder
+269,ADRA2C,adrenoceptor alpha 2C,DROXIDOPA,Small molecule,CHEMBL2103827,4.0,['NCT03115827'],MONDO_0021095,parkinsonian disorder
+270,COMT,catechol-O-methyltransferase,ENTACAPONE,Small molecule,CHEMBL953,4.0,['NCT00642356'],MONDO_0021095,parkinsonian disorder
+271,ACHE,acetylcholinesterase (Yt blood group),DONEPEZIL,Small molecule,CHEMBL502,4.0,['NCT03011476'],MONDO_0021095,parkinsonian disorder
+272,GRIN2D,glutamate ionotropic receptor NMDA type subunit 2D,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+273,DRD4,dopamine receptor D4,BROMOCRIPTINE,Small molecule,CHEMBL493,4.0,"['NCT02233023', 'NCT01673724']",MONDO_0021095,parkinsonian disorder
+274,DRD3,dopamine receptor D3,APOMORPHINE,Small molecule,CHEMBL53,4.0,[],MONDO_0021095,parkinsonian disorder
+275,ADRB1,adrenoceptor beta 1,DROXIDOPA,Small molecule,CHEMBL2103827,4.0,['NCT03115827'],MONDO_0021095,parkinsonian disorder
+276,GRIN3B,glutamate ionotropic receptor NMDA type subunit 3B,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,"['NCT04387773', 'NCT00632762']",MONDO_0021095,parkinsonian disorder
+277,SCN9A,sodium voltage-gated channel alpha subunit 9,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+278,DRD3,dopamine receptor D3,LEVODOPA,Small molecule,CHEMBL1009,4.0,[],MONDO_0021095,parkinsonian disorder
+279,DRD2,dopamine receptor D2,APOMORPHINE,Small molecule,CHEMBL53,4.0,"['NCT01770145', 'NCT02940912']",MONDO_0021095,parkinsonian disorder
+280,GABRP,gamma-aminobutyric acid type A receptor subunit pi,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+281,SCN1A,sodium voltage-gated channel alpha subunit 1,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+282,SCN9A,sodium voltage-gated channel alpha subunit 9,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+283,DRD2,dopamine receptor D2,ROTIGOTINE,Small molecule,CHEMBL1303,4.0,"['NCT00594464', 'NCT01711866', 'NCT03103919', 'NCT01782222', 'NCT01300819', 'NCT01523301', 'NCT01744496']",MONDO_0021095,parkinsonian disorder
+284,SNAP25,synaptosome associated protein 25,ONABOTULINUMTOXINA,Unknown,CHEMBL1201574,4.0,['NCT02472210'],MONDO_0021095,parkinsonian disorder
+285,DRD4,dopamine receptor D4,PRAMIPEXOLE,Small molecule,CHEMBL301265,4.0,"['NCT03521635', 'NCT00402233', 'NCT02231905', 'NCT02233023', 'NCT00321854', 'NCT01673724']",MONDO_0021095,parkinsonian disorder
+286,GRIN2C,glutamate ionotropic receptor NMDA type subunit 2C,AMANTADINE,Small molecule,CHEMBL660,4.0,"['NCT01313845', 'NCT00632762', 'NCT01071395', 'NCT04387773']",MONDO_0021095,parkinsonian disorder
+287,GRIN2B,glutamate ionotropic receptor NMDA type subunit 2B,MEMANTINE,Small molecule,CHEMBL807,4.0,"['NCT01108029', 'NCT00646204']",MONDO_0021095,parkinsonian disorder
+288,DRD3,dopamine receptor D3,PRAMIPEXOLE DIHYDROCHLORIDE,Small molecule,CHEMBL3182733,4.0,[],MONDO_0021095,parkinsonian disorder
+289,GRIN3A,glutamate ionotropic receptor NMDA type subunit 3A,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+290,DRD4,dopamine receptor D4,ROTIGOTINE,Small molecule,CHEMBL1303,4.0,['NCT01519882'],MONDO_0021095,parkinsonian disorder
+291,GRIN2B,glutamate ionotropic receptor NMDA type subunit 2B,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+292,DRD4,dopamine receptor D4,PRAMIPEXOLE,Small molecule,CHEMBL301265,4.0,[],MONDO_0021095,parkinsonian disorder
+293,AVPR1B,arginine vasopressin receptor 1B,DESMOPRESSIN,Protein,CHEMBL1429,4.0,['NCT00806468'],MONDO_0021095,parkinsonian disorder
+294,DRD2,dopamine receptor D2,CABERGOLINE,Small molecule,CHEMBL1201087,4.0,['NCT00174239'],MONDO_0021095,parkinsonian disorder
+295,CHRNA4,cholinergic receptor nicotinic alpha 4 subunit,NICOTINE,Small molecule,CHEMBL3,4.0,['NCT01216904'],MONDO_0021095,parkinsonian disorder
+296,DRD2,dopamine receptor D2,APOMORPHINE HYDROCHLORIDE,Small molecule,CHEMBL5314363,4.0,['NCT02549573'],MONDO_0021095,parkinsonian disorder
+297,GRIN3B,glutamate ionotropic receptor NMDA type subunit 3B,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+298,CHRNB2,cholinergic receptor nicotinic beta 2 subunit,NICOTINE,Small molecule,CHEMBL3,4.0,['NCT01216904'],MONDO_0021095,parkinsonian disorder
+299,MTNR1B,melatonin receptor 1B,RAMELTEON,Small molecule,CHEMBL1218,4.0,['NCT00462254'],MONDO_0021095,parkinsonian disorder
+300,DRD2,dopamine receptor D2,PRAMIPEXOLE DIHYDROCHLORIDE,Small molecule,CHEMBL3182733,4.0,['NCT02231905'],MONDO_0021095,parkinsonian disorder
+301,GRIN2C,glutamate ionotropic receptor NMDA type subunit 2C,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+302,ADRA2C,adrenoceptor alpha 2C,DEXMEDETOMIDINE,Small molecule,CHEMBL778,4.0,"['NCT01789385', 'NCT01721460', 'NCT02256319']",MONDO_0021095,parkinsonian disorder
+303,ADRA2B,adrenoceptor alpha 2B,DROXIDOPA,Small molecule,CHEMBL2103827,4.0,['NCT03115827'],MONDO_0021095,parkinsonian disorder
+304,GRIN2D,glutamate ionotropic receptor NMDA type subunit 2D,AMANTADINE,Small molecule,CHEMBL660,4.0,"['NCT04387773', 'NCT00632762', 'NCT01313845', 'NCT01071395']",MONDO_0021095,parkinsonian disorder
+305,COMT,catechol-O-methyltransferase,ENTACAPONE,Small molecule,CHEMBL953,4.0,['NCT06236230'],MONDO_0021095,parkinsonian disorder
+306,DRD2,dopamine receptor D2,APOMORPHINE HYDROCHLORIDE,Small molecule,CHEMBL5314363,4.0,[],MONDO_0021095,parkinsonian disorder
+307,DRD2,dopamine receptor D2,BROMOCRIPTINE,Small molecule,CHEMBL493,4.0,"['NCT01673724', 'NCT02233023']",MONDO_0021095,parkinsonian disorder
+308,ADRA2C,adrenoceptor alpha 2C,DEXMEDETOMIDINE,Small molecule,CHEMBL778,4.0,['NCT05376761'],MONDO_0021095,parkinsonian disorder
+309,SLC6A2,solute carrier family 6 member 2,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+310,SCN2A,sodium voltage-gated channel alpha subunit 2,ORPHENADRINE,Small molecule,CHEMBL900,4.0,[],MONDO_0021095,parkinsonian disorder
+311,ADRB2,adrenoceptor beta 2,DROXIDOPA,Small molecule,CHEMBL2103827,4.0,['NCT03115827'],MONDO_0021095,parkinsonian disorder
+312,DRD3,dopamine receptor D3,APOMORPHINE,Small molecule,CHEMBL53,4.0,"['NCT02940912', 'NCT01770145']",MONDO_0021095,parkinsonian disorder
+313,GRIN3A,glutamate ionotropic receptor NMDA type subunit 3A,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+314,GRIN3A,glutamate ionotropic receptor NMDA type subunit 3A,ORPHENADRINE HYDROCHLORIDE,Small molecule,CHEMBL1201023,4.0,[],MONDO_0021095,parkinsonian disorder
+315,MAOB,monoamine oxidase B,SAFINAMIDE,Small molecule,CHEMBL396778,4.0,['NCT03968744'],MONDO_0021095,parkinsonian disorder
+316,ADRA1D,adrenoceptor alpha 1D,DROXIDOPA,Small molecule,CHEMBL2103827,4.0,['NCT03115827'],MONDO_0021095,parkinsonian disorder
+317,DDC,dopa decarboxylase,CARBIDOPA ANHYDROUS,Small molecule,CHEMBL1201236,4.0,[],MONDO_0021095,parkinsonian disorder
+318,SCN7A,sodium voltage-gated channel alpha subunit 7,ZONISAMIDE,Small molecule,CHEMBL750,4.0,['NCT03034538'],MONDO_0021095,parkinsonian disorder
+319,CHRM1,cholinergic receptor muscarinic 1,ATROPINE SULFATE,Small molecule,CHEMBL2146146,4.0,[],MONDO_0021095,parkinsonian disorder
+320,GRIN2A,glutamate ionotropic receptor NMDA type subunit 2A,AMANTADINE,Small molecule,CHEMBL660,4.0,[],MONDO_0021095,parkinsonian disorder
+321,SLC6A2,solute carrier family 6 member 2,ATOMOXETINE,Small molecule,CHEMBL641,4.0,['NCT01340885'],MONDO_0021095,parkinsonian disorder
+322,MTNR1A,melatonin receptor 1A,RAMELTEON,Small molecule,CHEMBL1218,4.0,['NCT00462254'],MONDO_0021095,parkinsonian disorder
+323,SCN4A,sodium voltage-gated channel alpha subunit 4,ZONISAMIDE,Small molecule,CHEMBL750,4.0,['NCT03034538'],MONDO_0021095,parkinsonian disorder
+324,MAOB,monoamine oxidase B,SELEGILINE,Small molecule,CHEMBL972,4.0,[],MONDO_0021095,parkinsonian disorder
+325,DDC,dopa decarboxylase,CARBIDOPA,Small molecule,CHEMBL1200748,4.0,"['NCT00174239', 'NCT00642356']",MONDO_0021095,parkinsonian disorder
+326,COMT,catechol-O-methyltransferase,ENTACAPONE,Small molecule,CHEMBL953,4.0,[],MONDO_0021095,parkinsonian disorder
+327,DDC,dopa decarboxylase,CARBIDOPA ANHYDROUS,Small molecule,CHEMBL1201236,4.0,"['NCT04952194', 'NCT06013956', 'NCT06236230']",MONDO_0021095,parkinsonian disorder
+328,MAOB,monoamine oxidase B,RASAGILINE,Small molecule,CHEMBL887,4.0,"['NCT00399477', 'NCT00755027', 'NCT01497652', 'NCT01168596', 'NCT00902941', 'NCT01382342', 'NCT01049984', 'NCT01723228']",MONDO_0021095,parkinsonian disorder
+329,DRD3,dopamine receptor D3,PRAMIPEXOLE DIHYDROCHLORIDE,Small molecule,CHEMBL3182733,4.0,['NCT01515774'],MONDO_0021095,parkinsonian disorder
+330,DRD3,dopamine receptor D3,ROTIGOTINE,Small molecule,CHEMBL1303,4.0,[],MONDO_0021095,parkinsonian disorder
+331,DRD4,dopamine receptor D4,ROTIGOTINE,Small molecule,CHEMBL1303,4.0,"['NCT01782222', 'NCT01523301', 'NCT00594464', 'NCT03103919', 'NCT01744496', 'NCT01300819', 'NCT01711866']",MONDO_0021095,parkinsonian disorder
+332,CHRM2,cholinergic receptor muscarinic 2,ATROPINE,Small molecule,CHEMBL517712,4.0,[],MONDO_0021095,parkinsonian disorder
+333,GRIN3A,glutamate ionotropic receptor NMDA type subunit 3A,AMANTADINE,Small molecule,CHEMBL660,4.0,['NCT01313819'],MONDO_0021095,parkinsonian disorder
+334,GABRA4,gamma-aminobutyric acid type A receptor subunit alpha4,PROPOFOL,Small molecule,CHEMBL526,4.0,['NCT02256319'],MONDO_0021095,parkinsonian disorder
+335,DRD2,dopamine receptor D2,CABERGOLINE,Small molecule,CHEMBL1201087,4.0,[],MONDO_0021095,parkinsonian disorder
+336,GRIN2C,glutamate ionotropic receptor NMDA type subunit 2C,AMANTADINE,Small molecule,CHEMBL660,4.0,['NCT01313819'],MONDO_0021095,parkinsonian disorder
+337,CLCN2,chloride voltage-gated channel 2,LUBIPROSTONE,Small molecule,CHEMBL1201134,4.0,['NCT00908076'],MONDO_0021095,parkinsonian disorder
+338,GRIN2C,glutamate ionotropic receptor NMDA type subunit 2C,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
+339,GRIN2B,glutamate ionotropic receptor NMDA type subunit 2B,AMANTADINE HYDROCHLORIDE,Small molecule,CHEMBL1569,4.0,[],MONDO_0021095,parkinsonian disorder
