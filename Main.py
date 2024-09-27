@@ -69,24 +69,24 @@ with col3:
 
 with col4:
     hasClicked = card(
-        title="KGG workflow OV",
+        title="Clinical Data Science",
         text="Test",
-        image=load_logo("images/kg_1.png"),
+        image=load_logo("images/clinical_ds.png"),
         url="/kgg_user",
     )
 
-with col5:
-    hasClicked = card(
-        title="KGG workflow test 1",
-        text="Test2Jupyter",
-        image=load_logo("images/kg_2.png"),
-        url="/kgg_user_2",
-    )
+# with col5:
+#     hasClicked = card(
+#         title="KGG workflow test 1",
+#         text="Test2Jupyter",
+#         image=load_logo("images/kg_2.png"),
+#         url="/kgg_user_2",
+#     )
 
-with col6:
-    hasClicked = card(
-        title="KGG workflow test 2",
-        text="Test",
-        image=load_logo("images/kg_1.png"),
-        url="/kgg_user_3",
-    )
+# with col6:
+#     hasClicked = card(
+#         title="KGG workflow test 2",
+#         text="Test",
+#         image=load_logo("images/kg_1.png"),
+#         url="/kgg_user_3",
+#     )
