@@ -39,9 +39,9 @@ def load_logo(filepath):
 # Add cards for each app
 #col1, col2, col3, col4, col5, col6 = st.columns(6)
 
-col1, col2, col3 = st.columns(3)
+col1, col2  = st.columns(2)
 
-col4, col5, col6 = st.columns(3)
+col3, col4  = st.columns(4)
 
 with col1:
     hasClicked = card(
@@ -72,7 +72,7 @@ with col4:
         title="Clinical Data Science",
         text="Test",
         image=load_logo("images/clinical_ds.png"),
-        url="/kgg_user",
+        url="/clinical_ds",
     )
 
 # with col5:
