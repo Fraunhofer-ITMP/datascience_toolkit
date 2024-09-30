@@ -71,7 +71,7 @@ with col4:
     hasClicked = card(
         title="KGG_user",
         text="Test",
-        image=load_logo("images/clinical_ds.png"),
+        image=load_logo("images/kg_1.png"),
         url="/kggUser",
     )
 
