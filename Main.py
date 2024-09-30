@@ -41,7 +41,7 @@ def load_logo(filepath):
 
 col1, col2  = st.columns(2)
 
-col3, col4  = st.columns(4)
+col3, col4  = st.columns(2)
 
 with col1:
     hasClicked = card(
@@ -69,10 +69,10 @@ with col3:
 
 with col4:
     hasClicked = card(
-        title="Clinical Data Science",
+        title="KGG_user",
         text="Test",
         image=load_logo("images/clinical_ds.png"),
-        url="/clinical_ds",
+        url="/kggUser",
     )
 
 # with col5:
