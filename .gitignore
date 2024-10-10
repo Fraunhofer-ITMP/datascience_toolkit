@@ -892,18 +892,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-
-### VisualStudio Patch ###
-# Additional files built by Visual Studio
-
-# End of https://www.toptal.com/developers/gitignore/api/macos,linux,windows,python,jupyternotebooks,jetbrains,pycharm,vim,emacs,visualstudiocode,visualstudio
-
-scratch/
+.idea/
 
 # PyPi file
 .pypirc
 
-# Pickle dumps
-*.pkl
-/pyBiodatafuse-0.0.4.dev0
-*.graphml
