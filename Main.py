@@ -35,7 +35,7 @@ st.markdown(
 )  # .block-conatiner controls the padding of the page, .stTabs controls the font size of the text in the tabs
 
 st.markdown(
-    "<h1 style='text-align: center; color: #149372;'>Fraunhofer ITMP Data Science Toolkits</h1>",
+    "<h1 style='text-align: center; color: #149372;'>Fraunhofer ITMP Data Science Toolkit</h1>",
     unsafe_allow_html=True,
 )
 
@@ -75,11 +75,6 @@ with tab1:
         """
     )
 
-    st.markdown(
-        """
-        """
-    )
-
     st.write(
         """* **BY-COVID**:  [BeYond-COVID](https://by-covid.org/) is a European initiative aimed at enhancing COVID-19 data sharing across sectors. It focuses on providing open access to data on COVID-19 variants, treatments, and other aspects of the pandemic. The project seeks to improve data infrastructure, enable effective research collaborations, and make data FAIR (Findable, Accessible, Interoperable, and Reusable). It involves various stakeholders, including public health institutions, researchers, and policymakers, to ensure rapid responses to current and future pandemics.
         
@@ -93,7 +88,7 @@ with tab1:
     )
 
     st.write(
-        """* **COMBINE**:  [COMBINE](https://amr-accelerator.eu/project/combine/) project is part of the IMI AMR Accelerator and focuses on antimicrobial resistance (AMR). It aims to enhance drug discovery and development by integrating and optimizing preclinical models, biomarkers, and clinical trial designs. The project combines expertise from various research institutions and pharmaceutical companies to improve the development of new treatments for infections caused by drug-resistant bacteria. COMBINE supports the fight against AMR by streamlining processes to accelerate the creation of effective therapies.
+        """* **COMBINE**:  [COMBINE](https://amr-accelerator.eu/project/combine/) is part of the IMI AMR Accelerator and focuses on antimicrobial resistance (AMR). It aims to enhance drug discovery and development by integrating and optimizing preclinical models, biomarkers, and clinical trial designs. The project combines expertise from various research institutions and pharmaceutical companies to improve the development of new treatments for infections caused by drug-resistant bacteria. COMBINE supports the fight against AMR by streamlining processes to accelerate the creation of effective therapies.
         
         Project overview:
         - Start year: 2019
@@ -104,13 +99,56 @@ with tab1:
         """
     )
 
+    st.write(
+        """* **PROXIDRUGS**:  [PROXIDRUGS](https://www.proxidrugs.de/) is a research initiative under Germany’s Clusters4Future program, focused on developing proximity-induced drugs for treating diseases with unmet medical needs. These drugs trigger the targeted degradation of disease-related proteins, opening new therapeutic avenues, especially for previously undruggable proteins. The project involves collaboration between academic institutions and pharmaceutical companies like AbbVie, Merck, and GSK. It aims to enhance drug development, support innovation, and promote regional collaboration in the pharmaceutical industry.
+        
+        Project overview:
+        - Start year: 2021
+        - End year: 2024
+        - Grant agreement ID: 03ZU1109KB
+        - Funding: 14M€
+        - Funding source: Federal Ministry of Education and Research (BMBF)
+        """
+    )
+
+    st.write(
+        """* **IDERHA**:  [IDERHA](https://www.iderha.org/) (Improving Data-Driven Research in Health Applications) is a collaborative initiative aimed at enhancing clinical decision-making and patient access to healthcare innovations by optimizing the use of health data. Supported by the Innovative Health Initiative, the project focuses on developing a federated infrastructure for secure, cross-border health data sharing. It works across sectors like life sciences, healthcare, and policy-making to improve healthcare outcomes.
+        
+        Project overview:
+        - Start year: 2023
+        - End year: 2028
+        - Grant agreement ID: 101112135
+        - Funding: 19M€
+        - Funding source: Innovative Health Initiative
+        """
+    )
+
+    st.write(
+        """* **SYNTHIA**:  [SYNTHIA](https://www.ihi-synthia.eu/) focuses on using synthetic data to advance personalized medicine. It aims to develop privacy-preserving, high-quality synthetic datasets for healthcare research, addressing patient privacy concerns while improving treatment options. The project involves collaboration across sectors like Medtech, Pharma, and Academia, providing a platform for generating and validating synthetic data to accelerate discoveries in medicine and enhance patient care. SYNTHIA's federated platform ensures data privacy and quality for research and innovation.
+
+        Project overview:
+        - Start year: 2024
+        - End year: 2029
+        - Grant agreement ID: 101172872
+        - Funding: 0.26M€
+        - Funding source: Innovative Health Initiative
+        """
+    )
+
+    st.write(
+        """* **FAIRplus**:  [FAIRplus](https://fairplus-project.eu/) focuses on improving the FAIR (Findable, Accessible, Interoperable, Reusable) status of life science data. It developed a reusable FAIRification framework, including tools and guidelines to help organizations manage their data more effectively. By promoting better data sharing and management, the project aims to boost innovation in health research.
+
+        Project overview:
+        - Start year: 2019
+        - End year: 2022
+        - Grant agreement ID: 802750
+        - Funding: 7.8M€
+        - Funding source: Innovative Medicines Initiative 2
+        """
+    )
+
 # tools tab
 with tab2:
-    st.header("Expertise", anchor="expertise", divider="grey")
-    st.markdown("Here are our areas of expertise:")
-
-    st.header("Overview of Tools", anchor="tools", divider="grey")
-
     st.markdown("### Knowledge Graph")
 
     with st.expander(label="Graph based tools"):
@@ -161,7 +199,7 @@ with tab2:
 
         with col2:
             hasClicked = card(
-                title="E3 Ligage Model",
+                title="E3 Ligase Model",
                 text="Model for predicting speicificity of E3 ligase binders",
                 image=load_logo("images/protac.webp"),
                 url="https://github.com/Fraunhofer-ITMP/E3_binder_Model",
@@ -221,7 +259,7 @@ with tab2:
 
         with col1:
             card(
-                title="Patenet Enrichment Tool PEMT",
+                title="Patent Enrichment Tool PEMT",
                 text="Python package for extracting patent for genes and compounds",
                 image=load_logo("images/pemt.jpg"),
                 url="https://github.com/Fraunhofer-ITMP/PEMT",
@@ -230,7 +268,7 @@ with tab2:
         with col2:
             card(
                 title="rSASC",
-                text="Synthetic cohorts generator for longitudinal observational patient cohorts",
+                text="R tool for Synthetic cohorts generator for longitudinal observational patient cohorts",
                 image=load_logo("images/sasc.webp"),
                 url="https://github.com/Fraunhofer-ITMP/SASC",
             )
@@ -242,6 +280,60 @@ with tab2:
                 image=load_logo("images/alister.png"),
                 url="https://itmp.shinyapps.io/alister/",
             )
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            card(
+                title="PySASC",
+                text="Python tool for Synthetic cohorts generator for longitudinal observational patient cohorts",
+                image=load_logo("images/sasc.webp"),
+                url="https://github.com/Fraunhofer-ITMP/PySASC",
+            )
+
+        # with col3:
+        #     card(
+        #         title="ALISTER",
+        #         text="Application for lipid stability evaluation",
+        #         image=load_logo("images/alister.png"),
+        #         url="https://itmp.shinyapps.io/alister/",
+        #     )
+
+    st.markdown("### Findable, Accessible, Reusable, Interoperable (FAIR) data tools")
+
+    with st.expander(label="Endorsed FAIR tools"):
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            card(
+                title="FAIR Cookbook",
+                text="Resource for the Life Sciences with recipes that help you to make and keep data FAIR",
+                image=load_logo("images/faircookbook.png"),
+                url="https://faircookbook.elixir-europe.org/",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 10px rgba(0,0,0,0.5)",
+                    }
+                },
+            )
+
+        with col2:
+            card(
+                title="FAIRplus DSM",
+                text="Tool to assess the FAIRness level of datasests",
+                image=load_logo("images/fairplus_dsm.png"),
+                url="https://fairdsm.biospeak.solutions/",
+            )
+
+        with col3:
+            card(
+                title="FAIRSharing.org",
+                text="Resource on data and metadata standards, inter-related to databases and data policies",
+                image=load_logo("images/fairsharing.jpg"),
+                url="https://fairsharing.org/",
+            )
+
 
 # publications tab
 with tab3:
@@ -265,6 +357,12 @@ with tab3:
         3. Karki, Reagon, Yojana Gadiya, Philip Gribbon, and Andrea Zaliani. "Pharmacophore-Based Machine Learning Model To Predict Ligand Selectivity for E3 Ligase Binders." *ACS omega* 8, no. 33 (2023): 30177-30185. https://doi.org/10.1021/acsomega.3c02803
 
         4. Gadiya, Yojana, Philip Gribbon, Martin Hofmann-Apitius, and Andrea Zaliani. "Pharmaceutical patent landscaping: A novel approach to understand patents from the drug discovery perspective." *Artificial Intelligence in the Life Sciences* 3 (2023): 100069. https://doi.org/10.1016/j.ailsci.2023.100069
+
+        5. Rocca-Serra, Philippe, Wei Gu, Vassilios Ioannidis, Tooba Abbassi-Daloii, Salvador Capella-Gutierrez, Ishwar Chandramouliswaran, Andrea Splendiani et al. "The FAIR Cookbook-the essential resource for and by FAIR doers." *Scientific data* 10, no. 1 (2023): 292. https://doi.org/10.1038/s41597-023-02166-3
+
+        6. Welter, Danielle, Nick Juty, Philippe Rocca-Serra, Fuqi Xu, David Henderson, Wei Gu, Jolanda Strubel et al. "FAIR in action-a flexible framework to guide FAIRification." *Scientific data* 10, no. 1 (2023): 291. https://doi.org/10.1038/s41597-023-02167-2
+
+        7. Gadiya, Yojana, Vassilios Ioannidis, David Henderson, Philip Gribbon, Philippe Rocca-Serra, Venkata Satagopam, Susanna-Assunta Sansone, and Wei Gu. "FAIR data management: what does it mean for drug discovery?." *Frontiers in Drug Discovery* 3 (2023): 1226727. https://doi.org/10.3389/fddsv.2023.1226727
         """
     )
 
@@ -272,6 +370,8 @@ with tab3:
     st.markdown(
         """
         1. Berg, Hannes, Maria A. Wirtz Martin, Nadide Altincekic, Islam Alshamleh, Jasleen Kaur Bains, Julius Blechar, Betül Ceylan et al. "Comprehensive fragment screening of the SARS‐CoV‐2 proteome explores novel chemical space for drug development." *Angewandte Chemie International Edition* 61, no. 46 (2022): e202205858. https://doi.org/10.1002/anie.202205858
+
+        2. Alharbi, Ebtisam, Yojana Gadiya, David Henderson, Andrea Zaliani, Alejandra Delfin-Rossaro, Anne Cambon-Thomsen, Manfred Kohler et al. "Selection of data sets for FAIRification in drug discovery and development: Which, why, and how?." *Drug discovery today* 27, no. 8 (2022): 2080-2085. https://doi.org/10.1016/j.drudis.2022.05.010
         """
     )
 
