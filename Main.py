@@ -338,51 +338,18 @@ with tab2:
 # publications tab
 with tab3:
     # create list with publication data in Chicago style
-    st.header("2024 Publications", anchor="2024", divider="grey")
-    st.markdown(
-        """
-        1. Gadiya, Yojana, Simran Shetty, Martin Hofmann-Apitius, Philip Gribbon, and Andrea Zaliani. "Exploring SureChEMBL from a drug discovery perspective." *Scientific Data* 11, no. 1 (2024): 507. https://doi.org/10.1038/s41597-024-03371-4
-        
-        2. Karki, Reagon, Yojana Gadiya, Simran Shetty, Philip Gribbon, and Andrea Zaliani. "Pharmacophore-based ML model to filter candidate E3 ligands and predict E3 Ligase binding probabilities." *Informatics in Medicine Unlocked* 44 (2024): 101424. https://doi.org/10.1016/j.imu.2023.101424
-        """
-    )
+    df = pd.read_csv("data/publications.tsv", sep="\t", dtype=str)
+    df = df.sort_values("year", ascending=False)
 
-    st.header("2023 Publications", anchor="2023", divider="grey")
-    st.markdown(
-        """
-        1. Gadiya, Yojana, Andrea Zaliani, Philip Gribbon, and Martin Hofmann-Apitius. "PEMT: a patent enrichment tool for drug discovery." *Bioinformatics* 39, no. 1 (2023): btac716. https://doi.org/10.1093/bioinformatics/btac716
-        
-        2. Karki, Reagon, Yojana Gadiya, Andrea Zaliani, and Philip Gribbon. "Mpox Knowledge Graph: a comprehensive representation embedding chemical entities and associated biology of Mpox." *Bioinformatics Advances* 3, no. 1 (2023): vbad045. https://doi.org/10.1093/bioadv/vbad045
+    for year in df["year"].unique():
+        tmp = df[df["year"] == year]
+        tmp.reset_index(drop=True, inplace=True)
+        st.header(f"{year} Publications", anchor=year, divider="grey")
 
-        3. Karki, Reagon, Yojana Gadiya, Philip Gribbon, and Andrea Zaliani. "Pharmacophore-Based Machine Learning Model To Predict Ligand Selectivity for E3 Ligase Binders." *ACS omega* 8, no. 33 (2023): 30177-30185. https://doi.org/10.1021/acsomega.3c02803
-
-        4. Gadiya, Yojana, Philip Gribbon, Martin Hofmann-Apitius, and Andrea Zaliani. "Pharmaceutical patent landscaping: A novel approach to understand patents from the drug discovery perspective." *Artificial Intelligence in the Life Sciences* 3 (2023): 100069. https://doi.org/10.1016/j.ailsci.2023.100069
-
-        5. Rocca-Serra, Philippe, Wei Gu, Vassilios Ioannidis, Tooba Abbassi-Daloii, Salvador Capella-Gutierrez, Ishwar Chandramouliswaran, Andrea Splendiani et al. "The FAIR Cookbook-the essential resource for and by FAIR doers." *Scientific data* 10, no. 1 (2023): 292. https://doi.org/10.1038/s41597-023-02166-3
-
-        6. Welter, Danielle, Nick Juty, Philippe Rocca-Serra, Fuqi Xu, David Henderson, Wei Gu, Jolanda Strubel et al. "FAIR in action-a flexible framework to guide FAIRification." *Scientific data* 10, no. 1 (2023): 291. https://doi.org/10.1038/s41597-023-02167-2
-
-        7. Gadiya, Yojana, Vassilios Ioannidis, David Henderson, Philip Gribbon, Philippe Rocca-Serra, Venkata Satagopam, Susanna-Assunta Sansone, and Wei Gu. "FAIR data management: what does it mean for drug discovery?." *Frontiers in Drug Discovery* 3 (2023): 1226727. https://doi.org/10.3389/fddsv.2023.1226727
-        """
-    )
-
-    st.header("2022 Publications", anchor="2022", divider="grey")
-    st.markdown(
-        """
-        1. Berg, Hannes, Maria A. Wirtz Martin, Nadide Altincekic, Islam Alshamleh, Jasleen Kaur Bains, Julius Blechar, Betül Ceylan et al. "Comprehensive fragment screening of the SARS‐CoV‐2 proteome explores novel chemical space for drug development." *Angewandte Chemie International Edition* 61, no. 46 (2022): e202205858. https://doi.org/10.1002/anie.202205858
-
-        2. Alharbi, Ebtisam, Yojana Gadiya, David Henderson, Andrea Zaliani, Alejandra Delfin-Rossaro, Anne Cambon-Thomsen, Manfred Kohler et al. "Selection of data sets for FAIRification in drug discovery and development: Which, why, and how?." *Drug discovery today* 27, no. 8 (2022): 2080-2085. https://doi.org/10.1016/j.drudis.2022.05.010
-        """
-    )
-
-    st.header("2021 Publications", anchor="2021", divider="grey")
-    st.markdown(
-        """
-        1. Schultz, Bruce, Andrea Zaliani, Christian Ebeling, Jeanette Reinshagen, Denisa Bojkova, Vanessa Lage-Rupprecht, Reagon Karki *et al.* "A method for the rational selection of drug repurposing candidates from multimodal knowledge harmonization." *Scientific reports* 11, no. 1 (2021): 11049. https://doi.org/10.1038/s41598-021-90296-2
-
-        2. Khorchani, Takoua, Yojana Gadiya, Gesa Witt, Delia Lanzillotta, Carsten Claussen, and Andrea Zaliani. "SASC: A simple approach to synthetic cohorts for generating longitudinal observational patient cohorts from COVID-19 clinical data." *Patterns* 3, no. 4 (2022). https://doi.org/10.1016/j.patter.2022.100453
-        """
-    )
+        for i, row in tmp.iterrows():
+            st.markdown(
+                f"{i+1}. {row['chicago_authors']} {row['chicago_title']} *{row['chicago_journal']}* {row['chicago_meta']} doi: {row['doi']}"
+            )
 
 # team tab
 with tab4:
@@ -391,9 +358,11 @@ with tab4:
         "For any questions, feedback or collaborations, please contact our team members."
     )
 
-    df = pd.read_csv("data/members.csv")
+    member_df = pd.read_csv("data/members.csv")
 
-    for sub_df in np.array_split(df, 3):
+    member_chunk_df = [member_df[i : i + 3] for i in range(0, len(member_df), 3)]
+
+    for sub_df in member_chunk_df:
         sub_df.reset_index(drop=True, inplace=True)
         columns = st.columns(3)
         for i, row in sub_df.iterrows():
