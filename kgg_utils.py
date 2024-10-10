@@ -32,16 +32,17 @@ def load_kg(path):
     return kg
 
 
-def disease_figures(disease_name):
+def disease_figures(disease_name, graph: BELGraph = None):
     """Function to generate figures for the disease overview."""
 
-    disease_name = disease_name.lower()
+    if graph is None:
+        disease_name = disease_name.lower()
 
-    data_files = os.listdir(DATA_DIR + f"{disease_name}_kgg")
-    graph_path = [file for file in data_files if file.endswith(".pkl")][0]
+        data_files = os.listdir(DATA_DIR + f"{disease_name}_kgg")
+        graph_path = [file for file in data_files if file.endswith(".pkl")][0]
 
-    # Basic graph stats
-    graph = load_kg(DATA_DIR + f"{disease_name}_kgg/" + graph_path)
+        # Basic graph stats
+        graph = load_kg(DATA_DIR + f"{disease_name}_kgg/" + graph_path)
 
     nodes_data = {}
     for node in graph.nodes():
@@ -750,7 +751,7 @@ def GetDiseaseAssociatedProteinsPlot(df):
         "Enter threshold score (recommended > 0.3):",
         min_value=0.0,
         max_value=1.0,
-        value=0.3,
+        value=0.55,
         step=0.1,
     )
     return score
@@ -892,3 +893,25 @@ def finalizeKG(filtered_protein_df: pd.DataFrame, session_inputs: dict):
 
     st.write("Your KG is now generated!", "\n")
     return kg
+
+
+def get_graph_summary(graph):
+    """Printing summary similar to PyBEL summary."""
+    rv_basic = [
+        ("Name", graph.name),
+        ("Version", graph.version),
+    ]
+
+    rv_stats = [
+        ("Nodes", graph.number_of_nodes()),
+        ("Namespaces", len(graph.count.namespaces())),
+        ("Edges", graph.number_of_edges()),
+        ("Annotations", len(graph.count.annotations())),
+        ("Citations", graph.number_of_citations()),
+        ("Authors", graph.number_of_authors()),
+        ("Components", nx.number_weakly_connected_components(graph)),
+        ("Warnings", graph.number_of_warnings()),
+        ("Network Density", "{:.2E}".format(nx.density(graph))),
+    ]
+
+    return rv_basic, rv_stats

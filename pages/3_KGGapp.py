@@ -1,8 +1,10 @@
 """App for Knowledge Graph Generator (KGG)"""
 
 import datetime
+from tabulate import tabulate
 import streamlit as st
 import kgg_utils
+from pybel.struct.summary import supersummary as ss
 
 
 st.set_page_config(
@@ -184,4 +186,26 @@ with tab2:
         st.session_state["graph"] = graph
 
         st.header("Graph summary", anchor="graph-summary", divider="grey")
-        st.write("KG summary: ", st.session_state["graph"].summarize())
+
+        rv_base, rv_stats = kgg_utils.get_graph_summary(st.session_state["graph"])
+
+        with st.container():
+            st.markdown(
+                f"""\
+                <h3>Metadata</h3>
+                {tabulate(rv_base, tablefmt='html')}
+                <h3>Statistics</h3>
+                {tabulate(rv_stats, tablefmt='html')}
+                <h3>Nodes</h3>
+                {ss.functions_str(graph, examples=True, add_count=False, tablefmt='html')}
+                <h3>Namespaces</h3>
+                {ss.namespaces_str(graph, examples=True, add_count=False, tablefmt='html')}
+                <h3>Edges</h3>
+                {ss.edges_str(graph, examples=True, add_count=False, tablefmt='html')}""",
+                unsafe_allow_html=True,
+            )
+
+        kgg_utils.disease_figures(
+            disease_name=st.session_state["user_disease"],
+            graph=st.session_state["graph"],
+        )
