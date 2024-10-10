@@ -180,7 +180,7 @@ with tab2:
             hasClicked = card(
                 title="AntiMicrobial KG",
                 text="Data warehouse of experimentally validated antibacterial chemicals",
-                image=load_logo("images/Antimicrobial.webp"),
+                image=load_logo("images/antimicrobial.webp"),
                 url="https://antimicrobial-kg.serve.scilifelab.se/",
             )
 
@@ -193,7 +193,7 @@ with tab2:
             hasClicked = card(
                 title="AntiMicrobial Model",
                 text="Model for predicting antimicorbial activity of small molecules",
-                image=load_logo("images/Antimicrobial.webp"),
+                image=load_logo("images/antimicrobial.webp"),
                 url="https://antimicrobial-kg.serve.scilifelab.se/Model_Prediction",
             )
 
