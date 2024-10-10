@@ -13,6 +13,21 @@ st.set_page_config(
 )
 
 st.markdown(
+    """
+        <style>
+            .block-container {
+                padding-top: 1.5rem;
+                padding-bottom: 1.5rem;
+                padding-left: 5rem;
+                padding-right: 5rem;
+            }
+            .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {font-size:1.3rem;}
+        </style>
+        """,
+    unsafe_allow_html=True,
+)  # .block-conatiner controls the padding of the page, .stTabs controls the font size of the text in the tabs
+
+st.markdown(
     "<h1 style='text-align: center; color: #149372;'> Knowledge Graph Generator (KGG)</h1> <br>",
     unsafe_allow_html=True,
 )
@@ -20,7 +35,7 @@ st.markdown(
 tab1, tab2 = st.tabs(
     [
         "Description",
-        "DisKGG",
+        "KG Generator",
     ]
 )
 
@@ -166,5 +181,7 @@ with tab2:
 
         graph = kgg_utils.finalizeKG(filtered_df, session_inputs=st.session_state)
 
+        st.session_state["graph"] = graph
+
         st.header("Graph summary", anchor="graph-summary", divider="grey")
-        st.write("KG summary: ", graph.summarize())
+        st.write("KG summary: ", st.session_state["graph"].summarize())
