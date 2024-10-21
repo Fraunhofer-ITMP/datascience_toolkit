@@ -17,6 +17,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     build-essential \
     software-properties-common
 RUN apt-get install libxrender1 --no-install-recommends -y
+RUN apt-get install libxext6 --no-install-recommends -y
+# RUN apt-get install libx11-6 --no-install-recommends -y
+# RUN apt-get install libglib2.0-0 --no-install-recommends -y
 
 # Copy code and start script (this will place the files in home/username/)
 COPY .streamlit $HOME/datascience_toolkit/.streamlit
