@@ -181,10 +181,6 @@ def get_uniprot_info(gene_list):
 
 
 def main():
-    # Add the logo
-    logo = Image.open("fraunhofer_ITMP-logo_900p.jpg")
-    st.image(logo, width=200)  # Adjust the width as needed
-
     st.markdown(
         "<h1 style='text-align: center; color: green;'>Ensembl Gene Information Retriever</h1>",
         unsafe_allow_html=True,
