@@ -24,3 +24,8 @@ To add new members to the group, check out the [data](https://github.com/Fraunho
 
 * New publication: Add a new publication in Chicago style from [Google scholar](https://scholar.google.com/) in the [CSV](https://github.com/Fraunhofer-ITMP/datascience_toolkit/blob/main/data/publications.tsv)
 
+# Updating website
+
+To update the website, you need access to the [SERVE platform](https://serve.scilifelab.se/accounts/login/). If you do not have an account, please create one and reach out to Yojana to assist you in the account creation.
+
+Once you have an account, ask Yojana or Andrea to add you to the project.
