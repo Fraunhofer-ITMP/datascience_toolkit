@@ -16,6 +16,7 @@ WORKDIR $HOME/datascience_toolkit
 RUN apt-get update && apt-get install --no-install-recommends -y \
     build-essential \
     software-properties-common
+RUN apt-get install libxrender1
 
 # Copy code and start script (this will place the files in home/username/)
 COPY .streamlit $HOME/datascience_toolkit/.streamlit
