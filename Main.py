@@ -104,8 +104,8 @@ with tab1:
         
         Project overview:
         - Start year: 2021
-        - End year: 2024
-        - Grant agreement ID: 03ZU1109KB
+        - End year: 2027 (including 2nd phase)
+        - Grant agreement ID: 03ZU1109KB (InnoDATA)
         - Funding: 14M€
         - Funding source: Federal Ministry of Education and Research (BMBF)
         """
@@ -149,7 +149,7 @@ with tab1:
 
 # tools tab
 with tab2:
-    st.markdown("### Knowledge Graph")
+    st.markdown("### Dashboards, Knowledge Graphs and Databases")
 
     with st.expander(label="Graph based tools"):
         col1, col2, col3 = st.columns(3)
@@ -172,7 +172,7 @@ with tab2:
             hasClicked = card(
                 title="KGG",
                 text="Automated workflow for disease-specific KGs",
-                image=load_logo("images/kg_2.png"),
+                image=load_logo("images/kg_1.png"),
                 url="/KGGapp",
             )
 
@@ -183,6 +183,51 @@ with tab2:
                 image=load_logo("images/antimicrobial.webp"),
                 url="https://antimicrobial-kg.serve.scilifelab.se/",
             )
+
+        col4, col5, col6 = st.columns(3)
+
+        with col4:
+            hasClicked = card(
+                title = "Umap",
+                text  = "Umpa plots for SMILES",
+                image = load_logo("images/AR_demo.PNG"),
+                url = "/testmap",
+            )
+
+        with col5:
+            hasClicked = card(
+                title = "PROTACKB",
+                text  = "A comprehensive knowledgebase of PROTACs, molecular glues and degraders",
+                image = load_logo("images/AR_demo.PNG"),
+                url = "/PROTACKB",
+            )
+
+        with col6:
+            hasClicked = card(
+                title = "tSNE",
+                text  = "tSNE plots for SMILES",
+                image = load_logo("images/AR_demo.PNG"),
+                url = "/tSNE",
+            )
+
+        # col4, col7 = st.columns(2)
+        #
+        # with col7:
+        #     hasClicked = card(
+        #         title = "Umap",
+        #         text  = "Umpa plots for SMILES",
+        #         image = load_logo("images/AR_demo.PNG"),
+        #         url = "/Umap",
+        #     )
+
+        # with col4:
+        #     hasClicked = card(
+        #         title = "InnoDATA Dashboard",
+        #         text  = "A comprehensive knowledgebase of PROTACs, molecular glues and degraders",
+        #         image = load_logo("images/kg_2.png"),
+        #         url = "/abc",
+        #     )
+
 
     st.markdown("### Machine learning models")
 

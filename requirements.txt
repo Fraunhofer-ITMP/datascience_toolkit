@@ -6,6 +6,11 @@ rdkit==2023.9.1
 openpyxl==3.1.5
 streamlit-card==1.0.2
 pybel==0.15.5
+stqdm
+chembl_webresource_client
+pybel
+networkx
+#plotly==5.24.1
 stqdm==0.0.5
 chembl-webresource-client==0.10.9
-plotly==5.18.0
+#plotly==5.18.0
