@@ -73,6 +73,7 @@ st.markdown(
     "<h1 style='text-align: center; color: #149372;'>Pareto Analysis App</h1>",
     unsafe_allow_html=True,
 )
+st.markdown("*This Streamlit app* allows user to upload **any** :blue-background[CSV file] or **any** :blue-background[EXCEL file] containing a column named ***SMILES*** and some numerical columns whose data have to be minimized or maximize during the Pareto front calculation (https://en.wikipedia.org/wiki/Pareto_front). The app generates a subselection of compounds which calculated using the constraints/requirements indicated as 1) user selection of numerical columns and 2) maximization/minimization of those columns.")
 
 # File upload
 uploaded_file = st.file_uploader("Choose a CSV or Excel file", type=["csv", "xlsx"])
