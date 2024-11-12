@@ -148,7 +148,7 @@ with tab1:
 
 # tools tab
 with tab2:
-    st.markdown("### Dashboards, Knowledge Graphs and Databases")
+    st.markdown("### Dashboards and Databases")
 
     with st.expander(label="Graph based tools"):
         col1, col2, col3 = st.columns(3)
@@ -162,7 +162,8 @@ with tab2:
                 styles={
                     "card": {
                         "border-radius": "10px",
-                        "box-shadow": "0 0 10px rgba(0,0,0,0.5)",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
                     }
                 },
             )
@@ -173,6 +174,13 @@ with tab2:
                 text="Automated workflow for disease-specific KGs",
                 image=load_logo("images/kg_1.png"),
                 url="/KGGapp",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
         with col3:
@@ -181,52 +189,31 @@ with tab2:
                 text="Data warehouse of experimentally validated antibacterial chemicals",
                 image=load_logo("images/antimicrobial.webp"),
                 url="https://antimicrobial-kg.serve.scilifelab.se/",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
         col4, col5, col6 = st.columns(3)
 
         with col4:
             hasClicked = card(
-                title = "Umap",
-                text  = "Umpa plots for SMILES",
-                image = load_logo("images/AR_demo.PNG"),
-                url = "/testmap",
+                title="PROTACKB",
+                text="A comprehensive knowledgebase of PROTACs, molecular glues and degraders",
+                image=load_logo("images/AR_demo.PNG"),
+                url="/PROTACKB",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
-
-        with col5:
-            hasClicked = card(
-                title = "PROTACKB",
-                text  = "A comprehensive knowledgebase of PROTACs, molecular glues and degraders",
-                image = load_logo("images/AR_demo.PNG"),
-                url = "/PROTACKB",
-            )
-
-        with col6:
-            hasClicked = card(
-                title = "tSNE",
-                text  = "tSNE plots for SMILES",
-                image = load_logo("images/AR_demo.PNG"),
-                url = "/tSNE",
-            )
-
-        # col4, col7 = st.columns(2)
-        #
-        # with col7:
-        #     hasClicked = card(
-        #         title = "Umap",
-        #         text  = "Umpa plots for SMILES",
-        #         image = load_logo("images/AR_demo.PNG"),
-        #         url = "/Umap",
-        #     )
-
-        # with col4:
-        #     hasClicked = card(
-        #         title = "InnoDATA Dashboard",
-        #         text  = "A comprehensive knowledgebase of PROTACs, molecular glues and degraders",
-        #         image = load_logo("images/kg_2.png"),
-        #         url = "/abc",
-        #     )
-
 
     st.markdown("### Machine learning models")
 
@@ -239,6 +226,13 @@ with tab2:
                 text="Model for predicting antimicorbial activity of small molecules",
                 image=load_logo("images/antimicrobial.webp"),
                 url="https://antimicrobial-kg.serve.scilifelab.se/Model_Prediction",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
         with col2:
@@ -247,6 +241,13 @@ with tab2:
                 text="Model for predicting speicificity of E3 ligase binders",
                 image=load_logo("images/protac.webp"),
                 url="https://github.com/Fraunhofer-ITMP/E3_binder_Model",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
     st.markdown("### Screening data preprocessing")
