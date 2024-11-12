@@ -9,3 +9,5 @@ pybel==0.15.5
 stqdm==0.0.5
 chembl-webresource-client==0.10.9
 plotly==5.18.0
+umap==0.1.1
+umap-learn==0.5.7
