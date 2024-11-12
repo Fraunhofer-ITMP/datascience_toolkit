@@ -9,14 +9,18 @@ import time
 import streamlit as st
 import pandas as pd
 import numpy as np
+from umap import UMAP
 from bokeh.plotting import figure
+from bokeh.palettes import Category10
 from bokeh.models import ColumnDataSource, HoverTool
+from bokeh.transform import factor_cmap
 
+import tempfile
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from rdkit import Chem
-from rdkit.Chem import Draw
-import tempfile
+from rdkit.Chem import Descriptors, Draw
+from sklearn.manifold import TSNE
 from bokeh.io import export_svgs
 
 st.set_page_config(layout="wide", page_title="Small helper apps", page_icon="🧪")
@@ -273,7 +277,7 @@ tab1, tab2, tab3 = st.tabs(
     [
         "Pareto Analysis",
         "Ensemble grounder",
-        "t-SNE Plot for SMILES",
+        "2D Plot for SMILES",
     ]
 )
 
@@ -514,38 +518,70 @@ with tab2:
 
 with tab3:
     # Streamlit app title
-    st.header("🔎 t-SNE Plot of Molecules")
+    st.header("🔎 2D chemical space presentation")
     st.markdown(
-        "*This app* allows user to upload **any** :blue-background[CSV file] containing a column named ***SMILES*** and a label column named ***Type***. It generates a [t-SNE plot](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding) which shows the chemical space calculated on a selection of most common RDKIT 2D descriptors. Plot colors are dependent on ***Type*** column indicating the groups."
+        "*This app* allows user to upload **any** :blue-background[CSV file] containing a column named ***SMILES*** and a label column named ***Type***. It generates a [t-SNE plot](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding) or [UMAP plot](https://umap-learn.readthedocs.io/) which shows the chemical space calculated on a selection of most common RDKIT 2D descriptors. Plot colors are dependent on ***Type*** column indicating the groups."
     )
 
-    st.header("Generating t-SNE Plot", anchor="tsne-plot", divider="gray")
+    st.header("Data loader", anchor="data-loader", divider="gray")
 
     # File uploader
-    uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+    uploaded_file = st.file_uploader("Choose a CSV file", type="csv", key="chem-space")
 
-    if uploaded_file is None:
-        st.info("Please upload a CSV or Excel file to proceed!", icon="ℹ️")
+    @st.fragment  # Prevents the app from running the code below all the time
+    def load_dataset():
+        # File type and parameters
+        file_type = uploaded_file.name.split(".")[-1]
 
-    # Read the CSV file
-    df = pd.read_csv(uploaded_file)
+        if file_type == "csv":
+            sep = st.text_input("Enter CSV separator", ";")
+            df = pd.read_csv(uploaded_file, sep=sep)
+        else:  # Excel
+            sheet_name = st.text_input(
+                "Enter sheet name (leave blank for first sheet)", ""
+            )
+            if not sheet_name:
+                sheet_name = 0
 
-    # Check if required columns exist
-    if "SMILES" not in df.columns or "Type" not in df.columns:
-        st.error("The CSV file must contain 'SMILES' and 'Type' columns.")
-        st.stop()
-    else:
-        # Continue with the analysis
-        st.success("File uploaded successfully. Generating t-SNE plot...")
-
-        # Convert SMILES to RDKit molecules
-        mols = [Chem.MolFromSmiles(smiles) for smiles in df["SMILES"]]
+            df = pd.read_excel(uploaded_file, sheet_name=sheet_name, engine="openpyxl")
 
         # Convert SMILES column to string if it exists
         if "SMILES" in df.columns:
             df["SMILES"] = df["SMILES"].astype(str)
             df["molecule_img"] = df["SMILES"].apply(get_molecule_image_src)
 
+        return df
+
+    if uploaded_file is None:
+        st.info(
+            "Please upload a CSV or Excel file to proceed! Loading an example file",
+            icon="ℹ️",
+        )
+        df = pd.read_csv("data/E4C_smiles.csv", sep=";")
+    else:
+        df = load_dataset()
+
+    df.columns = [i.lower() for i in df.columns]
+
+    # Check if required columns exist
+    if "smiles" not in df.columns or "type" not in df.columns:
+        st.error("The CSV file must contain 'smiles' and 'type' columns.")
+    else:
+        st.info("Reading the CSV file...")
+        # Convert SMILES to RDKit molecules
+        mols = [Chem.MolFromSmiles(smiles) for smiles in df["smiles"]]
+
+        # Convert SMILES column to string if it exists
+        if "smiles" in df.columns:
+            df["smiles"] = df["smiles"].astype(str)
+            df["molecule_img"] = df["smiles"].apply(get_molecule_image_src)
+
+    st.header("Data plotter", anchor="data-plot", divider="gray")
+    st.markdown("### Select plot type and calculate 2D RDKit descriptors")
+
+    plot_type = st.radio("Plotting type", ["t-SNE", "UMAP"], horizontal=True)
+
+    if st.button("Calculate Descriptors and Plot"):
         # Calculate 2D RDKit descriptors
         desc_names = [
             "MolWt",
@@ -574,27 +610,43 @@ with tab3:
         descriptors = [calc(mol) for mol in mols]
         descriptors_df = pd.DataFrame(descriptors, columns=desc_names)
 
-        # Perform t-SNE
-        tsne = TSNE(n_components=2, random_state=42, perplexity=30, n_iter=500)
-        tsne_results = tsne.fit_transform(descriptors_df)
+        if plot_type == "t-SNE":
+            # Perform t-SNE
+            tsne = TSNE(
+                n_components=2,
+                random_state=42,
+                init="random",
+                perplexity=30,
+                n_iter=500,
+                learning_rate="auto",
+            )
+            tsne_results = tsne.fit_transform(descriptors_df)
+        elif plot_type == "UMAP":
+            # Perform UMAP
+            umap_model = UMAP(
+                n_components=2, random_state=42, n_neighbors=15, metric="cosine"
+            )
+            umap_results = umap_model.fit_transform(descriptors_df)
 
         # Create a Bokeh ColumnDataSource
         source = ColumnDataSource(
             data=dict(
                 x=tsne_results[:, 0],
                 y=tsne_results[:, 1],
-                smiles=df["SMILES"],
-                type=df["Type"],
+                smiles=df["smiles"],
+                type=df["type"],
                 molecule_img=df["molecule_img"],
             )
         )
 
         # Create Bokeh figure
-        p = figure(width=800, height=600, title="t-SNE Plot of 2D RDKit Descriptors")
+        p = figure(
+            width=800, height=600, title=f"{plot_type} Plot of 2D RDKit Descriptors"
+        )
 
         # Create a color mapper
-        colors = Category10[10][: len(df["Type"].unique())]
-        color_mapper = factor_cmap("type", palette=colors, factors=df["Type"].unique())
+        colors = Category10[10][: len(df["type"].unique())]
+        color_mapper = factor_cmap("type", palette=colors, factors=df["type"].unique())
 
         # Create the scatter plot
         scatter = p.scatter(
@@ -628,10 +680,15 @@ with tab3:
         # Show the plot in Streamlit
         st.bokeh_chart(p, use_container_width=True)
 
+        if plot_type == "t-SNE":
+            file_name = "tsne_plot.svg"
+        elif plot_type == "UMAP":
+            file_name = "umap_plot.svg"
+
         # Add download button
         if st.button("Download Plot as SVG"):
             svg_href = get_svg_download_link(p)
             st.markdown(
-                f'<a href="{svg_href}" download="tsne_plot.svg">Download Plot as SVG</a>',
+                f'<a href="{svg_href}" download=f"{file_name}">Download Plot as SVG</a>',
                 unsafe_allow_html=True,
             )
