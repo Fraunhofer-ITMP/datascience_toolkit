@@ -1,0 +1,17 @@
+﻿code,name,counts,partner,color
+DE-BW,Baden-Württemberg,0,,light grey
+DE-BY,Bayern,6,GSK,red
+DE-BE,Berlin,0,,light grey
+DE-BB,Brandenburg,0,,light grey
+DE-HB,Bremen,0,,light grey
+DE-HH,Hamburg,12,"Fraunhofer ITMP, Revvity",Blue
+DE-HE,Hessen,61,"AbbVie, Goethe University, Max-Planck Institute, Merck Group, TU Darmstadt, Fraunhofer ITMP",yellow
+DE-MV,Mecklenburg-Vorpommern,0,,light grey
+DE-NI,Niedersachsen,0,,light grey
+DE-NW,Nordrhein-Westfalen,0,,light grey
+DE-RP,Rheinland-Pfalz,0,,light grey
+DE-SL,Saarland,0,,light grey
+DE-ST,Sachsen-Anhalt,0,,light grey
+DE-SN,Sachsen,0,,light grey
+DE-SH,Schleswig-Holstein,0,,light grey
+DE-TH,Thüringen,0,,light grey

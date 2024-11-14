@@ -202,17 +202,18 @@ with tab2:
 
         with col4:
             hasClicked = card(
-                title="PROTACKB",
-                text="A comprehensive knowledgebase of PROTACs, molecular glues and degraders",
-                image=load_logo("images/AR_demo.PNG"),
-                url="/PROTACKB",
-                styles={
-                    "card": {
-                        "border-radius": "10px",
-                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
-                        "margin": "0px",
-                    }
-                },
+                title = "PROTACKB",
+                text  = "A comprehensive knowledgebase of PROTACs, molecular glues and degraders",
+                image = load_logo("images/AR_demo.PNG"),
+                url = "/PROTACKB",
+            )
+
+        with col5:
+            hasClicked = card(
+                title = "PROXIDRUGS",
+                text  = "Dashboard for sub-projects in PROXIDRUGS",
+                image = load_logo("images/proxidrugs_2.PNG"),
+                url = "/proxidrugs",
             )
 
     st.markdown("### Machine learning models")
@@ -297,7 +298,15 @@ with tab2:
                 url="/Ensemblapp",
             )
 
-    st.markdown("### Programming tools and workflows")
+        with col3:
+            hasClicked = card(
+                title="CBDREGNum Generator",
+                text="Prepare data for submission in PROXIDRUGSDB",
+                image=load_logo("images/cbdr.png"),
+                url="/cbdreg",
+            )
+
+    st.markdown("### Tools and workflows")
 
     with st.expander("Program tools"):
         col1, col2, col3 = st.columns(3)
@@ -336,13 +345,22 @@ with tab2:
                 url="https://github.com/Fraunhofer-ITMP/PySASC",
             )
 
-        # with col3:
-        #     card(
-        #         title="ALISTER",
-        #         text="Application for lipid stability evaluation",
-        #         image=load_logo("images/alister.png"),
-        #         url="https://itmp.shinyapps.io/alister/",
-        #     )
+        with col2:
+            hasClicked = card(
+                title = "Umap",
+                text  = "Umap plots for SMILES",
+                image = load_logo("images/umap.PNG"),
+                url = "/umap",
+            )
+
+        with col3:
+            hasClicked = card(
+                title = "t-SNE",
+                text  = "t-SNE plots for SMILES",
+                image = load_logo("images/tsne.PNG"),
+                url = "/tSNE",
+            )
+
 
     st.markdown("### Findable, Accessible, Reusable, Interoperable (FAIR) data tools")
 

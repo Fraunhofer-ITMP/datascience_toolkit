@@ -4,7 +4,7 @@ import streamlit.components.v1 as components
 st.set_page_config(
     layout="wide",
     page_title="PROTACKB",
-    page_icon="🕸️",
+    page_icon=":books:",
     initial_sidebar_state="collapsed",
 )
 
@@ -30,8 +30,8 @@ st.markdown(
 
 st.markdown("### Description")
 st.write("**PROTACKB** is a comprehensive knowledgebase of PROTACs, molecular glues and degraders developed with the motive to harmonize and "
-         "consolidate relevant data from public databases, patents and ProxiDrugs project. As of now, it consists of 15 types of entities "
-         "(**27K unique nodes**) and **115K relationships** which are represented using graph theory based data structure model. The entities are enriched with knowledge from curated databases such as Ubinet, OpenTargets, UniProt "
+         "consolidate relevant data from public databases, patents and ProxiDrugs project. As of now, it consists of 14 types of entities "
+         "(**24K unique entities**) and **55K relationships** which are represented using graph theory based data structure model. The entities are enriched with knowledge from curated databases such as Ubinet, OpenTargets, UniProt "
          "and ChEMBL. The PROTACKB is hosted in Neo4j, a visualization tool with intuitive graphical user interface (GUI). The access to Neo4j server is through "
          "personalized login credentials and is only available to members of ProxiDrugs consortium. Additional information about ProxiDrugs can be found [here](https://www.proxidrugs.de/).")
 
@@ -82,6 +82,30 @@ source_code = HtmlFile.read()
 # hit and trial for height adjustment == 400
 components.html(source_code, height=450, width=800)
 
+st.markdown("#### What can you do with PROTACKB?")
 
+st.write("The main purpose of PROTACKB is to systematically assemble information and knowledge about Targeted Protein Degradation (TPD), especially "
+         "PROTACs and their building blocks. In this regard, PROTACKB is a megastore as it provides information about 14 different types of entities, all of "
+         "which are related to TPDs. The Neo4j server, which hosts the PROTACKB, provides a search interface to look for entities of your interest and know more "
+         "about it. For instance, if you are interested in a PROTAC, you can get information about its physicochemical properties, standard representations such as "
+         "SMILES and InChI key, its provenance (link to scientific article, PubMed or patent number) and so on. Well, these are just the metadata about the PROTAC. "
+         "You can eventually expand the neighborhood around it to identify its correpsonding linker, warhead, e3 binder and target protein. Once done, you can "
+         "expand the neighborhood around the target protein to know which other PROTACs are also out there or get to know the e3 ligase for e3 binder and PROTAC. "
+         "These are simple things you can easily do with just a couple of clicks. Start with a entity of interest and get to know more. And all of this can be "
+         "saved for your next visit to Neo4j, you don't have to restart. There are features also to export screenshots and CSV files of your current instance.")
+
+st.write("There's more! Going after entity of your interest is straightforward and might only reveal just a little more than what you might already know. "
+         "Can we possibly ask the PROTACKB to find something more complex in the mix of 24K nodes and 55K relationships? Absolutely! That's why Neo4j comes "
+         "with Cypher. It is a query language to formulate complex questions with all your lists of this and that but not that. For instance, you can write a "
+         "query to know if warheads are used as e3 binders or vice-versa in PROTACs or identify PROTAC(s) with identical e3 binder and warhead. That would be "
+         " a lazy design if it exists! Something more complicated but realistic would be to identify PROTAC(s) and the target protein for a certain disease. "
+         "And because you know that the affect organ expresses a certain e3 ligase abundantly, you can easily add this condition to retrieve PROTAC(s)/e3 binder(s) "
+         "with only this e3 ligase. Lastly, you would also like the PROTAC(s) to be registered in ChEMBL. Not a problem at all except one. Since Cypher is a language "
+         "of its own, one needs to formulate this question as a Cypher query. That is difficult but worry not, ChatGPT and Perplexity like AI tools can easily do this. "
+         "In the near future, a ChatGPT integrated Neo4j will formulate your natural language query to a Cypher query. Just about time, we are working on it.")
+
+st.write("Lastly, not everything has to be about PROTACKB. It is just a comprehensive resource with TPD knowledge. The source data about TPD counterparts "
+         "can be used in many different ways such as developing ML/AI tools for characterization, profiling and virtual screening. Define your use case and "
+         "applications and just write to us.")
 
 

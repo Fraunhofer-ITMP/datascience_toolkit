@@ -13,6 +13,8 @@ import base64
 
 # Streamlit app title
 st.title("t-SNE Plot of Molecules")
+st.markdown("**t-distributed stochastic neighbor embedding (t-SNE)** is a nonlinear dimensionality reduction technique for embedding high-dimensional data for visualization in a low-dimensional space of two or three dimensions.")
+
 st.markdown("*This Streamlit app* allows user to upload **any** :blue-background[CSV file] containing a column named ***SMILES*** and a label column named ***Type***. It generates a t-SNE plot (https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding) which shows the chemical space calculated on a selection of most common RDKIT 2D descriptors. Plot colors are dependent on ***Type*** column indicating the groups.")
 
 def plot_molecule(smiles):
