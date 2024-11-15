@@ -57,8 +57,10 @@ st.markdown('#### PROXIDRUGS partners and their locations')
 
 # Get map data
 with urlopen(
+    #map of EU
+    "https://raw.githubusercontent.com/eurostat/Nuts2json/master/pub/v2/2021/4326/20M/nutsrg_1.json"
     #state level
-    "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/1_sehr_hoch.geo.json"
+    #"https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/1_sehr_hoch.geo.json"
     # #region level
     # "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/refs/heads/main/4_kreise/1_sehr_hoch.geo.json"
 ) as response:
@@ -69,9 +71,12 @@ map_data = pd.read_csv("./data/germany_states.csv",encoding='utf-8-sig')
 
 
 custom_color_map = {
-    "Bayern": "#FF0000",  # Red
-    "Hessen": "Yellow",   # Green
-    "Hamburg": "#0000FF",  # Blue
+
+    "Hessen": "Yellow",
+    "Hamburg": "Red",
+    "South West (England)" : "Green",
+    "Baden-Württemberg" : "Blue"
+
 }
 
 default_color = "#CCCCCC"  # Light gray
@@ -94,7 +99,7 @@ fig = px.choropleth_mapbox(
     opacity=0.5,
     labels={"partner":"Institute","counts": "People"},
     hover_data=["counts", "partner"],
-    featureidkey="properties.name",
+    featureidkey="properties.na",
 )
 #fig.update_layout(coloraxis_showscale=False)
 fig.update_layout(showlegend=False,margin={"r": 0, "t": 0, "l": 0, "b": 0},height=500)

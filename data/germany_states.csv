@@ -1,6 +1,6 @@
 ﻿code,name,counts,partner,color
-DE-BW,Baden-Württemberg,0,,light grey
-DE-BY,Bayern,6,GSK,red
+DE-BW,Baden-Württemberg,8,Ruprecht-Karls-Universität Heidelberg,light grey
+DE-BY,Bayern,0,,red
 DE-BE,Berlin,0,,light grey
 DE-BB,Brandenburg,0,,light grey
 DE-HB,Bremen,0,,light grey
@@ -15,3 +15,4 @@ DE-ST,Sachsen-Anhalt,0,,light grey
 DE-SN,Sachsen,0,,light grey
 DE-SH,Schleswig-Holstein,0,,light grey
 DE-TH,Thüringen,0,,light grey
+UK,South West (England),6,GSK,green
