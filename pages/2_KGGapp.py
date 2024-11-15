@@ -53,7 +53,7 @@ with tab1:
         "Additional information about KGG can be found [here](https://www.infectious-diseases-toolkit.org/showcase/knowledge-graph-generator)"
     )
 
-    kg_worklow = "./images/KGG_workflow_updated.png"
+    kg_worklow = "./images/pages/KGG_workflow_updated.png"
     st.image(
         kg_worklow,
         caption="A schematic representation of the 3 phases of KGG workflow.",
