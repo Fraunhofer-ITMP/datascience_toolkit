@@ -181,7 +181,7 @@ with tab2:
                 title="KGG",
                 text="Automated workflow for disease-specific KGs",
                 image=load_logo("images/app_logos/kgg.png"),
-                url="/KGGapp",
+                url="/KG_Generator",
                 styles={
                     "card": {
                         "border-radius": "10px",
@@ -227,7 +227,7 @@ with tab2:
             hasClicked = card(
                 title="PROXIDRUGS",
                 text="Dashboard for sub-projects in PROXIDRUGS",
-                image=load_logo("images/app_logos/proxidrugs.PNG"),
+                image=load_logo("images/app_logos/proxidrugs.png"),
                 url="/Proxidrugs",
                 styles={
                     "card": {
