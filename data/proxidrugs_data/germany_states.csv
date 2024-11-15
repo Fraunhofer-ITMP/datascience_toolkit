@@ -1,0 +1,18 @@
+﻿code,name,counts,partner
+DE-BW,Baden-Württemberg,0,None
+DE-BY,Bayern,6,GSK
+DE-BE,Berlin,0,None
+DE-BB,Brandenburg,0,None
+DE-HB,Bremen,0,None
+DE-HH,Hamburg,12,"Fraunhofer ITMP, Revvity"
+DE-HE,Hessen,61,"AbbVie, Goethe University, Max-Planck Institute, Merck Group, TU Darmstadt, Fraunhofer ITMP"
+DE-MV,Mecklenburg-Vorpommern,0,None
+DE-NI,Niedersachsen,0,None
+DE-NW,Nordrhein-Westfalen,0,None
+DE-RP,Rheinland-Pfalz,0,None
+DE-SL,Saarland,0,None
+DE-ST,Sachsen-Anhalt,0,None
+DE-SN,Sachsen,0,None
+DE-SH,Schleswig-Holstein,0,None
+DE-TH,Thüringen,0,None
+UK,South West (England),6,GSK
