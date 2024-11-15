@@ -67,7 +67,7 @@ with urlopen(
     map_germany = json.load(response)
 
 #state level
-map_data = pd.read_csv("./data/germany_states.csv",encoding='utf-8-sig')
+map_data = pd.read_csv("./data/proxidrugs_data/germany_states.csv",encoding='utf-8-sig')
 
 
 custom_color_map = {
@@ -75,7 +75,8 @@ custom_color_map = {
     "Hessen": "Yellow",
     "Hamburg": "Red",
     "South West (England)" : "Green",
-    "Baden-Württemberg" : "Blue"
+    "Baden-Württemberg" : "Blue",
+    "Rheinland-Pfalz" : "Orange",
 
 }
 
@@ -94,7 +95,7 @@ fig = px.choropleth_mapbox(
     color_discrete_map={**custom_color_map, "Other": default_color},
     #color_continuous_scale="Viridis",
     mapbox_style="open-street-map",
-    zoom=3,
+    zoom=4,
     center={"lat": 51.0057, "lon": 13.7274},
     opacity=0.5,
     labels={"partner":"Institute","counts": "People"},
@@ -118,7 +119,7 @@ with col[0]:
 
     #st.write("**Overview of number of individuals per sub-project**")
 
-    prx = pd.read_csv('./data/proxidrugs_partners.csv')
+    prx = pd.read_csv('./data/proxidrugs_data/proxidrugs_partners.csv')
 
     prx = prx.groupby(['Project'])['Project'].count().reset_index(name='count')
     fig = px.pie(prx, values='count', names='Project')
@@ -135,12 +136,12 @@ with col[0]:
 with col[1]:
 
     st.write("**Data champions for each sub-project**")
-    data_champ = pd.read_excel('./data/data_champion.xlsx')
+    data_champ = pd.read_excel('./data/proxidrugs_data/data_champion.xlsx')
     st.write(data_champ)
 
 st.markdown("#### Overview of partners")
 
-df = pd.read_csv('./data/proxidrugs_partners.csv', encoding='utf-8-sig')
+df = pd.read_csv('./data/proxidrugs_data/proxidrugs_partners.csv', encoding='utf-8-sig')
 # st.write(df)
 
 # Create a dropdown menu for institute selection
