@@ -213,7 +213,7 @@ with tab2:
                 title="PROTACKB",
                 text="A comprehensive knowledgebase of PROTACs, molecular glues and degraders",
                 image=load_logo("images/app_logos/ar_demo.png"),
-                url="/PROTACKB",
+                url="/PROTAC-KB",
                 styles={
                     "card": {
                         "border-radius": "10px",
@@ -228,7 +228,7 @@ with tab2:
                 title="PROXIDRUGS",
                 text="Dashboard for sub-projects in PROXIDRUGS",
                 image=load_logo("images/app_logos/proxidrugs.PNG"),
-                url="/proxidrugs",
+                url="/Proxidrugs",
                 styles={
                     "card": {
                         "border-radius": "10px",
@@ -309,7 +309,7 @@ with tab2:
                 title="CBDREGNum Generator",
                 text="Prepare data for submission in PROXIDRUGSDB",
                 image=load_logo("images/app_logos/cbdr.png"),
-                url="/cbdreg",
+                url="/CBDReg_Generator",
                 styles={
                     "card": {
                         "border-radius": "10px",
@@ -387,9 +387,24 @@ with tab2:
         with col2:
             hasClicked = card(
                 title="Data Processor",
-                text="Small toolkit for processing proteins and chemicals",
-                image=load_logo("images/app_logos/umap.png"),
+                text="Small toolkit for processing proteins",
+                image=load_logo("images/pages/pareto_front.png"),
                 url="/Small_helper_apps",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
+            )
+
+        with col3:
+            hasClicked = card(
+                title="Chemical space visualizer",
+                text="Chemical space visualizer through t-SNE and UMAP",
+                image=load_logo("images/app_logos/umap.png"),
+                url="/Compound_space_visualizer",
                 styles={
                     "card": {
                         "border-radius": "10px",
@@ -413,7 +428,8 @@ with tab2:
                 styles={
                     "card": {
                         "border-radius": "10px",
-                        "box-shadow": "0 0 10px rgba(0,0,0,0.5)",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
                     }
                 },
             )
@@ -424,6 +440,13 @@ with tab2:
                 text="Tool to assess the FAIRness level of datasests",
                 image=load_logo("images/app_logos/fairplus_dsm.png"),
                 url="https://fairdsm.biospeak.solutions/",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
         with col3:
@@ -432,6 +455,13 @@ with tab2:
                 text="Resource on data and metadata standards, inter-related to databases and data policies",
                 image=load_logo("images/app_logos/fairsharing.jpg"),
                 url="https://fairsharing.org/",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
     st.markdown("### Our presence on web platforms")
@@ -506,6 +536,8 @@ with tab4:
                     f"**Email**: {row['member_email']} <br> **ORCID**: https://orcid.org/{row['member_orcid']}",
                     unsafe_allow_html=True,
                 )
+
+    st.image("./images/clinical_ds.png", use_column_width=True)
 
 # footer with text and green background
 st.markdown(
