@@ -64,17 +64,17 @@ with urlopen(
     # #region level
     # "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/refs/heads/main/4_kreise/1_sehr_hoch.geo.json"
 ) as response:
-    map_germany = json.load(response)
+    map_eu = json.load(response)
 
 #state level
-map_data = pd.read_csv("./data/proxidrugs_data/germany_states.csv",encoding='utf-8-sig')
+map_data = pd.read_csv("./data/proxidrugs_data/partner_location.csv",encoding='utf-8-sig')
 
 
 custom_color_map = {
 
     "Hessen": "Yellow",
     "Hamburg": "Red",
-    "South West (England)" : "Green",
+    "London" : "Green",
     "Baden-Württemberg" : "Blue",
     "Rheinland-Pfalz" : "Orange",
 
@@ -88,7 +88,7 @@ map_data['color'] = map_data['name'].map(lambda x: x if x in custom_color_map el
 # Geographic Map
 fig = px.choropleth_mapbox(
     map_data,
-    geojson=map_germany,
+    geojson=map_eu,
     locations="name",
     color="color",
     #color_discrete_map=custom_color_map,
