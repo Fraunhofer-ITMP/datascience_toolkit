@@ -209,3 +209,12 @@ with tab2:
             disease_name=st.session_state["user_disease"],
             graph=st.session_state["graph"],
         )
+
+# footer with text and green background
+st.markdown(
+    "<footer style='background-color: #149372; padding: 10px; border-radius: 10px;'>"
+    "<p style='color: white; text-align: center;'>Fraunhofer ITMP © 2024</p>"
+    "<p style='color: white; text-align: center;'>This work has been conducted across several key projects in which ITMP has been actively involved.</p>"
+    "</footer>",
+    unsafe_allow_html=True,
+)

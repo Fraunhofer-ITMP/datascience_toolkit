@@ -25,6 +25,22 @@ from bokeh.io import export_svgs
 
 st.set_page_config(layout="wide", page_title="Small helper apps", page_icon="🧪")
 
+st.markdown(
+    """
+        <style>
+            .block-container {
+                padding-top: 1.5rem;
+                padding-bottom: 1.5rem;
+                padding-left: 5rem;
+                padding-right: 5rem;
+            }
+            .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {font-size:1.3rem;}
+            [data-testid="stExpander"] details:hover summary{background-color: #d0e9e2;}
+        </style>
+        """,
+    unsafe_allow_html=True,
+)  # .block-conatiner controls the padding of the page, .stTabs controls the font size of the text in the tabs
+
 
 # Functions
 def is_numeric(col):
@@ -282,14 +298,20 @@ tab1, tab2, tab3 = st.tabs(
 )
 
 with tab1:
-    st.header(
-        "📈 Pareto Analysis App",
-        anchor="pareto-analysis-app",
+    col1, col2 = st.columns(
+        [5, 2],
+        vertical_alignment="center",
     )
-
-    st.markdown(
-        "*This app* allows user to upload **any** :blue-background[CSV file] or **any** :blue-background[EXCEL file] containing a column named ***SMILES*** and some numerical columns whose data have to be minimized or maximize during the [Pareto front calculation](https://en.wikipedia.org/wiki/Pareto_front). The app generates a subselection of compounds which calculated using the constraints/requirements indicated as: (1) user selection of numerical columns and (2) maximization/minimization of those columns."
-    )
+    with col1:
+        st.header(
+            "📈 Pareto Analysis App",
+            anchor="pareto-analysis-app",
+        )
+        st.markdown(
+            "*This app* allows user to upload **any** :blue-background[CSV file] or **any** :blue-background[EXCEL file] containing a column named ***SMILES*** and some numerical columns whose data have to be minimized or maximize during the [Pareto front calculation](https://en.wikipedia.org/wiki/Pareto_front). The app generates a subselection of compounds which calculated using the constraints/requirements indicated as: (1) user selection of numerical columns and (2) maximization/minimization of those columns."
+        )
+    with col2:
+        st.image("images/pages/pareto_front.png", width=250)
 
     st.header(
         "Pareto parameterization", anchor="pareto-parameterization", divider="gray"
@@ -557,138 +579,150 @@ with tab3:
             "Please upload a CSV or Excel file to proceed! Loading an example file",
             icon="ℹ️",
         )
-        df = pd.read_csv("data/E4C_smiles.csv", sep=";")
+        # df = pd.read_csv("data/E4C_smiles.csv", sep=";")
     else:
         df = load_dataset()
 
-    df.columns = [i.lower() for i in df.columns]
+        df.columns = [i.lower() for i in df.columns]
 
-    # Check if required columns exist
-    if "smiles" not in df.columns or "type" not in df.columns:
-        st.error("The CSV file must contain 'smiles' and 'type' columns.")
-    else:
-        st.info("Reading the CSV file...")
-        # Convert SMILES to RDKit molecules
-        mols = [Chem.MolFromSmiles(smiles) for smiles in df["smiles"]]
+        # Check if required columns exist
+        if "smiles" not in df.columns or "type" not in df.columns:
+            st.error("The CSV file must contain 'smiles' and 'type' columns.")
+        else:
+            st.info("Reading the CSV file...")
+            # Convert SMILES to RDKit molecules
+            mols = [Chem.MolFromSmiles(smiles) for smiles in df["smiles"]]
 
-        # Convert SMILES column to string if it exists
-        if "smiles" in df.columns:
-            df["smiles"] = df["smiles"].astype(str)
-            df["molecule_img"] = df["smiles"].apply(get_molecule_image_src)
+            # Convert SMILES column to string if it exists
+            if "smiles" in df.columns:
+                df["smiles"] = df["smiles"].astype(str)
+                df["molecule_img"] = df["smiles"].apply(get_molecule_image_src)
 
-    st.header("Data plotter", anchor="data-plot", divider="gray")
-    st.markdown("### Select plot type and calculate 2D RDKit descriptors")
+        st.header("Data plotter", anchor="data-plot", divider="gray")
+        st.markdown("### Select plot type and calculate 2D RDKit descriptors")
 
-    plot_type = st.radio("Plotting type", ["t-SNE", "UMAP"], horizontal=True)
+        plot_type = st.radio("Plotting type", ["t-SNE", "UMAP"], horizontal=True)
 
-    if st.button("Calculate Descriptors and Plot"):
-        # Calculate 2D RDKit descriptors
-        desc_names = [
-            "MolWt",
-            "FractionCSP3",
-            "HeavyAtomCount",
-            "NumAliphaticCarbocycles",
-            "NumAliphaticHeterocycles",
-            "NumAliphaticRings",
-            "NumAromaticCarbocycles",
-            "NumAromaticHeterocycles",
-            "NumAromaticRings",
-            "NumHAcceptors",
-            "NumHDonors",
-            "NumHeteroatoms",
-            "NumRotatableBonds",
-            "NumSaturatedCarbocycles",
-            "NumSaturatedHeterocycles",
-            "NumSaturatedRings",
-            "RingCount",
-            "MolLogP",
-            "MolMR",
-        ]
+        if st.button("Calculate Descriptors and Plot"):
+            # Calculate 2D RDKit descriptors
+            desc_names = [
+                "MolWt",
+                "FractionCSP3",
+                "HeavyAtomCount",
+                "NumAliphaticCarbocycles",
+                "NumAliphaticHeterocycles",
+                "NumAliphaticRings",
+                "NumAromaticCarbocycles",
+                "NumAromaticHeterocycles",
+                "NumAromaticRings",
+                "NumHAcceptors",
+                "NumHDonors",
+                "NumHeteroatoms",
+                "NumRotatableBonds",
+                "NumSaturatedCarbocycles",
+                "NumSaturatedHeterocycles",
+                "NumSaturatedRings",
+                "RingCount",
+                "MolLogP",
+                "MolMR",
+            ]
 
-        desc_functions = [(name, getattr(Descriptors, name)) for name in desc_names]
-        calc = lambda m: [func(m) for _, func in desc_functions]
-        descriptors = [calc(mol) for mol in mols]
-        descriptors_df = pd.DataFrame(descriptors, columns=desc_names)
+            desc_functions = [(name, getattr(Descriptors, name)) for name in desc_names]
+            calc = lambda m: [func(m) for _, func in desc_functions]
+            descriptors = [calc(mol) for mol in mols]
+            descriptors_df = pd.DataFrame(descriptors, columns=desc_names)
 
-        if plot_type == "t-SNE":
-            # Perform t-SNE
-            tsne = TSNE(
-                n_components=2,
-                random_state=42,
-                init="random",
-                perplexity=30,
-                n_iter=500,
-                learning_rate="auto",
+            if plot_type == "t-SNE":
+                # Perform t-SNE
+                tsne = TSNE(
+                    n_components=2,
+                    random_state=42,
+                    init="random",
+                    perplexity=30,
+                    n_iter=500,
+                    learning_rate="auto",
+                )
+                tsne_results = tsne.fit_transform(descriptors_df)
+            elif plot_type == "UMAP":
+                # Perform UMAP
+                umap_model = UMAP(
+                    n_components=2, random_state=42, n_neighbors=15, metric="cosine"
+                )
+                umap_results = umap_model.fit_transform(descriptors_df)
+
+            # Create a Bokeh ColumnDataSource
+            source = ColumnDataSource(
+                data=dict(
+                    x=tsne_results[:, 0],
+                    y=tsne_results[:, 1],
+                    smiles=df["smiles"],
+                    type=df["type"],
+                    molecule_img=df["molecule_img"],
+                )
             )
-            tsne_results = tsne.fit_transform(descriptors_df)
-        elif plot_type == "UMAP":
-            # Perform UMAP
-            umap_model = UMAP(
-                n_components=2, random_state=42, n_neighbors=15, metric="cosine"
+
+            # Create Bokeh figure
+            p = figure(
+                width=800, height=600, title=f"{plot_type} Plot of 2D RDKit Descriptors"
             )
-            umap_results = umap_model.fit_transform(descriptors_df)
 
-        # Create a Bokeh ColumnDataSource
-        source = ColumnDataSource(
-            data=dict(
-                x=tsne_results[:, 0],
-                y=tsne_results[:, 1],
-                smiles=df["smiles"],
-                type=df["type"],
-                molecule_img=df["molecule_img"],
+            # Create a color mapper
+            colors = Category10[10][: len(df["type"].unique())]
+            color_mapper = factor_cmap(
+                "type", palette=colors, factors=df["type"].unique()
             )
-        )
 
-        # Create Bokeh figure
-        p = figure(
-            width=800, height=600, title=f"{plot_type} Plot of 2D RDKit Descriptors"
-        )
+            # Create the scatter plot
+            scatter = p.scatter(
+                "x",
+                "y",
+                source=source,
+                color=color_mapper,
+                legend_field="type",
+                size=10,
+                alpha=0.8,
+            )
 
-        # Create a color mapper
-        colors = Category10[10][: len(df["type"].unique())]
-        color_mapper = factor_cmap("type", palette=colors, factors=df["type"].unique())
-
-        # Create the scatter plot
-        scatter = p.scatter(
-            "x",
-            "y",
-            source=source,
-            color=color_mapper,
-            legend_field="type",
-            size=10,
-            alpha=0.8,
-        )
-
-        # Create tooltip HTML
-        tooltip_html = """
-        <div>
+            # Create tooltip HTML
+            tooltip_html = """
             <div>
-                <img src="@molecule_img" height="200" alt="@molecule_img" width="200">
+                <div>
+                    <img src="@molecule_img" height="200" alt="@molecule_img" width="200">
+                </div>
+                <div>
+                    <span style="font-size: 12px; color: #666;">Type: @type</span>
+                </div>
+                <div>
+                    <span style="font-size: 12px; color: #666;">SMILES: @smiles</span>
+                </div>
             </div>
-            <div>
-                <span style="font-size: 12px; color: #666;">Type: @type</span>
-            </div>
-            <div>
-                <span style="font-size: 12px; color: #666;">SMILES: @smiles</span>
-            </div>
-        </div>
-        """
+            """
 
-        hover = HoverTool(renderers=[scatter], tooltips=tooltip_html)
-        p.add_tools(hover)
+            hover = HoverTool(renderers=[scatter], tooltips=tooltip_html)
+            p.add_tools(hover)
 
-        # Show the plot in Streamlit
-        st.bokeh_chart(p, use_container_width=True)
+            # Show the plot in Streamlit
+            st.bokeh_chart(p, use_container_width=True)
 
-        if plot_type == "t-SNE":
-            file_name = "tsne_plot.svg"
-        elif plot_type == "UMAP":
-            file_name = "umap_plot.svg"
+            if plot_type == "t-SNE":
+                file_name = "tsne_plot.svg"
+            elif plot_type == "UMAP":
+                file_name = "umap_plot.svg"
 
-        # Add download button
-        if st.button("Download Plot as SVG"):
-            svg_href = get_svg_download_link(p)
-            st.markdown(
-                f'<a href="{svg_href}" download=f"{file_name}">Download Plot as SVG</a>',
-                unsafe_allow_html=True,
-            )
+            # Add download button
+            if st.button("Download Plot as SVG"):
+                svg_href = get_svg_download_link(p)
+                st.markdown(
+                    f'<a href="{svg_href}" download=f"{file_name}">Download Plot as SVG</a>',
+                    unsafe_allow_html=True,
+                )
+
+
+# footer with text and green background
+st.markdown(
+    "<footer style='background-color: #149372; padding: 10px; border-radius: 10px;'>"
+    "<p style='color: white; text-align: center;'>Fraunhofer ITMP © 2024</p>"
+    "<p style='color: white; text-align: center;'>This work has been conducted across several key projects in which ITMP has been actively involved.</p>"
+    "</footer>",
+    unsafe_allow_html=True,
+)

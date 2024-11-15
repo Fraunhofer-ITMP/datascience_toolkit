@@ -28,6 +28,7 @@ st.markdown(
                 padding-right: 5rem;
             }
             .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {font-size:1.3rem;}
+            [data-testid="stExpander"] details:hover summary{background-color: #d0e9e2;}
         </style>
         """,
     unsafe_allow_html=True,
@@ -47,6 +48,13 @@ def load_logo(filepath):
         encoded = base64.b64encode(data)
     data = "data:image/png;base64," + encoded.decode("utf-8")
     return data
+
+
+def img_to_html(img_path):
+    img_html = "<img src='data:image/png;base64,{}' class='img-fluid'>".format(
+        load_logo(img_path)
+    )
+    return img_html
 
 
 tab1, tab2, tab3, tab4 = st.tabs(["About", "Tools", "Publications", "Team"])
@@ -148,16 +156,16 @@ with tab1:
 
 # tools tab
 with tab2:
-    st.markdown("### Dashboards and Databases")
 
-    with st.expander(label="Graph based tools"):
+    st.markdown("### Explore our tools and workflows")
+    with st.expander(label=r"$\textsf{\Large Dashboards and Databases}$"):
         col1, col2, col3 = st.columns(3)
 
         with col1:
             hasClicked = card(
                 title="R4A Expertise Dashboard",
                 text="Dashboard for the the REMEDi4ALL expertise knowledge graph",
-                image=load_logo("images/r4a_logo.png"),
+                image=load_logo("images/app_logos/r4a_logo.png"),
                 url="https://r4a-expertise-dashboard.serve.scilifelab.se/",
                 styles={
                     "card": {
@@ -172,7 +180,7 @@ with tab2:
             hasClicked = card(
                 title="KGG",
                 text="Automated workflow for disease-specific KGs",
-                image=load_logo("images/kg_1.png"),
+                image=load_logo("images/app_logos/kgg.png"),
                 url="/KGGapp",
                 styles={
                     "card": {
@@ -187,7 +195,7 @@ with tab2:
             hasClicked = card(
                 title="AntiMicrobial KG",
                 text="Data warehouse of experimentally validated antibacterial chemicals",
-                image=load_logo("images/antimicrobial.webp"),
+                image=load_logo("images/app_logos/antimicrobial.webp"),
                 url="https://antimicrobial-kg.serve.scilifelab.se/",
                 styles={
                     "card": {
@@ -202,30 +210,42 @@ with tab2:
 
         with col4:
             hasClicked = card(
-                title = "PROTACKB",
-                text  = "A comprehensive knowledgebase of PROTACs, molecular glues and degraders",
-                image = load_logo("images/AR_demo.PNG"),
-                url = "/PROTACKB",
+                title="PROTACKB",
+                text="A comprehensive knowledgebase of PROTACs, molecular glues and degraders",
+                image=load_logo("images/app_logos/ar_demo.png"),
+                url="/PROTACKB",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
         with col5:
             hasClicked = card(
-                title = "PROXIDRUGS",
-                text  = "Dashboard for sub-projects in PROXIDRUGS",
-                image = load_logo("images/proxidrugs_2.PNG"),
-                url = "/proxidrugs",
+                title="PROXIDRUGS",
+                text="Dashboard for sub-projects in PROXIDRUGS",
+                image=load_logo("images/app_logos/proxidrugs.PNG"),
+                url="/proxidrugs",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
-    st.markdown("### Machine learning models")
-
-    with st.expander(label="ML models"):
+    with st.expander(label=r"$\textsf{\Large Machine learning models}$"):
         col1, col2, col3 = st.columns(3)
 
         with col1:
             hasClicked = card(
                 title="AntiMicrobial Model",
                 text="Model for predicting antimicorbial activity of small molecules",
-                image=load_logo("images/antimicrobial.webp"),
+                image=load_logo("images/app_logos/antimicrobial.webp"),
                 url="https://antimicrobial-kg.serve.scilifelab.se/Model_Prediction",
                 styles={
                     "card": {
@@ -240,7 +260,7 @@ with tab2:
             hasClicked = card(
                 title="E3 Ligase Model",
                 text="Model for predicting speicificity of E3 ligase binders",
-                image=load_logo("images/protac.webp"),
+                image=load_logo("images/app_logos/protac.webp"),
                 url="https://github.com/Fraunhofer-ITMP/E3_binder_Model",
                 styles={
                     "card": {
@@ -251,88 +271,100 @@ with tab2:
                 },
             )
 
-    st.markdown("### Screening data preprocessing")
-
-    with st.expander("Preprocessing tools"):
+    with st.expander(label=r"$\textsf{\Large Screening data preprocessing tools}$"):
         col1, col2, col3 = st.columns(3)
 
         with col1:
             card(
                 title="Dose-Response Analyses",
                 text="Fit dose-response curves from normalised biochemical assay data",
-                image=load_logo("images/drc.png"),
+                image=load_logo("images/app_logos/drc.png"),
                 url="https://hub.knime.com/fraunhoferitmp/spaces/Public/Dose_Response_Biochemical/DRCfit_biochemical_ECBD~6NLZB5Jkgn6j5a6Y/current-state",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
         with col2:
             hasClicked = card(
                 title="Chemical annotator",
                 text="Annotation of chemicals with biochemical and pharmaceutical information retrieved from ChEMBL",
-                image=load_logo("images/workflow.png"),
+                image=load_logo("images/app_logos/workflow.png"),
                 url="https://hub.knime.com/fraunhoferitmp/spaces/Public/Remedi4All/R4A_AnnotationTool_v1~RPNHTYMP7vUEoUwD/current-state",
-            )
-
-        with col3:
-            hasClicked = card(
-                title="Annotator Dashboard",
-                text="Dashboard of biochemical and pharmaceutical information retrieved from ChEMBL",
-                image=load_logo("images/workflow.png"),
-                url="https://hub.knime.com/fraunhoferitmp/spaces/Public/Remedi4All/ChemblAssays~yQeFQzSCx6DSlZPd/current-state",
-            )
-
-        col1, col2, col3 = st.columns(3)
-
-        with col1:
-            hasClicked = card(
-                title="Pareto Hit Analysis App",
-                text="Some description",
-                image=load_logo("images/pareto_front.png"),
-                url="/Paretoapp",
-            )
-
-        with col2:
-            hasClicked = card(
-                title="ENSEMBL Gene Annotator App",
-                text="Some description",
-                image=load_logo("images/gene_icon.png"),
-                url="/Ensemblapp",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
         with col3:
             hasClicked = card(
                 title="CBDREGNum Generator",
                 text="Prepare data for submission in PROXIDRUGSDB",
-                image=load_logo("images/cbdr.png"),
+                image=load_logo("images/app_logos/cbdr.png"),
                 url="/cbdreg",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
-    st.markdown("### Tools and workflows")
-
-    with st.expander("Program tools"):
+    with st.expander(label=r"$\textsf{\Large Tools and workflows}$"):
         col1, col2, col3 = st.columns(3)
 
         with col1:
             card(
                 title="Patent Enrichment Tool PEMT",
                 text="Python package for extracting patent for genes and compounds",
-                image=load_logo("images/pemt.jpg"),
+                image=load_logo("images/app_logos/pemt.jpg"),
                 url="https://github.com/Fraunhofer-ITMP/PEMT",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
         with col2:
             card(
                 title="rSASC",
                 text="R tool for Synthetic cohorts generator for longitudinal observational patient cohorts",
-                image=load_logo("images/sasc.webp"),
+                image=load_logo("images/app_logos/sasc.webp"),
                 url="https://github.com/Fraunhofer-ITMP/SASC",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
         with col3:
             card(
                 title="ALISTER",
                 text="Application for lipid stability evaluation",
-                image=load_logo("images/alister.png"),
+                image=load_logo("images/app_logos/alister.png"),
                 url="https://itmp.shinyapps.io/alister/",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
         col1, col2, col3 = st.columns(3)
@@ -341,37 +373,42 @@ with tab2:
             card(
                 title="PySASC",
                 text="Python tool for Synthetic cohorts generator for longitudinal observational patient cohorts",
-                image=load_logo("images/sasc.webp"),
+                image=load_logo("images/app_logos/sasc.webp"),
                 url="https://github.com/Fraunhofer-ITMP/PySASC",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
         with col2:
             hasClicked = card(
-                title = "Umap",
-                text  = "Umap plots for SMILES",
-                image = load_logo("images/umap.PNG"),
-                url = "/umap",
+                title="Data Processor",
+                text="Small toolkit for processing proteins and chemicals",
+                image=load_logo("images/app_logos/umap.png"),
+                url="/Small_helper_apps",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
             )
 
-        with col3:
-            hasClicked = card(
-                title = "t-SNE",
-                text  = "t-SNE plots for SMILES",
-                image = load_logo("images/tsne.PNG"),
-                url = "/tSNE",
-            )
-
-
-    st.markdown("### Findable, Accessible, Reusable, Interoperable (FAIR) data tools")
-
-    with st.expander(label="Endorsed FAIR tools"):
+    with st.expander(
+        label=r"$\textsf{\Large Findable, Accessible, Reusable, Interoperable (FAIR) endorsed tools}$"
+    ):
         col1, col2, col3 = st.columns(3)
 
         with col1:
             card(
                 title="FAIR Cookbook",
                 text="Resource for the Life Sciences with recipes that help you to make and keep data FAIR",
-                image=load_logo("images/faircookbook.png"),
+                image=load_logo("images/app_logos/faircookbook.png"),
                 url="https://faircookbook.elixir-europe.org/",
                 styles={
                     "card": {
@@ -385,7 +422,7 @@ with tab2:
             card(
                 title="FAIRplus DSM",
                 text="Tool to assess the FAIRness level of datasests",
-                image=load_logo("images/fairplus_dsm.png"),
+                image=load_logo("images/app_logos/fairplus_dsm.png"),
                 url="https://fairdsm.biospeak.solutions/",
             )
 
@@ -393,9 +430,43 @@ with tab2:
             card(
                 title="FAIRSharing.org",
                 text="Resource on data and metadata standards, inter-related to databases and data policies",
-                image=load_logo("images/fairsharing.jpg"),
+                image=load_logo("images/app_logos/fairsharing.jpg"),
                 url="https://fairsharing.org/",
             )
+
+    st.markdown("### Our presence on web platforms")
+
+    col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
+
+    linkedin = "https://content.linkedin.com/content/dam/me/business/en-us/amp/brand-site/v2/bg/LI-Bug.svg.original.svg"
+    col1.markdown(
+        f"""<a href='https://www.linkedin.com/company/fraunhofer-itmp'><img src='{linkedin}' width='300px'/></a>""",
+        unsafe_allow_html=True,
+    )
+
+    github = "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+    col2.markdown(
+        f"""<a href='https://github.com/Fraunhofer-ITMP'><img src='{github}' width='300px'/></a>""",
+        unsafe_allow_html=True,
+    )
+
+    twitter = "https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg"
+    col3.markdown(
+        f"""<a href='https://twitter.com/FraunhoferITMP'><img src='{twitter}' width='300px'/></a>""",
+        unsafe_allow_html=True,
+    )
+
+    # zendo = "images/social_media/zenodo-mark.png"
+    # col4.markdown(
+    #     f"""<a href='https://zenodo.org/communities/fraunhoferitmp'><img src='{zendo}' width='500px'/></a>""",
+    #     unsafe_allow_html=True,
+    # )
+
+    # knime = "https://mahmoudelgendi.com/wp-content/uploads/2022/03/Knime-White.svg"
+    # col5.markdown(
+    #     f"""<a href='https://hub.knime.com/fraunhoferitmp'><img src='{knime}' width='500px'/></a>""",
+    #     unsafe_allow_html=True,
+    # )
 
 
 # publications tab
