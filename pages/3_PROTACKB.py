@@ -51,11 +51,11 @@ st.video(video_bytes, loop=True, start_time="8s", end_time="48s", autoplay=True)
 
 st.header("General workflow", divider="gray")
 
-kg_worklow = "./images/pages/workflow_ptackb.png"
+kg_worklow = "./images/pages/workflow_ptackb_2.png"
 st.image(
     kg_worklow,
     caption="A schematic representation of PROTACKB",
-    width=1000,
+    #width=800,
 )
 
 st.write(
