@@ -122,15 +122,13 @@ def load_dataset(file: str = None):
 
 tab_1, tab_2 = st.tabs(
     [
-        "t-SNE Plot",
+        "Chemical space analysis",
         "UMAP Plot",
     ]
 )
 
 with tab_1:
-    st.header(
-        "🔎 2D chemical space presentation with t-SNE", anchor="t-SNE", divider="gray"
-    )
+    st.header("🔎 2D chemical space presentation", anchor="chem-space", divider="gray")
     st.markdown(
         "*This app* allows user to upload **any** :blue-background[CSV file] containing a column named ***SMILES*** and a label column named ***Type***. It generates a [t-SNE plot](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding) or [UMAP plot](https://umap-learn.readthedocs.io/) which shows the chemical space calculated on a selection of most common RDKIT 2D descriptors. Plot colors are dependent on ***Type*** column indicating the groups."
     )
@@ -150,16 +148,16 @@ with tab_1:
             icon="ℹ️",
         )
     else:
-        df = load_dataset(uploaded_file)
+        chem_df = load_dataset(uploaded_file)
 
         st.info("Reading the CSV file...")
         # Convert SMILES to RDKit molecules
-        mols = [Chem.MolFromSmiles(smiles) for smiles in df["smiles"]]
+        mols = [Chem.MolFromSmiles(smiles) for smiles in chem_df["smiles"]]
 
         # Convert SMILES column to string if it exists
-        if "smiles" in df.columns:
-            df["smiles"] = df["smiles"].astype(str)
-            df["molecule_img"] = df["smiles"].apply(get_molecule_image_src)
+        if "smiles" in chem_df.columns:
+            chem_df["smiles"] = chem_df["smiles"].astype(str)
+            chem_df["molecule_img"] = chem_df["smiles"].apply(get_molecule_image_src)
 
         st.header("Data plotter", anchor="data-plot", divider="gray")
         st.markdown("### Select plot type and calculate 2D RDKit descriptors")
@@ -287,7 +285,7 @@ with tab_2:
         "Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique that can be used for visualisation similarly to t-SNE, but also for general non-linear dimension reduction. It visualises the closest topological structure of the data."
     )
     st.markdown(
-        "*This Streamlit app* allows user to upload **any** :blue-background[CSV file] containing a column named ***SMILES*** and a label column named ***Type***. It generates a UMAP plot (https://umap-learn.readthedocs.io/) which shows the chemical space calculated on a selection of most common RDKIT 2D descriptors. Plot colors are dependent on ***Type*** column indicating the groups. A user can upload another CSV file with only a column called SMILES and the plot will show with label ***USER*** the relative molecule within the plot with a :red[slightly bigger red dot]."
+        "*This Streamlit app* allows user to upload **any** :blue-background[CSV file] containing a column named ***SMILES*** and a label column named ***Type***. It generates a [UMAP plot](https://umap-learn.readthedocs.io/) which shows the chemical space calculated on a selection of most common RDKIT 2D descriptors. Plot colors are dependent on ***Type*** column indicating the groups. A user can upload another CSV file with only a column called SMILES and the plot will show with label ***USER*** the relative molecule within the plot with a :red[slightly bigger red dot]."
     )
 
     st.header("Data loader", anchor="data-loader", divider="gray")
@@ -302,38 +300,42 @@ with tab_2:
 
     if uploaded_file is not None and user_file is not None:
         # Read the CSV file
-        df = pd.read_csv(uploaded_file)
-        df.columns = [i.lower() for i in df.columns]
+        ref_df = pd.read_csv(uploaded_file)
+        ref_df.columns = [i.lower() for i in ref_df.columns]
 
         # Read the user's CSV file
         user_df = pd.read_csv(user_file)
         user_df.columns = [i.lower() for i in user_df.columns]
 
+        type_col = [i for i in ref_df.columns if "type" in i][0]
+        smile_col = [i for i in ref_df.columns if "smile" in i][0]
+
         # Check if SMILES column exists
-        if "smiles" not in user_df.columns:
-            st.error("The user's CSV file must contain a 'smiles' column.")
-        else:
-            # Add 'Type' column with 'user' label
+        if type_col not in ref_df.columns or smile_col not in ref_df.columns:
+            st.error(
+                f"The user's CSV file must contain a {smile_col} and {type_col} column."
+            )
+
+        if smile_col not in user_df.columns:
+            st.error(f"The user's CSV file must contain a {smile_col} column.")
+
+        if type_col not in user_df.columns:
             user_df["type"] = "User"
 
-            # Concatenate user_df with the main df
-            df = pd.concat([df, user_df], ignore_index=True)
-            df = df.dropna(subset="smiles")
-
-            st.success("User compounds added successfully.")
+        full_df = pd.concat([ref_df, user_df], ignore_index=True)
+        full_df = full_df.dropna(subset=[smile_col])
 
         # Continue with the analysis
         st.success("File uploaded successfully. Generating UMAP plot...")
 
         # Filter out invalid molecules
         # Convert SMILES to RDKit molecules
-        mols = [Chem.MolFromSmiles(smiles) for smiles in df["smiles"]]
+        mols = [Chem.MolFromSmiles(smiles) for smiles in full_df[smile_col]]
         mols = [mol for mol in mols if mol is not None]
 
         # Convert SMILES column to string if it exists
-        if "smiles" in df.columns:
-            df["smiles"] = df["smiles"].astype(str)
-            df["molecule_img"] = df["smiles"].apply(get_molecule_image_src)
+        full_df["smiles"] = full_df[smile_col].astype(str)
+        full_df["molecule_img"] = full_df["smiles"].apply(get_molecule_image_src)
 
         # Calculate 2D RDKit descriptors
         desc_names = [
@@ -375,14 +377,14 @@ with tab_2:
         )
         umap_results = umap_model.fit_transform(descriptors_df)
         # Ensure df and umap_results are aligned
-        df = df.loc[descriptors_df.index].reset_index(drop=True)
+        df = full_df.loc[descriptors_df.index].reset_index(drop=True)
 
         source = ColumnDataSource(
             data=dict(
                 x=umap_results[:, 0],
                 y=umap_results[:, 1],
                 smiles=df["smiles"],
-                type=df["type"],
+                type=df[type_col],
                 molecule_img=df["molecule_img"],
             )
         )
@@ -391,8 +393,10 @@ with tab_2:
         p = figure(width=800, height=600, title="UMAP Plot of 2D RDKit Descriptors")
 
         # Create a color mapper
-        colors = Category10[10][: len(df["type"].unique())]
-        color_mapper = factor_cmap("type", palette=colors, factors=df["type"].unique())
+        colors = Category10[10][: len(df[type_col].unique())]
+        color_mapper = factor_cmap(
+            "type", palette=colors, factors=df[type_col].unique()
+        )
 
         # Create the scatter plot
         scatter = p.scatter(
@@ -406,14 +410,14 @@ with tab_2:
         )
 
         # Highlight user compounds
-        if "User" in df["Type"].unique():
+        if "User" in df[type_col].unique():
             user_source = ColumnDataSource(
                 data=dict(
-                    x=umap_results[df["type"] == "User", 0],
-                    y=umap_results[df["type"] == "User", 1],
-                    smiles=df[df["type"] == "User"]["smiles"],
-                    type=df[df["type"] == "User"]["type"],
-                    molecule_img=df[df["type"] == "User"]["molecule_img"],
+                    x=umap_results[df[type_col] == "User", 0],
+                    y=umap_results[df[type_col] == "User", 1],
+                    smiles=df[df[type_col] == "User"]["smiles"],
+                    type=df[df[type_col] == "User"][type_col],
+                    molecule_img=df[df[type_col] == "User"]["molecule_img"],
                 )
             )
             p.scatter(
