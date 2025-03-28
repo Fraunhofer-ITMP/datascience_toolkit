@@ -259,7 +259,7 @@ with tab2:
         with col2:
             hasClicked = card(
                 title="E3 Ligase Model",
-                text="Model for predicting speicificity of E3 ligase binders",
+                text="Model for predicting specificity of E3 ligase binders",
                 image=load_logo("images/app_logos/protac.webp"),
                 url="https://github.com/Fraunhofer-ITMP/E3_binder_Model",
                 styles={
@@ -270,6 +270,7 @@ with tab2:
                     }
                 },
             )
+
 
     with st.expander(label=r"$\textsf{\Large Screening data preprocessing tools}$"):
         col1, col2, col3 = st.columns(3)
