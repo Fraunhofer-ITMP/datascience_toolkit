@@ -29,6 +29,8 @@ from rdkit.Chem import Descriptors
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+pd.options.mode.chained_assignment = None  # default='warn'
+
 
 logger = logging.getLogger("__name__")
 
@@ -113,6 +115,10 @@ def disease_figures(disease_name, graph: BELGraph = None):
     fig.update_yaxes(title_text="Count", row=1, col=2)
 
     st.plotly_chart(fig, use_container_width=True)
+    if "graph_stats_plot" in st.session_state:
+        st.session_state["graph_stats_plot"] = fig
+
+    st.session_state["graph_stats_plot"] = fig
 
     # Namespace summary
     namespace_data = {}
@@ -140,6 +146,10 @@ def disease_figures(disease_name, graph: BELGraph = None):
 
     st.plotly_chart(figure_ns, use_container_width=True)
 
+    if "graph_ns_plot" in st.session_state:
+        st.session_state["graph_ns_plot"] = figure_ns
+    st.session_state["graph_ns_plot"] = figure_ns
+
     # TODO: Add drug specific information
 
 
@@ -153,7 +163,7 @@ def RetMech(chemblIds) -> list:
     getMech = new_client.mechanism
 
     mechList = []
-    for chemblid in stqdm(chemblIds,desc="Fetching mechanims of actions"):
+    for chemblid in stqdm(chemblIds, desc="Fetching mechanims of actions"):
         mechs = getMech.filter(molecule_chembl_id=chemblid).only(
             ["mechanism_of_action", "target_chembl_id", "action_type"]
         )
@@ -184,7 +194,7 @@ def RetAct(chemblIds) -> dict:
         "target_type",
     ]
 
-    for chembl in stqdm(chemblIds,desc="Fetching targets and associated assays"):
+    for chembl in stqdm(chemblIds, desc="Fetching targets and associated assays"):
         acts = GetAct.filter(
             molecule_chembl_id=chembl,
             pchembl_value__isnull=False,
@@ -330,10 +340,7 @@ def chembl2uniprot(chemblIDs) -> dict:
     return named_chem2Gene2path
 
 
-def chembl2gene2path(
-    chem2geneList,
-    ActList
-):
+def chembl2gene2path(chem2geneList, ActList):
     """Method for updating chembl protein nodes with gene symbol.
 
     :param chem2geneList:
@@ -342,41 +349,19 @@ def chembl2gene2path(
     """
     for item in chem2geneList:
         sizeOfitem = len(chem2geneList[item])
-        gene = chem2geneList[item][sizeOfitem - 1]['component_synonym']
-        #uniprot id is located in 2nd last pos
-        uprot = chem2geneList[item][-2]['accession']
+        gene = chem2geneList[item][sizeOfitem - 1]["component_synonym"]
+        # uniprot id is located in 2nd last pos
+        uprot = chem2geneList[item][-2]["accession"]
         for jtem in ActList:
             for i in range(len(ActList[jtem])):
-                if item == ActList.get(jtem)[i]['target_chembl_id']:
-                    newkey = {'Protein': gene,'Accession':uprot}
+                if item == ActList.get(jtem)[i]["target_chembl_id"]:
+                    newkey = {"Protein": gene, "Accession": uprot}
                     ActList[jtem][i].update(newkey)
 
     return ActList
 
-# def chembl2gene2path(chem2geneList, ActList):
-#     """Method for updating chembl protein nodes with gene symbol.
-#
-#     :param chem2geneList:
-#     :param ActList:
-#     :return:
-#     """
-#     for item in chem2geneList:
-#         sizeOfitem = len(chem2geneList[item])
-#         gene = chem2geneList[item][sizeOfitem - 1]["component_synonym"]
-#         for jtem in ActList:
-#             for i in range(len(ActList[jtem])):
-#                 if item == ActList.get(jtem)[i]["target_chembl_id"]:
-#                     newkey = {"Protein": gene}
-#                     ActList[jtem][i].update(newkey)
-#
-#     return ActList
 
-
-def chem2moa_rel(
-        named_mechList,
-        org, otp_prots,
-        graph: BELGraph
-) -> BELGraph:
+def chem2moa_rel(named_mechList, org, otp_prots, graph: BELGraph) -> BELGraph:
     """Method to create the monkeypox graph
 
     :param named_mechList:
@@ -388,46 +373,58 @@ def chem2moa_rel(
     # identified types of chemical and protein action types
     # ['INHIBITOR','NEGATIVE ALLOSTERIC MODULATOR','POSITIVE ALLOSTERIC MODULATOR','ANTAGONIST','AGONIST','MODULATOR','BLOCKER','ACTIVATOR','DISRUPTING AGENT', 'SUBSTRATE', 'OPENER','PARTIAL AGONIST','SEQUESTERING AGENT']
     # following lists are used to determine type of edge relationships
-    pos = ['POSITIVE ALLOSTERIC MODULATOR', 'AGONIST', 'ACTIVATOR', 'PARTIAL AGONIST']
-    neg = ['INHIBITOR', 'NEGATIVE ALLOSTERIC MODULATOR', 'ANTAGONIST', 'BLOCKER']
-    misc = ['MODULATOR', 'DISRUPTING AGENT', 'SUBSTRATE', 'OPENER', 'SEQUESTERING AGENT']
+    pos = ["POSITIVE ALLOSTERIC MODULATOR", "AGONIST", "ACTIVATOR", "PARTIAL AGONIST"]
+    neg = ["INHIBITOR", "NEGATIVE ALLOSTERIC MODULATOR", "ANTAGONIST", "BLOCKER"]
+    misc = [
+        "MODULATOR",
+        "DISRUPTING AGENT",
+        "SUBSTRATE",
+        "OPENER",
+        "SEQUESTERING AGENT",
+    ]
 
-    for chembl_name, chembl_entries in stqdm(named_mechList.items(), desc='Populating Chemical-MoA edges'):
+    for chembl_name, chembl_entries in stqdm(
+        named_mechList.items(), desc="Populating Chemical-MoA edges"
+    ):
         for info in chembl_entries:
             graph.add_qualified_edge(
-                Abundance(namespace='ChEMBL', name=chembl_name),
-                BiologicalProcess(namespace='MOA', name=info['mechanism_of_action']),
-                relation='hasMechanismOfAction',
-                citation='ChEMBL database',
-                evidence='ChEMBL query'
+                Abundance(namespace="ChEMBL", name=chembl_name),
+                BiologicalProcess(namespace="MOA", name=info["mechanism_of_action"]),
+                relation="hasMechanismOfAction",
+                citation="ChEMBL database",
+                evidence="ChEMBL query",
             )
 
-            if not info['target_chembl_id']:
+            if not info["target_chembl_id"]:
                 continue
 
-            if 'Protein' in info and 'Accession' in info and info['Accession'] in otp_prots:
-                if info['action_type'] in pos and info['Accession'] in otp_prots:
+            if (
+                "Protein" in info
+                and "Accession" in info
+                and info["Accession"] in otp_prots
+            ):
+                if info["action_type"] in pos and info["Accession"] in otp_prots:
                     graph.add_increases(
-                        Abundance(namespace='ChEMBL', name=chembl_name),
-                        Protein(namespace=org, name=info['Protein']),
-                        citation='ChEMBL database',
-                        evidence='ChEMBL query'
+                        Abundance(namespace="ChEMBL", name=chembl_name),
+                        Protein(namespace=org, name=info["Protein"]),
+                        citation="ChEMBL database",
+                        evidence="ChEMBL query",
                     )
-                if info['action_type'] in neg and info['Accession'] in otp_prots:
+                if info["action_type"] in neg and info["Accession"] in otp_prots:
                     graph.add_decreases(
-                        Abundance(namespace='ChEMBL', name=chembl_name),
-                        Protein(namespace=org, name=info['Protein']),
-                        citation='ChEMBL database',
-                        evidence='ChEMBL query'
+                        Abundance(namespace="ChEMBL", name=chembl_name),
+                        Protein(namespace=org, name=info["Protein"]),
+                        citation="ChEMBL database",
+                        evidence="ChEMBL query",
                     )
 
-                if info['action_type'] in misc and info['Accession'] in otp_prots:
+                if info["action_type"] in misc and info["Accession"] in otp_prots:
                     graph.add_qualified_edge(
-                        Abundance(namespace='ChEMBL', name=chembl_name),
-                        Protein(namespace=org, name=info['Protein']),
-                        relation='targets',
-                        citation='ChEMBL database',
-                        evidence='ChEMBL query'
+                        Abundance(namespace="ChEMBL", name=chembl_name),
+                        Protein(namespace=org, name=info["Protein"]),
+                        relation="targets",
+                        citation="ChEMBL database",
+                        evidence="ChEMBL query",
                     )
 
             # else:
@@ -440,11 +437,8 @@ def chem2moa_rel(
 
     return graph
 
-def chem2act_rel(
-    named_ActList,
-    org,otp_prots,
-    graph: BELGraph
-) -> BELGraph:
+
+def chem2act_rel(named_ActList, org, otp_prots, graph: BELGraph) -> BELGraph:
     """Method to add bioassay edges to the KG.
 
     :param named_ActList:
@@ -452,44 +446,49 @@ def chem2act_rel(
     :param graph:
     :return:
     """
-    for chemical, chem_entries in stqdm(named_ActList.items(), desc='Adding bioassay edges to BEL'):
+    for chemical, chem_entries in stqdm(
+        named_ActList.items(), desc="Adding bioassay edges to BEL"
+    ):
         for chem_data in chem_entries:
-            if chem_data['target_chembl_id']:
-                if 'Protein' in chem_data and 'Accession' in chem_data and chem_data['Accession'] in otp_prots:
+            if chem_data["target_chembl_id"]:
+                if (
+                    "Protein" in chem_data
+                    and "Accession" in chem_data
+                    and chem_data["Accession"] in otp_prots
+                ):
                     graph.add_qualified_edge(
-                        Abundance(namespace='ChEMBLAssay', name=chem_data['assay_chembl_id']),
-                        Protein(namespace=org, name=chem_data['Protein']),
-                        relation='hasTarget',
-                        citation='ChEMBL database',
-                        evidence='ChEMBL query'
+                        Abundance(
+                            namespace="ChEMBLAssay", name=chem_data["assay_chembl_id"]
+                        ),
+                        Protein(namespace=org, name=chem_data["Protein"]),
+                        relation="hasTarget",
+                        citation="ChEMBL database",
+                        evidence="ChEMBL query",
                     )
                 # else:
-                    # graph.add_association(
-                        # Abundance(namespace='ChEMBLAssay', name=chem_data['assay_chembl_id']),
-                        # Protein(namespace=org, name=chem_data['target_chembl_id']),
-                        # citation='ChEMBL database',
-                        # evidence='ChEMBL query'
-                    # )
+                # graph.add_association(
+                # Abundance(namespace='ChEMBLAssay', name=chem_data['assay_chembl_id']),
+                # Protein(namespace=org, name=chem_data['target_chembl_id']),
+                # citation='ChEMBL database',
+                # evidence='ChEMBL query'
+                # )
 
             graph.add_qualified_edge(
-                Abundance(namespace='ChEMBL', name=chemical),
-                Abundance(namespace='ChEMBLAssay', name=chem_data['assay_chembl_id']),
-                relation='hasAssay',
-                citation='ChEMBL database',
-                evidence='ChEMBL query',
+                Abundance(namespace="ChEMBL", name=chemical),
+                Abundance(namespace="ChEMBLAssay", name=chem_data["assay_chembl_id"]),
+                relation="hasAssay",
+                citation="ChEMBL database",
+                evidence="ChEMBL query",
                 annotation={
-                    'assayType': chem_data['assay_type'],
-                    'pChEMBL': chem_data['pchembl_value']
-                }
+                    "assayType": chem_data["assay_type"],
+                    "pChEMBL": chem_data["pchembl_value"],
+                },
             )
 
     return graph
 
-def gene2path_rel(
-        named_chem2geneList,
-        org, otp_prots,
-        graph
-) -> BELGraph:
+
+def gene2path_rel(named_chem2geneList, org, otp_prots, graph) -> BELGraph:
     """Method to add protein and reactome data to KG
 
     :param named_chem2geneList:
@@ -502,25 +501,29 @@ def gene2path_rel(
         for j in range(itemLen - 1):
 
             # checks if uprot id is in otp_proteins
-            if named_chem2geneList[item][itemLen - 1]['accession'] in otp_prots:
+            if named_chem2geneList[item][itemLen - 1]["accession"] in otp_prots:
                 graph.add_qualified_edge(
-                    Protein(namespace=org, name=named_chem2geneList[item][itemLen]['component_synonym']),
-                    BiologicalProcess(namespace='Reactome', name=named_chem2geneList[item][j]['xref_name']),
-                    relation='hasPathway',
-                    citation='ChEMBL database',
-                    evidence='ChEMBL query',
+                    Protein(
+                        namespace=org,
+                        name=named_chem2geneList[item][itemLen]["component_synonym"],
+                    ),
+                    BiologicalProcess(
+                        namespace="Reactome",
+                        name=named_chem2geneList[item][j]["xref_name"],
+                    ),
+                    relation="hasPathway",
+                    citation="ChEMBL database",
+                    evidence="ChEMBL query",
                     annotation={
-                        'Reactome': 'https://reactome.org/content/detail/' + named_chem2geneList[item][j]['xref_id']
-                    }
+                        "Reactome": "https://reactome.org/content/detail/"
+                        + named_chem2geneList[item][j]["xref_id"]
+                    },
                 )
 
     return graph
 
-def uniprot_rel(
-        named_uprotList,
-        org,
-        graph
-) -> BELGraph:
+
+def uniprot_rel(named_uprotList, org, graph) -> BELGraph:
     """Method to add UniProt related edges
 
     :param named_uprotList:
@@ -528,59 +531,96 @@ def uniprot_rel(
     :param graph:
     :return:
     """
-    for item in stqdm(named_uprotList, desc='Populating Uniprot edges'):
-        fun = list(named_uprotList[item]['Function'].keys())
-        bp = list(named_uprotList[item]['BioProcess'].keys())
+    for item in stqdm(named_uprotList, desc="Populating Uniprot edges"):
+        fun = list(named_uprotList[item]["Function"].keys())
+        bp = list(named_uprotList[item]["BioProcess"].keys())
         for f in fun:
-            if str(named_uprotList[item]['Gene']) != 'nan' and not isinstance(named_uprotList[item]['Gene'], dict):
+            if str(named_uprotList[item]["Gene"]) != "nan" and not isinstance(
+                named_uprotList[item]["Gene"], dict
+            ):
                 graph.add_qualified_edge(
-                    Protein(namespace=org, name=named_uprotList[item]['Gene']),
-                    BiologicalProcess(namespace='GOMF', name=f),
-                    relation='hasMolecularFunction',
-                    citation='UniProt database',
-                    evidence='UniProt query'
+                    Protein(namespace=org, name=named_uprotList[item]["Gene"]),
+                    BiologicalProcess(namespace="GOMF", name=f),
+                    relation="hasMolecularFunction",
+                    citation="UniProt database",
+                    evidence="UniProt query",
                 )
             else:
                 graph.add_qualified_edge(
                     Protein(namespace=org, name=item),
-                    BiologicalProcess(namespace='GOMF', name=f),
-                    relation='hasMolecularFunction',
-                    citation='UniProt database',
-                    evidence='UniProt query'
+                    BiologicalProcess(namespace="GOMF", name=f),
+                    relation="hasMolecularFunction",
+                    citation="UniProt database",
+                    evidence="UniProt query",
                 )
 
         for b in bp:
-            if str(named_uprotList[item]['Gene']) != 'nan' and not isinstance(named_uprotList[item]['Gene'], dict):
+            if str(named_uprotList[item]["Gene"]) != "nan" and not isinstance(
+                named_uprotList[item]["Gene"], dict
+            ):
                 graph.add_qualified_edge(
-                    Protein(namespace=org, name=named_uprotList[item]['Gene']),
-                    BiologicalProcess(namespace='GOBP', name=b),
-                    relation='hasBiologicalProcess',
-                    citation='UniProt database',
-                    evidence='UniProt query'
+                    Protein(namespace=org, name=named_uprotList[item]["Gene"]),
+                    BiologicalProcess(namespace="GOBP", name=b),
+                    relation="hasBiologicalProcess",
+                    citation="UniProt database",
+                    evidence="UniProt query",
                 )
             else:
                 graph.add_qualified_edge(
                     Protein(namespace=org, name=item),
-                    BiologicalProcess(namespace='GOBP', name=b),
-                    relation='hasBiologicalProcess',
-                    citation='UniProt database',
-                    evidence='UniProt query'
+                    BiologicalProcess(namespace="GOBP", name=b),
+                    relation="hasBiologicalProcess",
+                    citation="UniProt database",
+                    evidence="UniProt query",
                 )
 
-        if str(named_uprotList[item]['Gene']) != 'nan' and not isinstance(named_uprotList[item]['Gene'], dict):
-            nx.set_node_attributes(graph, {Protein(namespace=org, name=named_uprotList[item][
-                'Gene']): 'https://3dbionotes.cnb.csic.es/?queryId=' + item}, '3Dbio')
+        if str(named_uprotList[item]["Gene"]) != "nan" and not isinstance(
+            named_uprotList[item]["Gene"], dict
+        ):
+            nx.set_node_attributes(
+                graph,
+                {
+                    Protein(
+                        namespace=org, name=named_uprotList[item]["Gene"]
+                    ): "https://3dbionotes.cnb.csic.es/?queryId="
+                    + item
+                },
+                "3Dbio",
+            )
 
-            nx.set_node_attributes(graph, {Protein(namespace=org, name=named_uprotList[item][
-                'Gene']): 'https://www.uniprot.org/uniprotkb/' + item}, 'UniProt')
+            nx.set_node_attributes(
+                graph,
+                {
+                    Protein(
+                        namespace=org, name=named_uprotList[item]["Gene"]
+                    ): "https://www.uniprot.org/uniprotkb/"
+                    + item
+                },
+                "UniProt",
+            )
 
         else:
-            nx.set_node_attributes(graph, {
-                Protein(namespace=org, name=item): 'https://3dbionotes.cnb.csic.es/?queryId=' + item}, '3Dbio')
+            nx.set_node_attributes(
+                graph,
+                {
+                    Protein(
+                        namespace=org, name=item
+                    ): "https://3dbionotes.cnb.csic.es/?queryId="
+                    + item
+                },
+                "3Dbio",
+            )
 
-            nx.set_node_attributes(graph,
-                                   {Protein(namespace=org, name=item): 'https://www.uniprot.org/uniprotkb/' + item},
-                                   'UniProt')
+            nx.set_node_attributes(
+                graph,
+                {
+                    Protein(
+                        namespace=org, name=item
+                    ): "https://www.uniprot.org/uniprotkb/"
+                    + item
+                },
+                "UniProt",
+            )
 
     return graph
 
@@ -657,7 +697,7 @@ def getDrugCount(disease_id):
     return api_response
 
 
-def GetDiseaseAssociatedDrugs(disease_id, CT_phase):
+def GetDiseaseAssociatedDrugs(disease_id, CT_phase) -> pd.DataFrame:
     """Finding drugs associated with a disease using OpenTargets API"""
     efo_id = disease_id
     size = getDrugCount(efo_id)
@@ -710,8 +750,10 @@ def GetDiseaseAssociatedDrugs(disease_id, CT_phase):
     return df
 
 
-def GetDiseaseAssociatedProteins(disease_id,index_counter=0,merged_list= []):   
-    
+def GetDiseaseAssociatedProteins(
+    disease_id, index_counter=0, merged_list=[]
+) -> pd.DataFrame:
+
     efo_id = str(disease_id)
 
     query_string = """
@@ -737,126 +779,75 @@ def GetDiseaseAssociatedProteins(disease_id,index_counter=0,merged_list= []):
         }
 
     """
-    
-    #replace $efo_id with value from efo_id
-    #query_string = query_string.replace("$efoId",f'"{efo_id}"')
-    
-    variables = {"efoId":efo_id,"index":index_counter}
+
+    # replace $efo_id with value from efo_id
+    # query_string = query_string.replace("$efoId",f'"{efo_id}"')
+
+    variables = {"efoId": efo_id, "index": index_counter}
 
     # Set base URL of GraphQL API endpoint
     base_url = "https://api.platform.opentargets.org/api/v4/graphql"
 
     # Perform POST request and check status code of response
     r = requests.post(base_url, json={"query": query_string, "variables": variables})
-    #r = requests.post(base_url, json={"query": query_string})
-    #print(r.status_code)
+    # r = requests.post(base_url, json={"query": query_string})
+    # print(r.status_code)
 
     # Transform API response from JSON into Python dictionary and print in console
     api_response = json.loads(r.text)
-    
-    result = api_response['data']['disease']['associatedTargets']['rows']
-    #print(len(result))
-    
+
+    result = api_response["data"]["disease"]["associatedTargets"]["rows"]
+
     merged_list.extend(result)
-    
+
     if result:
-        counter = index_counter+1
-        #print('Counter',counter)
-        GetDiseaseAssociatedProteins(disease_id,counter,merged_list)
-    
-    #return(merged_list)
-    
+        counter = index_counter + 1
+        GetDiseaseAssociatedProteins(disease_id, counter, merged_list)
+
     temp_list = []
     for item in merged_list:
-        #api_response['data']['disease']['associatedTargets']['rows']
-        #print(item['target'])
-        #break
-        for obj in item['target']['proteinIds']:
-            if obj['source'] == 'uniprot_swissprot':
-                #print(obj)
-                uprot = obj['id']
-                source = obj['source']
-                score = item['score']
-                ensg = item['target']['id']
-                name = item['target']['approvedSymbol']
-                temp = {'Protein':name,'ENSG':ensg,'UniProt':uprot,'Source':source,'Score':score}
+        # api_response['data']['disease']['associatedTargets']['rows']
+        # print(item['target'])
+        # break
+        for obj in item["target"]["proteinIds"]:
+            if obj["source"] == "uniprot_swissprot":
+                # print(obj)
+                uprot = obj["id"]
+                source = obj["source"]
+                score = item["score"]
+                ensg = item["target"]["id"]
+                name = item["target"]["approvedSymbol"]
+                temp = {
+                    "Protein": name,
+                    "ENSG": ensg,
+                    "UniProt": uprot,
+                    "Source": source,
+                    "Score": score,
+                }
                 temp_list.append(temp)
-    
+
     df = pd.DataFrame(temp_list)
-    df['disease_id'] = efo_id
-    
-    return(df)
+    df["disease_id"] = efo_id
 
-# def GetDiseaseAssociatedProteins(disease_id):
-    # """Finding proteins associated with a disease using OpenTargets API"""
-    # efo_id = str(disease_id)
+    df.drop_duplicates(inplace=True)  # recursion function created duplicates
+    return df
 
-    # query_string = """
-        # query associatedTargets{
-            # disease(efoId: $efo_id){
-                # id
-                # name
-                # associatedTargets(page:{size:15000,index:0}){
-                    # count
-                    # rows {
-                        # target {
-                            # id
-                            # approvedSymbol
-                            # proteinIds {
-                                # id
-                                # source
-                            # }
-                        # }
-                        # score
-                    # }
-                # }
-            # }
-        # }
-    # """
 
-    # # replace $efo_id with value from efo_id
-    # query_string = query_string.replace("$efo_id", f'"{efo_id}"')
-
-    # # Set base URL of GraphQL API endpoint
-    # base_url = "https://api.platform.opentargets.org/api/v4/graphql"
-
-    # # Perform POST request and check status code of response
-    # r = requests.post(base_url, json={"query": query_string})
-
-    # # Transform API response from JSON into Python dictionary and print in console
-    # api_response = json.loads(r.text)
-
-    # temp_list = []
-    # for item in api_response["data"]["disease"]["associatedTargets"]["rows"]:
-        # for obj in item["target"]["proteinIds"]:
-            # if obj["source"] == "uniprot_swissprot":
-                # # st.write(obj)
-                # uprot = obj["id"]
-                # source = obj["source"]
-                # score = item["score"]
-                # ensg = item["target"]["id"]
-                # name = item["target"]["approvedSymbol"]
-                # temp = {
-                    # "Protein": name,
-                    # "ENSG": ensg,
-                    # "UniProt": uprot,
-                    # "Source": source,
-                    # "Score": score,
-                # }
-                # temp_list.append(temp)
-
-    # df = pd.DataFrame(temp_list)
-    # df["disease_id"] = efo_id
-
-    # return df
-
-@st.cache_data
-def GetDiseaseAssociatedProteinsPlot(df):
+def GetDiseaseAssociatedProteinsPlot(df) -> None:
     """Plotting the protein confidence scores associated with a disease."""
     st.markdown("**Protein-Disease Association summary**")
+    disease_id = df["disease_id"].unique()[0]
+
+    assert df["disease_id"].nunique() == 1
+
     st.markdown(
-        f"""We have identified {len(df)} proteins (Swiss-Prot) associated with the disease. Please note that the proteins identified may not be unique if you combined two or more diseases. Following is a histogram that shows distribution of proteins based on scores provided by OpenTargets. The scores are influenced by various factors such as genetic associations, expression, mutations, known pathways, targeting drugs and so on."""
+        f"We have identified :green[{len(df)}] proteins (Swiss-Prot) associated with the disease (:green[{disease_id}]). "
+        + "Following is a histogram that shows distribution of proteins based on scores provided by OpenTargets. "
+        + "The scores are influenced by various factors such as genetic associations, expression, mutations, known pathways, "
+        + "targeting drugs and so on."
     )
+
+    df.sort_values(by="Score", ascending=False, inplace=True)
 
     prot_fig = go.Figure()
     prot_fig.add_trace(
@@ -873,18 +864,9 @@ def GetDiseaseAssociatedProteinsPlot(df):
         yaxis_title="Score",
     )
     st.plotly_chart(prot_fig, use_container_width=True)
-
-    # score = st.number_input(
-    #     "Enter threshold score (recommended > 0.3):",
-    #     min_value=0.0,
-    #     max_value=1.0,
-    #     value=0.55,
-    #     step=0.1,
-    # )
-    #
-    # if st.button("Submit"):
-    #
-    #     return score
+    st.markdown(
+        "> **_NOTE:_** 📝 Please note that the proteins identified may not be unique if you combined two or more diseases."
+    )
 
 
 def ExtractFromUniProt(uniprot_id) -> dict:
@@ -960,157 +942,149 @@ def ExtractFromUniProt(uniprot_id) -> dict:
     return Uniprot_Dict
 
 
-def GetDiseaseSNPs(disease_id):
+def GetDiseaseSNPs(disease_id) -> pd.DataFrame:
     try:
         snps = get_variants_by_efo_id(disease_id)
         snps_df = snps.genomic_contexts
-        snps_df['disease_id'] = disease_id
-        # snps_functional_class_df = snps.variants
-        # snps_functional_class_df['disease_id'] = disease_id
+        snps_df["disease_id"] = disease_id
         snps_df = snps_df.reset_index(drop=True)
-        return(snps_df)
-
     except:
-        st.write(
-            'No SNPs found. This could be either because 1. The identifier of your disease of interest is not compatible with Experimental Factor Ontology (EFO) or 2. No SNPs have been reported for the disease.')
-        #snps_df = pd.DataFrame()
-        #return(snps_df)
+        st.markdown(
+            "> <i>No SNPs found. This could be either because: (1.) The identifier of your disease of interest is not compatible with Experimental Factor Ontology (EFO) or (2.) No SNPs have been reported for the disease.</i>",
+            unsafe_allow_html=True,
+        )
+        snps_df = pd.DataFrame()
+
+    return snps_df
 
 
-def GetViralProteins(query_disease):
+def GetViralProteins(query_disease) -> list:
     # file downloaded from https://www.genome.jp/ftp/db/virushostdb Dated: 12/09/2023
-    virus = pd.read_csv('https://raw.githubusercontent.com/Fraunhofer-ITMP/kgg/main/data/misc/virushostdb.csv')
-    #virus = pd.read_csv('../data/misc/virushostdb.csv')
+    virus = pd.read_csv(
+        "https://raw.githubusercontent.com/Fraunhofer-ITMP/kgg/main/data/misc/virushostdb.csv"
+    )
 
-    cols = ['virus tax id', 'virus name', 'DISEASE', 'host tax id']
+    cols = ["virus tax id", "virus name", "DISEASE", "host tax id"]
     virus = virus[cols]
 
-    # print(virus)
+    virus = virus.rename(
+        columns={
+            "virus tax id": "virus tax id",
+            "virus name": "virus name",
+            "DISEASE": "disease",
+            "host tax id": "host tax id",
+        }
+    )
 
     # filter virus with host humans
-    virus = virus.loc[virus['host tax id'] == 9606.0, :]
+    virus = virus.loc[virus["host tax id"] == 9606.0, :]
     virus = virus.reset_index(drop=True)
 
     # replace 9606.0 to 9606
-    virus["host tax id"] = pd.to_numeric(virus["host tax id"], downcast='integer')
-
-    # get the initial keyword for disease search
-    # disease = GetQuery()
+    virus["host tax id"] = pd.to_numeric(virus["host tax id"], downcast="integer")
 
     # subset df with disease keyword
-    virus_subset_1 = virus[virus['DISEASE'].str.contains(query_disease, na=False, case=False)]
+    virus_subset_1 = virus[
+        virus["disease"].str.contains(query_disease, na=False, case=False)
+    ]
 
-    if not virus_subset_1.empty:
+    if virus_subset_1.empty:
+        return []
 
-        # print(disease)
-        #print('\n')
-        st.write(
-            'The workflow has identified your query as a viral disease. In the next steps we will add viral proteins (SWISS-Prot) in the KG.',
-            '\n')
+    st.warning(
+        "The workflow has identified your query as a viral disease. In the next steps, you can choose to add viral proteins (SWISS-Prot) in the KG. \n"
+    )
 
-        #time.sleep(0.1)
-        virus_name = st.text_input(
-            "Would you like to look further for a specific virus? Please type its name or skip by typing 'no'.",
-            placeholder='no'
+    # Cleaning the dataframe for outputting
+    virus_subset_1.drop(columns=["host tax id"], inplace=True)
+    virus_subset_1.drop_duplicates(inplace=True)
+
+    viral_output_req = st.text_input(
+        "Do you want to add viral proteins to the KG?",
+        value="No",
+    )
+
+    if viral_output_req.lower() == "no":
+        st.write("You can skip this step and proceed to the next step.")
+        uprot_list = []
+
+    elif viral_output_req.lower() == "yes":
+
+        st.markdown(
+            "**The following viruses have been identified affecting humans, please search and find the virus of interest.**"
+        )
+        config = {
+            "index": st.column_config.NumberColumn("Index"),
+            "virus name": st.column_config.TextColumn("Virus Name"),
+            "disease": st.column_config.TextColumn("Disease"),
+            "host tax id": st.column_config.TextColumn("Host Tax ID"),
+        }
+        st.dataframe(
+            virus_subset_1,
+            use_container_width=True,
+            column_config=config,
         )
 
-        # virus_name = st.selectbox(
-        #     "Would you like to look further for a specific virus?",
-        #     ("Yes", "No"),
-        #     index=None,
-        #     placeholder="Select Yes or No",
-        # )
-
-        st.write("You selected:", virus_name)
-
-        # virus_name = input(
-        #     'Do you want to look further for a specific virus? Please type its name or skip it by typing \'no\': ')
-
-        # subset df with virus name
-        if virus_name.lower() != 'no' :
-
-            virus_subset_2 = virus[virus['virus name'].str.contains(virus_name, na=False, case=False)]
-            # print(virus_subset_2)
-            # break
-        else:
-            virus_subset_2 = pd.DataFrame()
-
-        # merge subsets of df_1 and df_2
-        virus_subset_merge = pd.concat([virus_subset_1, virus_subset_2])
-
-        virus_subset_merge = virus_subset_merge.drop_duplicates(keep='first')
-
-        virus_subset_merge = virus_subset_merge.reset_index(drop=True)
-
-        virus_subset_merge['index'] = virus_subset_merge.index
-
-        virus_subset_merge.style.hide(axis='index')
-
-        virus_subset_merge = virus_subset_merge[['index', 'virus tax id', 'virus name', 'DISEASE', 'host tax id']]
-        virus_subset_merge['virus tax id'] = virus_subset_merge['virus tax id'].astype(str)
-
-        st.dataframe(virus_subset_merge)
-        #display(HTML(virus_subset_merge.to_html(index=False)))
-
+        first_index_of_subset = virus_subset_1.index[0]
         temp_id = st.text_input(
             "Enter the index value(s). If multiple, use space, for example -> 0 1 3: ",
-            placeholder=0,
+            value=str(first_index_of_subset),
         )
 
-        #time.sleep(0.1)
-        #temp_id = input('Enter the index value(s). If multiple, use space, for example -> 0 1 3: ')
-
-        #print('\n')
-
-        temp_id = temp_id.split(' ')
-        temp_id = [int(x) for x in temp_id]
-        # print(virus_subset_merge.loc[0]['virus tax id'])
+        temp_ids = temp_id.split(" ")
+        temp_id_list = [int(x) for x in temp_ids]
 
         uprot_list = []
 
-        for item in temp_id:
-            tax_id = virus_subset_merge.loc[item]['virus tax id']
-            # print(tax_id)
+        for item in temp_id_list:
+            tax_id = virus_subset_1.loc[item]["virus tax id"]
 
             # fetch tax id related proteins from Uniprot
             # the link can be created from downloads option in uniprot
-            query_string = 'https://rest.uniprot.org/uniprotkb/stream?fields=accession%2Creviewed%2Cid%2Cgene_names%2Corganism_name%2Clength%2Cgene_primary%2Cprotein_name&format=tsv&query=%28%28taxonomy_id%3A' + str(
-                tax_id) + '%29+AND+%28reviewed%3Atrue%29%29'
-
-            # query_string = 'https://rest.uniprot.org/uniprotkb/stream?fields=accession%2Creviewed%2Cid%2Cgene_names%2Corganism_name%2Clength%2Cgene_primary%2Cprotein_name&format=tsv&query=%28%28taxonomy_id%3A11676%29%29+AND+%28reviewed%3Atrue%29'
+            query_string = (
+                "https://rest.uniprot.org/uniprotkb/stream?fields=accession%2Creviewed%2Cid%2Cgene_names%2Corganism_name%2Clength%2Cgene_primary%2Cprotein_name&format=tsv&query=%28%28taxonomy_id%3A"
+                + str(tax_id)
+                + "%29+AND+%28reviewed%3Atrue%29%29"
+            )
 
             query_uniprot = requests.get(query_string)
-            query_uniprot = query_uniprot.text.split('\n')
+            query_uniprot = query_uniprot.text.split("\n")
 
-            query_uniprot_df = pd.DataFrame([x.strip().split('\t') for x in query_uniprot])
+            query_uniprot_df = pd.DataFrame(
+                [x.strip().split("\t") for x in query_uniprot]
+            )
             cols = query_uniprot_df.iloc[0]
-            # print(cols)
-            query_uniprot_df = query_uniprot_df[1:len(query_uniprot_df) - 1]
+
+            query_uniprot_df = query_uniprot_df[1 : len(query_uniprot_df) - 1]
             query_uniprot_df.columns = cols
-            temp = list(query_uniprot_df['Entry'])
-            # print(len(temp))
+            temp = list(query_uniprot_df["Entry"])
+
             uprot_list.append(temp)
 
         uprot_list = [item for sublist in uprot_list for item in sublist]
 
-        #st.write('A total of', str(len(uprot_list)), 'viral proteins have been identified.', '\n')
-        st.write(f'A total of {str(len(uprot_list))} viral proteins have been identified.')
+    st.write(
+        f"A total of :green[{str(len(uprot_list))} viral proteins] have been identified."
+    )
 
-        return (uprot_list)
+    return uprot_list
+
 
 def getProtfromKG(mainGraph):
     prot_list = []
-    for u, v, data in stqdm(mainGraph.edges(data=True), desc='Filtering Proteins/Genes'):
+    for u, v, data in stqdm(
+        mainGraph.edges(data=True), desc="Filtering Proteins/Genes"
+    ):
 
-        if 'HGNC' in u.namespace:
+        if "HGNC" in u.namespace:
             if u.name not in prot_list:
                 prot_list.append(u.name)
 
-        if 'HGNC' in v.namespace:
+        if "HGNC" in v.namespace:
             if v.name not in prot_list:
                 prot_list.append(v.name)
 
-    return (prot_list)
+    return prot_list
 
 
 def snp2gene_rel(snp_df, graph):
@@ -1118,55 +1092,50 @@ def snp2gene_rel(snp_df, graph):
 
     kg_prots = getProtfromKG(graph)
 
-    unique_prots_df = pd.DataFrame(kg_prots, columns=['Proteins'])
+    unique_prots_df = pd.DataFrame(kg_prots, columns=["Proteins"])
 
-    snp_df = unique_prots_df.merge(snp_df, how='inner', left_on='Proteins', right_on='gene.geneName')
+    snp_df = unique_prots_df.merge(
+        snp_df, how="inner", left_on="Proteins", right_on="gene.geneName"
+    )
 
     # take SNPs which are within the gene sequence
-    snp_df = snp_df.loc[snp_df['distance'] == 0]
+    snp_df = snp_df.loc[snp_df["distance"] == 0]
     snp_df = snp_df.reset_index(drop=True)
-
-    print('A total of ' + str(len(snp_df)) + ' SNPs have been identified from GWAS Central. Now adding relevant data')
-    print('\n')
 
     # graph = pybel.BELGraph(name='test', version="0.0.1")
 
-    for i in stqdm(range(len(snp_df)), desc='Adding disease associated SNPs'):
+    for i in stqdm(range(len(snp_df)), desc="Adding disease associated SNPs"):
         graph.add_qualified_edge(
-            Protein(namespace="HGNC", name=snp_df['Proteins'][i]),
-            Gene(namespace="dbSNP", name=snp_df['rsId'][i]),
-            relation='hasGeneticVariant',
+            Protein(namespace="HGNC", name=snp_df["Proteins"][i]),
+            Gene(namespace="dbSNP", name=snp_df["rsId"][i]),
+            relation="hasGeneticVariant",
             citation="GWAS Central",
-            evidence="SNPs for queried disease"
+            evidence="SNPs for queried disease",
         )
 
-    return (graph)
+    return graph
 
-@st.cache_data
-def createInitialKG(_session_inputs):
+
+def createInitialKG(efo_id, ct_phase):
     """Creating the initial Knowledge Graph using the disease and protein data."""
-    efo_id = _session_inputs["disease_id"]
-    ct_phase = _session_inputs["ct_phase"]
-
     for functions in stqdm(
         ["disease_drugs", "disease_proteins", "disease_snp"],
         "Fetching real-time data from databases. Be patient!",
     ):
         if functions == "disease_drugs":
-            st.write('Fetching Drugs')
             drugs_df = GetDiseaseAssociatedDrugs(efo_id, ct_phase)
-            drugs_df = drugs_df.reset_index(drop=True)
+            if not drugs_df.empty:
+                drugs_df = drugs_df.reset_index(drop=True)
 
         elif functions == "disease_proteins":
-            st.write('Fetching Proteins')
             dis2prot_df = GetDiseaseAssociatedProteins(efo_id)
-            dis2prot_df = dis2prot_df.reset_index(drop=True)
+            if not dis2prot_df.empty:
+                dis2prot_df = dis2prot_df.reset_index(drop=True)
 
         elif functions == "disease_snp":
-            st.write('Fetching SNPs')
             dis2snp = GetDiseaseSNPs(efo_id)
-            #dis2snp = dis2snp.reset_index(drop=True)
-
+            if not dis2snp.empty:
+                dis2snp = dis2snp.reset_index(drop=True)
 
     return drugs_df, dis2prot_df, dis2snp
 
@@ -1215,13 +1184,14 @@ def getAdverseEffectCount(chembl_id):
     api_response = json.loads(r.text)
 
     # get the count value from api_repsonse dict
-    api_response = api_response['data']['drug']['adverseEvents']['count']
-    return (api_response)
+    api_response = api_response["data"]["drug"]["adverseEvents"]["count"]
+    return api_response
 
-def GetAdverseEvents(chem_list):
+
+def GetAdverseEvents(chem_list) -> pd.DataFrame:
     api_response = pd.DataFrame()
 
-    for chem in stqdm(chem_list, desc='Retrieving Adverse Effects for each drug'):
+    for chem in stqdm(chem_list, desc="Retrieving Adverse Effects for each drug"):
 
         chembl_id = chem
 
@@ -1231,32 +1201,31 @@ def GetAdverseEvents(chem_list):
             count = getAdverseEffectCount(chembl_id)
 
             query_string = """
-                query AdverseEventsQuery(
-                  $chemblId: String!
-                  $index: Int = 0
-                  $size: Int!
-                ) {
-                  drug(chemblId: $chemblId) {
-                    id
-                    maxLlr: adverseEvents(page: { index: 0, size: 1 }) {
-                      rows {
-                        logLR
-                      }
-                    }
-                    adverseEvents(page: { index: $index, size: $size }) {
-                      criticalValue
-                      count
-                      rows {
-                        name
+                    query AdverseEventsQuery(
+                    $chemblId: String!
+                    $index: Int = 0
+                    $size: Int!
+                    ) {
+                    drug(chemblId: $chemblId) {
+                        id
+                        maxLlr: adverseEvents(page: { index: 0, size: 1 }) {
+                        rows {
+                            logLR
+                        }
+                        }
+                        adverseEvents(page: { index: $index, size: $size }) {
+                        criticalValue
                         count
-                        logLR
-                        meddraCode
-                      }
+                        rows {
+                            name
+                            count
+                            logLR
+                            meddraCode
+                        }
+                        }
                     }
-                  }
-                }
-
-        """
+                    }
+            """
             # Set variables object of arguments to be passed to endpoint
             variables = {"chemblId": chembl_id, "size": count}
 
@@ -1264,16 +1233,18 @@ def GetAdverseEvents(chem_list):
             base_url = "https://api.platform.opentargets.org/api/v4/graphql"
 
             # Perform POST request and check status code of response
-            r = requests.post(base_url, json={"query": query_string, "variables": variables})
-            # r = requests.post(base_url, json={"query": query_string})
-            # print(r.status_code)
+            r = requests.post(
+                base_url, json={"query": query_string, "variables": variables}
+            )
 
             # Transform API response from JSON into Python dictionary and print in console
             api_response_temp = json.loads(r.text)
 
-            api_response_temp = api_response_temp['data']['drug']['adverseEvents']['rows']
+            api_response_temp = api_response_temp["data"]["drug"]["adverseEvents"][
+                "rows"
+            ]
             api_response_temp = pd.DataFrame(api_response_temp)
-            api_response_temp['chembl_id'] = chembl_id
+            api_response_temp["chembl_id"] = chembl_id
 
             api_response = pd.concat([api_response, api_response_temp])
 
@@ -1281,13 +1252,10 @@ def GetAdverseEvents(chem_list):
             continue
 
     api_response.reset_index(drop=True, inplace=True)
-    return (api_response)
+    return api_response
 
 
-def chembl2adverseEffect_rel(
-    chembl_adveff_df,
-    graph: BELGraph
-) -> BELGraph:
+def chembl2adverseEffect_rel(chembl_adveff_df, graph: BELGraph) -> BELGraph:
     """
 
     :param chembl_adveff_df:
@@ -1298,14 +1266,15 @@ def chembl2adverseEffect_rel(
     for i in range(len(chembl_adveff_df)):
 
         graph.add_qualified_edge(
-            Abundance(namespace='ChEMBL', name= str(chembl_adveff_df['chembl_id'][i])),
-            Pathology(namespace='SideEffect', name= str(chembl_adveff_df['name'][i])),
-            relation='hasAdverseEffect',
+            Abundance(namespace="ChEMBL", name=str(chembl_adveff_df["chembl_id"][i])),
+            Pathology(namespace="SideEffect", name=str(chembl_adveff_df["name"][i])),
+            relation="hasAdverseEffect",
             citation="OpenTargets Platform",
-            evidence='DrugReactions'
+            evidence="DrugReactions",
         )
 
     return graph
+
 
 def getNodeList(nodeName, graph):
     # import pybel
@@ -1314,57 +1283,75 @@ def getNodeList(nodeName, graph):
         if isinstance(node, pybel.dsl.Abundance):
             if node.namespace == nodeName:
                 node_list.append(node.name)
-    return (node_list)
+    return node_list
+
 
 def chembl_annotation(graph):
-    chemblids = getNodeList('ChEMBL', graph)
-    for item in stqdm(chemblids, desc='Adding ChEMBL URLs'):
-        nx.set_node_attributes(graph, {Abundance(namespace='ChEMBL',
-                                                 name=item): 'https://www.ebi.ac.uk/chembl/compound_report_card/' + item},
-                               'ChEMBL')
+    chemblids = getNodeList("ChEMBL", graph)
+    for item in stqdm(chemblids, desc="Adding ChEMBL URLs"):
+        nx.set_node_attributes(
+            graph,
+            {
+                Abundance(
+                    namespace="ChEMBL", name=item
+                ): "https://www.ebi.ac.uk/chembl/compound_report_card/"
+                + item
+            },
+            "ChEMBL",
+        )
     return graph
 
 
 def chembl_name_annotation(graph, drugs_df):
     # create a dict {'Metformin':'CHEMBL1431'} for adding node attributes
     drugName_chembl_dict = {}
-    for v, k in drugs_df[['prefName', 'drugId']].values:
+    for v, k in drugs_df[["prefName", "drugId"]].values:
         # print(k,v)
         drugName_chembl_dict.update({k: v})
 
     molecule = new_client.molecule
 
     # get all chemicals/drugs from kg
-    chemblids = getNodeList('ChEMBL', graph)
+    chemblids = getNodeList("ChEMBL", graph)
 
-    for chem in stqdm(chemblids, desc='Adding preferred names and trade names'):
+    for chem in stqdm(chemblids, desc="Adding preferred names and trade names"):
 
-        #print(chem)
+        # print(chem)
 
         trade_names = []
 
         # fetch prefName and synonym from chembl
-        getNames = molecule.filter(molecule_chembl_id=chem).only(['pref_name', 'molecule_synonyms'])
+        getNames = molecule.filter(molecule_chembl_id=chem).only(
+            ["pref_name", "molecule_synonyms"]
+        )
 
         # get preferred name #not preferred because it can be empty sometimes
         # pref_name = getNames[0]['pref_name']
 
         # get preferred name of a drug from openTarget diseaseAssociatedDrug file #always has a preferredName
-        nx.set_node_attributes(graph, {Abundance(namespace='ChEMBL', name=chem): drugName_chembl_dict[chem]},
-                               'PreferredName')
+        nx.set_node_attributes(
+            graph,
+            {Abundance(namespace="ChEMBL", name=chem): drugName_chembl_dict[chem]},
+            "PreferredName",
+        )
 
         # get trade names and append to a list
         try:
-            for item in getNames[0]['molecule_synonyms']:
-                if item['syn_type'] == 'TRADE_NAME':
-                    trade_names.append(item['molecule_synonym'])
+            for item in getNames[0]["molecule_synonyms"]:
+                if item["syn_type"] == "TRADE_NAME":
+                    trade_names.append(item["molecule_synonym"])
 
-            nx.set_node_attributes(graph, {Abundance(namespace='ChEMBL', name=chem): trade_names}, 'TradeName')
+            nx.set_node_attributes(
+                graph,
+                {Abundance(namespace="ChEMBL", name=chem): trade_names},
+                "TradeName",
+            )
 
         except:
             continue
 
     return graph
+
 
 def getGeneOntolgyNodes(nodeName, graph):
     # import pybel
@@ -1374,7 +1361,8 @@ def getGeneOntolgyNodes(nodeName, graph):
             # print(node)
             if node.namespace == nodeName:
                 node_list.append(node.name)
-    return (node_list)
+    return node_list
+
 
 def gene_ontology_annotation(graph, uprotDict):
 
@@ -1383,152 +1371,121 @@ def gene_ontology_annotation(graph, uprotDict):
 
     # create a merged dict of {bioprocess: bp_id} for mapping
     for prot in uprotDict:
-        gobp_dict.update(uprotDict[prot]['BioProcess'])
+        gobp_dict.update(uprotDict[prot]["BioProcess"])
 
     for prot in uprotDict:
-        gomf_dict.update(uprotDict[prot]['Function'])
+        gomf_dict.update(uprotDict[prot]["Function"])
 
     # extract bps and mfs from kg
-    bp_kg = getGeneOntolgyNodes('GOBP', graph)
-    mf_kg = getGeneOntolgyNodes('GOMF', graph)
+    bp_kg = getGeneOntolgyNodes("GOBP", graph)
+    mf_kg = getGeneOntolgyNodes("GOMF", graph)
 
-    for item in stqdm(bp_kg, desc='adding biological process annotations'):
+    for item in stqdm(bp_kg, desc="adding biological process annotations"):
         gobp_id = gobp_dict[item]
         # print(gobp_id)
         # print('https://www.ebi.ac.uk/QuickGO/term/'+gobp_id)
-        nx.set_node_attributes(graph, {
-            BiologicalProcess(namespace='GOBP', name=item): 'https://www.ebi.ac.uk/QuickGO/term/' + gobp_id},
-                               'QuickGO')
-        nx.set_node_attributes(graph, {BiologicalProcess(namespace='GOBP', name=item): gobp_id},
-                               'Gene Ontology identifier')
+        nx.set_node_attributes(
+            graph,
+            {
+                BiologicalProcess(
+                    namespace="GOBP", name=item
+                ): "https://www.ebi.ac.uk/QuickGO/term/"
+                + gobp_id
+            },
+            "QuickGO",
+        )
+        nx.set_node_attributes(
+            graph,
+            {BiologicalProcess(namespace="GOBP", name=item): gobp_id},
+            "Gene Ontology identifier",
+        )
 
-    for item in stqdm(mf_kg, desc='adding molecular function annotations'):
+    for item in stqdm(mf_kg, desc="adding molecular function annotations"):
         gomf_id = gomf_dict[item]
         # print(gobp_id)
         # print('https://www.ebi.ac.uk/QuickGO/term/'+gobp_id)
-        nx.set_node_attributes(graph, {
-            BiologicalProcess(namespace='GOMF', name=item): 'https://www.ebi.ac.uk/QuickGO/term/' + gomf_id},
-                               'QuickGO')
-        nx.set_node_attributes(graph, {BiologicalProcess(namespace='GOMF', name=item): gomf_id},
-                               'Gene Ontology identifier')
+        nx.set_node_attributes(
+            graph,
+            {
+                BiologicalProcess(
+                    namespace="GOMF", name=item
+                ): "https://www.ebi.ac.uk/QuickGO/term/"
+                + gomf_id
+            },
+            "QuickGO",
+        )
+        nx.set_node_attributes(
+            graph,
+            {BiologicalProcess(namespace="GOMF", name=item): gomf_id},
+            "Gene Ontology identifier",
+        )
 
-    return (graph)
+    return graph
 
-def finalizeKG(filtered_protein_df: pd.DataFrame, session_inputs: dict):
+
+def finalizeKG(
+    filtered_protein_df: pd.DataFrame,
+    drugs_df: pd.DataFrame,
+    kg_name: str,
+    dis2snp_df: pd.DataFrame,
+    viral_proteins: list,
+):
     """Finalizing the Knowledge Graph by adding proteins and drugs data."""
 
     # create empty KG
-    kg = BELGraph(name=session_inputs["kg_name"], version="0.0.1")
+    kg = BELGraph(name=kg_name, version="0.0.1")
 
-    for metadata_functions in "prot", "cmpds", "snps":
-        if metadata_functions == "prot":
-            unique_proteins = list(set(filtered_protein_df["UniProt"]))
-            #st.write(unique_proteins)
-            uprot_ext = ExtractFromUniProt(unique_proteins)
-            kg = uniprot_rel(uprot_ext, "HGNC", kg)
-            kg = gene_ontology_annotation(kg, uprot_ext)
+    # Prots
+    unique_proteins = list(set(filtered_protein_df["UniProt"]))
 
-            if "human_protein" not in st.session_state:
-                st.session_state["human_protein"] = uprot_ext
-            elif uprot_ext != st.session_state["human_protein"]:
-                st.session_state["human_protein"] = uprot_ext
+    uprot_ext = ExtractFromUniProt(unique_proteins)
+    kg = uniprot_rel(uprot_ext, "HGNC", kg)
+    kg = gene_ontology_annotation(kg, uprot_ext)
 
-            viral_prot = st.session_state.viral_prot
-            if viral_prot:
-                vir_uprot_ext = ExtractFromUniProt(viral_prot)
-                #st.write(vir_uprot_ext)
-                kg = uniprot_rel(vir_uprot_ext,'VP',kg)
+    if len(viral_proteins) > 0:
+        vir_uprot_ext = ExtractFromUniProt(viral_proteins)
+        kg = uniprot_rel(vir_uprot_ext, "VP", kg)
 
-                #kg = gene_ontology_annotation(kg, vir_uprot_ext)
+    # Drugs
+    if not drugs_df.empty:
+        st.write(
+            "A total of "
+            + str(len(list(set(drugs_df["drugId"]))))
+            + " drugs have been identified. Now fetching relevant data"
+        )
 
-                if "viral_protein" not in st.session_state:
-                    st.session_state["viral_protein"] = vir_uprot_ext
-                elif vir_uprot_ext != st.session_state["viral_protein"]:
-                    st.session_state["viral_protein"] = vir_uprot_ext
+        chembl2mech = RetMech(list(set(drugs_df["drugId"])))
+        chembl2act = RetAct(list(set(drugs_df["drugId"])))
 
-        elif metadata_functions == "cmpds":
-            drugs_df = st.session_state.drugs_df
-            if not drugs_df.empty:
+        prtn_as_chembl = Ret_chembl_protein(chembl2act) + Ret_chembl_protein(
+            chembl2mech
+        )
+        prtn_as_chembl = set(prtn_as_chembl)
+        prtn_as_chembl = list(prtn_as_chembl)
+        chembl2uprot = chembl2uniprot(prtn_as_chembl)
 
-                # for rel_function_1 in stqdm(
-                #     ["chembl2mech", "chembl2act"], desc="Fetching chemical relations"
-                # ):
-                #     if rel_function_1 == "chembl2mech":
-                #         chembl2mech = RetMech(list(set(drugs_df["drugId"])))
-                #     elif rel_function_1 == "chembl2act":
-                #         chembl2act = RetAct(list(set(drugs_df["drugId"])))
-                #
-                # prtn_as_chembl = Ret_chembl_protein(chembl2act) + Ret_chembl_protein(chembl2mech)
-                # prtn_as_chembl = set(prtn_as_chembl)
-                # chembl2uprot = chembl2uniprot(prtn_as_chembl)
-                #
-                # for rel_function_2 in stqdm(
-                #     ["chembl2act", "chembl2mech"], desc="Fetching protein relations"
-                # ):
-                #     if rel_function_2 == "chembl2act":
-                #         chembl2act = chembl2gene2path(chembl2uprot, chembl2act)
-                #     elif rel_function_2 == "chembl2mech":
-                #         chembl2mech = chembl2gene2path(chembl2uprot, chembl2mech)
-                #         st.write('Here')
-                #         st.write(chembl2mech)
+        chembl2act_2 = chembl2gene2path(chembl2uprot, chembl2act)
+        chembl2mech_2 = chembl2gene2path(chembl2uprot, chembl2mech)
 
-                st.write('A total of ' + str(
-                    len(list(set(drugs_df['drugId'])))) + ' drugs have been identified. Now fetching relevant data')
+        kg = chem2moa_rel(chembl2mech_2, "HGNC", unique_proteins, kg)
+        kg = chem2act_rel(chembl2act_2, "HGNC", unique_proteins, kg)
+        kg = gene2path_rel(chembl2uprot, "HGNC", unique_proteins, kg)
 
-                chembl2mech = RetMech(list(set(drugs_df['drugId'])))
-                #st.write("Mech",chembl2mech)
-                chembl2act = RetAct(list(set(drugs_df['drugId'])))
-                #st.write('Act',chembl2act)
+        adv_effect = GetAdverseEvents(list(set(drugs_df["drugId"])))
 
-                prtn_as_chembl = Ret_chembl_protein(chembl2act) + Ret_chembl_protein(chembl2mech)
-                prtn_as_chembl = set(prtn_as_chembl)
-                prtn_as_chembl = list(prtn_as_chembl)
-                chembl2uprot = chembl2uniprot(prtn_as_chembl)
-                #st.write('Chem2prot',chembl2uprot)
+        kg = chembl2adverseEffect_rel(adv_effect, kg)
 
-                chembl2act_2 = chembl2gene2path(chembl2uprot, chembl2act)
-                chembl2mech_2 = chembl2gene2path(chembl2uprot, chembl2mech)
+        kg = chembl_name_annotation(kg, drugs_df)
+    else:
+        st.write("No drugs have been identified for the disease.")
+        adv_effect = pd.DataFrame()
 
-                #st.write("Mech2", chembl2act_2)
-                #st.write('Act2', chembl2act_2)
-
-                kg = chem2moa_rel(chembl2mech_2, 'HGNC', unique_proteins, kg)
-                kg = chem2act_rel(chembl2act_2, 'HGNC', unique_proteins, kg)
-                kg = gene2path_rel(chembl2uprot, 'HGNC', unique_proteins, kg)
-
-                adv_effect = GetAdverseEvents(list(set(drugs_df['drugId'])))
-
-                # viral_prot = kgg_utils.GetViralProteins(st.session_state["user_disease"])
-                #
-                # if "viral_prot" not in st.session_state:
-                #     st.session_state["viral_prot"] = viral_prot
-                # elif not st.session_state['viral_prot'] == viral_prot:
-                #     st.session_state["viral_prot"] = viral_prot
-
-                if "adv_effect" not in st.session_state:
-                    st.session_state["adv_effect"] = adv_effect
-                elif not st.session_state["adv_effect"].equals(adv_effect):
-                    st.session_state["adv_effect"] = adv_effect
-
-                kg = chembl2adverseEffect_rel(adv_effect, kg)
-
-                kg = chembl_name_annotation(kg, drugs_df)
-
-        elif metadata_functions == "snps":
-
-            dis2snp_df = st.session_state.dis2snp_df
-            #st.write(st.session_state)
-            # if not dis2snp_df.empty:
-            #     kg = snp2gene_rel(dis2snp_df, kg)
-            try:
-                kg = snp2gene_rel(dis2snp_df, kg)
-            except:
-                continue
-
-    st.write(st.session_state)
+    # SNPs
+    if not dis2snp_df.empty:
+        kg = snp2gene_rel(dis2snp_df, kg)
 
     st.write("Your KG is now generated!", "\n")
-    return kg
+    return kg, adv_effect
 
 
 def get_graph_summary(graph):
@@ -1564,26 +1521,30 @@ def GetSmiles(drugs_df, colname):
     temp_list = []
     unused_list = []
 
-    for item in stqdm(drugs_list,'Getting SMILES for CHEMBL ids and generating descriptors'):
+    for item in stqdm(
+        drugs_list, "Getting SMILES for CHEMBL ids and generating descriptors"
+    ):
 
         try:
 
-            mol = molecule.filter(chembl_id=str(item)).only(['molecule_chembl_id', 'molecule_structures'])
-            mol_smiles = mol[0]['molecule_structures']['canonical_smiles']
+            mol = molecule.filter(chembl_id=str(item)).only(
+                ["molecule_chembl_id", "molecule_structures"]
+            )
+            mol_smiles = mol[0]["molecule_structures"]["canonical_smiles"]
             temp = [item, mol_smiles]
             temp_list.append(temp)
 
         except:
-            #st.write(f'Id {str(item)} could not be parsed')
+            # st.write(f'Id {str(item)} could not be parsed')
             # print(item)
             unused_list.append(item)
             continue
 
-    temp_df = pd.DataFrame(temp_list, columns=['drugId', 'smiles'])
+    temp_df = pd.DataFrame(temp_list, columns=["drugId", "smiles"])
 
-    unused_df = pd.DataFrame(unused_list, columns=['Unparsed_drugs'])
+    unused_df = pd.DataFrame(unused_list, columns=["Unparsed_drugs"])
 
-    return(temp_df,unused_df)
+    return (temp_df, unused_df)
 
 
 def ro5_filter(df):
@@ -1593,7 +1554,7 @@ def ro5_filter(df):
 
     pass_list = []
 
-    for item in df['smiles']:
+    for item in df["smiles"]:
 
         molecule = Chem.MolFromSmiles(item)
 
@@ -1612,7 +1573,12 @@ def ro5_filter(df):
 
         logp = Descriptors.MolLogP(molecule)
 
-        conditions = [molecular_weight <= 500, h_bond_acceptors <= 10, h_bond_donor <= 5, logp <= 5]
+        conditions = [
+            molecular_weight <= 500,
+            h_bond_acceptors <= 10,
+            h_bond_donor <= 5,
+            logp <= 5,
+        ]
 
         violation_counts = conditions.count(False)
 
@@ -1630,15 +1596,15 @@ def ro5_filter(df):
         else:
             pass_list.append(1)
 
-    names = 'MW HBA HBD LogP'.split(' ')
+    names = "MW HBA HBD LogP".split(" ")
     temp_df = pd.DataFrame(temp_df, columns=names)
 
-    df['Violation(s)_ro5'] = violation_counts_list
-    df['Lipinski_ro5'] = pass_list
+    df["Violation(s)_ro5"] = violation_counts_list
+    df["Lipinski_ro5"] = pass_list
 
     df = pd.concat([df, temp_df], axis=1)
 
-    return (df)
+    return df
 
 
 def ghose_filter(df):
@@ -1646,7 +1612,7 @@ def ghose_filter(df):
 
     pass_list = []
 
-    for item in df['smiles']:
+    for item in df["smiles"]:
 
         molecule = Chem.MolFromSmiles(item)
 
@@ -1664,10 +1630,12 @@ def ghose_filter(df):
 
         logp = Descriptors.MolLogP(molecule)
 
-        conditions = [molecular_weight >= 160 and molecular_weight <= 480,
-                      number_of_atoms >= 20 and number_of_atoms <= 70,
-                      molar_refractivity >= 40 and molar_refractivity <= 130,
-                      logp >= -0.4 and logp <= 5.6]
+        conditions = [
+            molecular_weight >= 160 and molecular_weight <= 480,
+            number_of_atoms >= 20 and number_of_atoms <= 70,
+            molar_refractivity >= 40 and molar_refractivity <= 130,
+            logp >= -0.4 and logp <= 5.6,
+        ]
 
         pass_ghose = conditions.count(True) == 4
 
@@ -1681,14 +1649,14 @@ def ghose_filter(df):
         else:
             pass_list.append(1)
 
-    names = 'AtomNum MolRefractivity'.split(' ')
+    names = "AtomNum MolRefractivity".split(" ")
     temp_df = pd.DataFrame(temp_df, columns=names)
 
-    df['Ghose'] = pass_list
+    df["Ghose"] = pass_list
 
     df = pd.concat([df, temp_df], axis=1)
 
-    return (df)
+    return df
 
 
 def veber_filter(df):
@@ -1696,7 +1664,7 @@ def veber_filter(df):
 
     pass_list = []
 
-    for item in df['smiles']:
+    for item in df["smiles"]:
 
         molecule = Chem.MolFromSmiles(item)
 
@@ -1708,9 +1676,7 @@ def veber_filter(df):
 
         rotatable_bonds = Descriptors.NumRotatableBonds(molecule)
 
-        conditions = [rotatable_bonds <= 10,
-                      topological_surface_area_mapping <= 140
-                      ]
+        conditions = [rotatable_bonds <= 10, topological_surface_area_mapping <= 140]
 
         pass_veber = conditions.count(True) == 2
 
@@ -1724,14 +1690,14 @@ def veber_filter(df):
         else:
             pass_list.append(1)
 
-    names = 'RotBond TPSA'.split(' ')
+    names = "RotBond TPSA".split(" ")
     temp_df = pd.DataFrame(temp_df, columns=names)
 
-    df['Veber'] = pass_list
+    df["Veber"] = pass_list
 
     df = pd.concat([df, temp_df], axis=1)
 
-    return (df)
+    return df
 
 
 def reos_filter(df):
@@ -1739,7 +1705,7 @@ def reos_filter(df):
 
     pass_list = []
 
-    for item in df['smiles']:
+    for item in df["smiles"]:
 
         molecule = Chem.MolFromSmiles(item)
 
@@ -1762,13 +1728,15 @@ def reos_filter(df):
 
         # print(molecular_weight,logp,h_bond_donor,h_bond_acceptors,formal_charge,rotatable_bonds,heavy_atoms)
 
-        conditions = [molecular_weight >= 200 and molecular_weight <= 500,
-                      logp >= -0.4 and logp <= 5.6,
-                      h_bond_donor >= 0 and h_bond_donor <= 5,
-                      h_bond_acceptors >= 0 and h_bond_acceptors <= 10,
-                      formal_charge >= -2 and formal_charge <= 2,
-                      rotatable_bonds >= 0 and rotatable_bonds <= 8,
-                      heavy_atoms >= 15 and heavy_atoms <= 50]
+        conditions = [
+            molecular_weight >= 200 and molecular_weight <= 500,
+            logp >= -0.4 and logp <= 5.6,
+            h_bond_donor >= 0 and h_bond_donor <= 5,
+            h_bond_acceptors >= 0 and h_bond_acceptors <= 10,
+            formal_charge >= -2 and formal_charge <= 2,
+            rotatable_bonds >= 0 and rotatable_bonds <= 8,
+            heavy_atoms >= 15 and heavy_atoms <= 50,
+        ]
 
         descriptors = [formal_charge, heavy_atoms]
 
@@ -1783,14 +1751,14 @@ def reos_filter(df):
         else:
             pass_list.append(1)
 
-    names = 'Charge HeavyAtom'.split(' ')
+    names = "Charge HeavyAtom".split(" ")
     temp_df = pd.DataFrame(temp_df, columns=names)
 
-    df['REOS'] = pass_list
+    df["REOS"] = pass_list
 
     df = pd.concat([df, temp_df], axis=1)
 
-    return (df)
+    return df
 
 
 def qed_filter(df):
@@ -1798,7 +1766,7 @@ def qed_filter(df):
 
     pass_list = []
 
-    for item in df['smiles']:
+    for item in df["smiles"]:
 
         molecule = Chem.MolFromSmiles(item)
 
@@ -1819,12 +1787,14 @@ def qed_filter(df):
 
         # print(molecular_weight,logp,h_bond_donor,h_bond_acceptors,formal_charge,rotatable_bonds,heavy_atoms)
 
-        conditions = [molecular_weight <= 400,
-                      logp <= 5,
-                      h_bond_donor <= 5,
-                      h_bond_acceptors <= 10,
-                      num_of_rings > 0,
-                      rotatable_bonds <= 5]
+        conditions = [
+            molecular_weight <= 400,
+            logp <= 5,
+            h_bond_donor <= 5,
+            h_bond_acceptors <= 10,
+            num_of_rings > 0,
+            rotatable_bonds <= 5,
+        ]
 
         # descriptors = [num_of_rings]
 
@@ -1839,14 +1809,15 @@ def qed_filter(df):
         else:
             pass_list.append(1)
 
-    df['QED'] = pass_list
-    df['RingNum'] = temp_df
+    df["QED"] = pass_list
+    df["RingNum"] = temp_df
 
-    return (df)
+    return df
+
 
 def calculate_filters(df, colname_chembl):
 
-    df_smiles,unusedDrugs_df = GetSmiles(df, colname_chembl)
+    df_smiles, unusedDrugs_df = GetSmiles(df, colname_chembl)
 
     # df_smiles = remove_salt(df_smiles,'smiles')
 
@@ -1856,65 +1827,74 @@ def calculate_filters(df, colname_chembl):
     temp = reos_filter(temp)
     temp = qed_filter(temp)
 
-    df = df.loc[df.groupby('drugId')['phase'].idxmax()]
+    df = df.loc[df.groupby("drugId")["phase"].idxmax()]
     df = df.reset_index(drop=True)
 
-    df = pd.merge(temp, df[['drugId', 'phase']], on='drugId', how='left')
+    df = pd.merge(temp, df[["drugId", "phase"]], on="drugId", how="left")
 
-    df[['phase']] = df[['phase']].astype(int)
+    df[["phase"]] = df[["phase"]].astype(int)
 
     df = df.drop_duplicates()
     df = df.reset_index(drop=True)
 
-    return (df,unusedDrugs_df)
+    return (df, unusedDrugs_df)
 
-def create_zip():
 
-    drugs_df = st.session_state["drugs_df"].to_csv(index=False)
-    dis2prot_df = st.session_state["dis2prot_df"].to_csv(index=False)
-    dis2snp_df = st.session_state["dis2snp_df"].to_csv(index=False)
-    advEff_df = st.session_state["adv_effect"].to_csv(index=False)
-    humanProtDict = st.session_state["human_protein"]
+def refactor_state(session_keys: list):
+    # Delete the keys from session state
+    for key in session_keys:
+        if key in st.session_state:
+            del st.session_state[key]
+
+
+def save_files():
+    folder_name = st.session_state.disease_name
+    os.makedirs(folder_name, exist_ok=True)
+
+    # Save DataFrames as CSV files
+    files = {
+        "DiseaseAssociatedDrugs.csv": st.session_state["drugs_df"],
+        "DiseaseAssociatedProteins.csv": st.session_state["dis2prot_df"],
+        "DiseaseAssociatedSNPs.csv": st.session_state["dis2snp_df"],
+        "AdverseEffects.csv": st.session_state["adv_effect"],
+    }
+
+    for file_name, df in files.items():
+        df.to_csv(os.path.join(folder_name, file_name), index=False)
+
+    # Save other data structures
     kg = st.session_state["graph"]
-    if "viral_protein" in st.session_state:
-        viralProtDict = st.session_state["viral_protein"]
+    # humanProtDict = st.session_state["human_protein"]
+    viralProtDict = st.session_state["viral_prot"]
 
-    files = {"DiseaseAssociatedDrugs.csv": drugs_df, "DiseaseAssociatedProteins.csv": dis2prot_df,
-             "DiseaseAssociatedSNPs.csv": dis2snp_df,"AdverseEffects.csv":advEff_df}
+    bel_file = os.path.join(folder_name, f"{st.session_state.kg_name}.bel")
+    graphml_file = os.path.join(folder_name, f"{st.session_state.kg_name}.graphml")
 
-    zip_buffer = io.BytesIO()
-    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
-        for file_name, file_content in files.items():
-            zip_file.writestr(file_name, file_content)
+    pybel.dump(kg, bel_file)
+    pybel.to_graphml(kg, graphml_file)
 
-        pickle_buffer_kg = io.BytesIO()
-        pickle.dump(kg, pickle_buffer_kg)
-        zip_file.writestr(f"{st.session_state.kg_name}.pkl", pickle_buffer_kg.getvalue())
+    if viralProtDict is not None:
+        viral_pickle_file = os.path.join(
+            folder_name, f"{st.session_state.kg_name}_ViralUniProtDict.pkl"
+        )
+        pickle.dump(viralProtDict, open(viral_pickle_file, "wb"))
 
-        # Save the DataFrame as a CSV in memory and add it to the zip
-        kg_csv_buffer = io.StringIO()
-        pybel.to_csv(kg,kg_csv_buffer)
-        zip_file.writestr(f"{st.session_state.kg_name}.csv", kg_csv_buffer.getvalue())
+    # Save the plotly figures
+    ns_fig = st.session_state["graph_ns_plot"]
+    stat_fig = st.session_state["graph_stats_plot"]
+    ns_fig.write_image(
+        os.path.join(folder_name, f"{st.session_state.kg_name}_NamespaceSummary.png")
+    )
+    stat_fig.write_image(
+        os.path.join(folder_name, f"{st.session_state.kg_name}_GraphStatistics.png")
+    )
 
-        kg_bel_buffer = io.StringIO()
-        pybel.dump(kg,kg_bel_buffer)
-        zip_file.writestr(f"{st.session_state.kg_name}.bel", kg_bel_buffer.getvalue())
+    # Create zip file
+    zip_path = f"{folder_name}.zip"
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for root, _, files in os.walk(folder_name):
+            for file in files:
+                file_path = os.path.join(root, file)
+                zipf.write(file_path, os.path.relpath(file_path, folder_name))
 
-        kg_graphml_buffer = io.StringIO()
-        pybel.to_graphml(kg,kg_graphml_buffer)
-        zip_file.writestr(f"{st.session_state.kg_name}.graphml", kg_graphml_buffer.getvalue())
-
-        pickle_buffer_humanProt = io.BytesIO()
-        pickle.dump(humanProtDict, pickle_buffer_humanProt)
-        zip_file.writestr(f"{st.session_state.kg_name}_UniProtDict.pkl", pickle_buffer_humanProt.getvalue())
-
-        try:
-            pickle_buffer_viralProt = io.BytesIO()
-            pickle.dump(viralProtDict, pickle_buffer_viralProt)
-            zip_file.writestr(f"{st.session_state.kg_name}_UniProtDict.pkl", pickle_buffer_viralProt.getvalue())
-        except NameError:
-            viralProtDict = None
-
-    #zip_buffer.seek(0)
-
-    return zip_buffer.getvalue()
+    return zip_path

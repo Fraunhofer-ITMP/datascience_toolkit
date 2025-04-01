@@ -1,16 +1,14 @@
 """App for Knowledge Graph Generator (KGG)"""
 
+import os
+import shutil
 import datetime
 from tabulate import tabulate
 import streamlit as st
 import kgg_utils
 from pybel.struct.summary import supersummary as ss
 import pandas as pd
-
-import zipfile
-#from zipfile import ZipFile
-from io import BytesIO
-import base64
+from pandas.testing import assert_frame_equal
 
 st.set_page_config(
     layout="wide",
@@ -39,13 +37,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-tab1, tab2, tab3 = st.tabs(
-    [
-        "Description",
-        "KG Generator",
-        "Drug-likeness assessment"
-    ]
-)
+tab1, tab2, tab3 = st.tabs(["Description", "KG Generator", "Drug-likeness assessment"])
 
 
 with tab1:
@@ -107,7 +99,26 @@ with tab2:
     if st.session_state["user_disease"] != disease_name:
         st.session_state["user_disease"] = disease_name
 
+        # destroy the previous session state
+        session_state_keys_1 = [
+            "disease_df",
+            "disease_id",
+            "disease_name",
+            "viral_prot",
+            "ct_phase",
+            "drugs_df",
+            "dis2prot_df",
+            "dis2snp_df",
+            "protein_score",
+            "graph",
+            "kg_name",
+            "filtered_protein_df",
+        ]
+
+        kgg_utils.refactor_state(session_state_keys_1)
+
     disease_df = kgg_utils.searchDisease(st.session_state["user_disease"])
+    disease_df.drop_duplicates(inplace=True)
     if disease_df.empty:
         st.write("No results found for the disease. Please try again.")
         st.stop()
@@ -116,9 +127,28 @@ with tab2:
 
     if "disease_df" not in st.session_state:
         st.session_state["disease_df"] = disease_df
+    else:
+        try:
+            assert_frame_equal(disease_df, st.session_state["disease_df"])
+        except AssertionError:
+            st.session_state["disease_df"] = disease_df
 
-    if not st.session_state['disease_df'].equals(disease_df):
-        st.session_state["disease_df"] = disease_df
+            # destroy the previous session state
+            session_state_keys_2 = [
+                "disease_id",
+                "disease_name",
+                "viral_prot",
+                "ct_phase",
+                "drugs_df",
+                "dis2prot_df",
+                "dis2snp_df",
+                "protein_score",
+                "graph",
+                "kg_name",
+                "filtered_protein_df",
+            ]
+
+            kgg_utils.refactor_state(session_state_keys_2)
 
     col1, col2 = st.columns(2)
 
@@ -133,12 +163,29 @@ with tab2:
 
         if "disease_id" not in st.session_state:
             st.session_state["disease_id"] = disease_id
-            st.session_state["disease_name"] = disease_df[disease_df["id"] == disease_id]["name"].values[0]
-
+            st.session_state["disease_name"] = disease_df[
+                disease_df["id"] == disease_id
+            ]["name"].values[0]
         elif disease_id != st.session_state["disease_id"]:
-            st.session_state["disease_id"] = disease_id  # Update the session
-            #st.session_state["disease_name"] = st.session_state["disease_df"][st.session_state["disease_df"]["id"] == disease_id]["name"].values[0]
-            st.session_state["disease_name"] = disease_df[disease_df["id"] == disease_id]["name"].values[0]
+            st.session_state["disease_id"] = disease_id
+            st.session_state["disease_name"] = disease_df[
+                disease_df["id"] == disease_id
+            ]["name"].values[0]
+
+            # destroy the previous session state
+            session_state_keys_3 = [
+                "viral_prot",
+                "ct_phase",
+                "drugs_df",
+                "dis2prot_df",
+                "dis2snp_df",
+                "protein_score",
+                "graph",
+                "kg_name",
+                "filtered_protein_df",
+            ]
+
+            kgg_utils.refactor_state(session_state_keys_3)
 
     with col2:
         st.markdown(
@@ -151,33 +198,51 @@ with tab2:
         if "ct_phase" not in st.session_state:
             st.session_state["ct_phase"] = ct_phase
         elif ct_phase != st.session_state["ct_phase"]:
-            st.session_state["ct_phase"] = ct_phase  # Update the session
+            st.session_state["ct_phase"] = ct_phase
+
+            # destroy the previous session state
+            session_state_keys_4 = [
+                "viral_prot",
+                "drugs_df",
+                "dis2prot_df",
+                "dis2snp_df",
+                "protein_score",
+                "graph",
+                "kg_name",
+                "filtered_protein_df",
+            ]
+
+            kgg_utils.refactor_state(session_state_keys_4)
 
     st.markdown(
-        ":red[Selected disease:] "
-        + st.session_state["disease_name"]
-        + ":red[ with ID:] "
-        + st.session_state["disease_id"]
-        + ":red[ and clinical trial phase:] "
-        + str(st.session_state["ct_phase"])
+        "Selected disease: "
+        + f":green[{st.session_state['disease_name']}]"
+        + " with ID: "
+        + f":green[{st.session_state['disease_id']}]"
+        + " and clinical trial phase: "
+        + f":green[{st.session_state['ct_phase']}]"
+        + "."
     )
 
     viral_prot = kgg_utils.GetViralProteins(st.session_state["user_disease"])
+
     if "viral_prot" not in st.session_state:
         st.session_state["viral_prot"] = viral_prot
-    elif not st.session_state['viral_prot'] == viral_prot:
-    #elif viral_prot != st.session_state["viral_prot"]:
+    elif sorted(viral_prot) != sorted(st.session_state["viral_prot"]):
         st.session_state["viral_prot"] = viral_prot
 
-    # st.markdown(
-    #     ":red[Selected disease:] "
-    #     + st.session_state["disease_name"]
-    #     + ":red[ with ID:] "
-    #     + st.session_state["disease_id"]
-    #     + ":red[ and clinical trial phase:] "
-    #     + str(st.session_state["ct_phase"])
-    # )
-    st.write(st.session_state)
+        # destroy the previous session state
+        session_state_keys_5 = [
+            "drugs_df",
+            "dis2prot_df",
+            "dis2snp_df",
+            "protein_score",
+            "graph",
+            "kg_name",
+            "filtered_protein_df",
+        ]
+
+        kgg_utils.refactor_state(session_state_keys_5)
 
     st.header("Generating the graph", anchor="generate-graph", divider="grey")
     dis_name = (
@@ -188,40 +253,78 @@ with tab2:
     if "kg_name" not in st.session_state:
         st.session_state["kg_name"] = kg_name
     elif kg_name != st.session_state["kg_name"]:
-        st.session_state["kg_name"] = kg_name  # Update the session
+        st.session_state["kg_name"] = kg_name
 
-    if "button_clicked" not in st.session_state:
-        st.session_state.button_clicked = False
+        # destroy the previous session state
+        session_state_keys_6 = [
+            "drugs_df",
+            "dis2prot_df",
+            "dis2snp_df",
+            "protein_score",
+            "graph",
+            "filtered_protein_df",
+        ]
+
+        kgg_utils.refactor_state(session_state_keys_6)
 
     def callback():
         st.session_state.button_clicked = True
 
-    if st.button("Generate Base Knowledge Graph",on_click=callback) or st.session_state.button_clicked:
-        #st.write(st.session_state)
+    if "button_clicked" not in st.session_state:
+        st.session_state.button_clicked = False
 
-        drugs_df, dis2prot_df,dis2snp_df = kgg_utils.createInitialKG(st.session_state)
-
+    if (
+        st.button("Generate Base Knowledge Graph", on_click=callback)
+        or st.session_state.button_clicked
+    ):
+        drugs_df, dis2prot_df, dis2snp_df = kgg_utils.createInitialKG(
+            st.session_state["disease_id"], st.session_state["ct_phase"]
+        )
         if "drugs_df" not in st.session_state:
             st.session_state["drugs_df"] = drugs_df
-        elif not st.session_state['drugs_df'].equals(drugs_df):
-            st.session_state["drugs_df"] = drugs_df
+        else:
+            try:
+                assert_frame_equal(drugs_df, st.session_state["drugs_df"])
+            except AssertionError:
+                st.session_state["drugs_df"] = drugs_df
+                # destroy the previous session state
+                session_state_keys_7 = [
+                    "dis2prot_df",
+                    "dis2snp_df",
+                    "protein_score",
+                    "graph",
+                    "filtered_protein_df",
+                ]
+                kgg_utils.refactor_state(session_state_keys_7)
 
         if "dis2prot_df" not in st.session_state:
             st.session_state["dis2prot_df"] = dis2prot_df
-        elif not st.session_state['dis2prot_df'].equals(dis2prot_df):
-            st.session_state["dis2prot_df"] = dis2prot_df
+        else:
+            try:
+                assert_frame_equal(dis2prot_df, st.session_state["dis2prot_df"])
+            except AssertionError:
+                st.session_state["dis2prot_df"] = dis2prot_df
+                # destroy the previous session state
+                session_state_keys_8 = [
+                    "dis2snp_df",
+                    "protein_score",
+                    "graph",
+                    "filtered_protein_df",
+                ]
+                kgg_utils.refactor_state(session_state_keys_8)
 
         if "dis2snp_df" not in st.session_state:
             st.session_state["dis2snp_df"] = dis2snp_df
-        elif not st.session_state['dis2snp_df'].equals(dis2snp_df):
-            st.session_state["dis2snp_df"] = dis2snp_df
+        else:
+            try:
+                assert_frame_equal(dis2snp_df, st.session_state["dis2snp_df"])
+            except AssertionError:
+                st.session_state["dis2snp_df"] = dis2snp_df
+                # destroy the previous session state
+                session_state_keys_9 = ["protein_score", "graph", "filtered_protein_df"]
+                kgg_utils.refactor_state(session_state_keys_9)
 
-        #st.session_state["dis2prot_df"] = dis2prot_df
-        #st.session_state["dis2snp_df"] = dis2snp_df
-
-        kgg_utils.GetDiseaseAssociatedProteinsPlot(
-            st.session_state["dis2prot_df"]
-        )
+        kgg_utils.GetDiseaseAssociatedProteinsPlot(st.session_state["dis2prot_df"])
 
         score = st.number_input(
             "Enter threshold score (recommended > 0.3):",
@@ -230,36 +333,63 @@ with tab2:
             value=0.55,
             step=0.1,
         )
-        if "protein_score" not in st.session_state:
+
+        if "kg_submitted" not in st.session_state:
+            st.session_state["kg_submitted"] = False
+
+        def callback2():
+            st.session_state.kg_submitted = True
+
+        if st.button("Submit", on_click=callback2) or st.session_state.kg_submitted:
+            filtered_df = st.session_state["dis2prot_df"][
+                st.session_state["dis2prot_df"]["Score"] >= score
+            ]
+
+            if "filtered_protein_df" not in st.session_state:
+                st.session_state["filtered_protein_df"] = filtered_df
+            else:
+                try:
+                    assert_frame_equal(
+                        filtered_df, st.session_state["filtered_protein_df"]
+                    )
+                except AssertionError:
+                    st.session_state["filtered_protein_df"] = filtered_df
+                    # destroy the previous session state
+                    session_state_keys_10 = ["graph"]
+                    kgg_utils.refactor_state(session_state_keys_10)
             st.session_state["protein_score"] = score
-        elif score != st.session_state["protein_score"]:
-            st.session_state["protein_score"] = score
-
-        #st.write(st.session_state)
-
-        if st.button("Submit"):
-
-            # dis2prot_df = st.session_state["dis2prot_df"]
-            # disease_df = st.session_state["disease_df"]
-            # dis2snp_df = st.session_state["dis2snp_df"]
-
-
-            filtered_df = dis2prot_df[dis2prot_df["Score"] >= score]
-
 
             st.warning(
-                f"""ℹ️ Filter of protein score (> {score}) has been applied. This reduced the number of proteins from {len(dis2prot_df)} to {len(filtered_df)}."""
+                f"ℹ️ Filter of protein score (> {score}) has been applied. "
+                + f"This reduced the number of proteins from {len(st.session_state['dis2prot_df'])} to {len(filtered_df)}."
             )
 
-            st.session_state.filtered_protein_df = filtered_df
+            graph, ad_effect = kgg_utils.finalizeKG(
+                filtered_protein_df=st.session_state["filtered_protein_df"],
+                drugs_df=st.session_state["drugs_df"],
+                dis2snp_df=st.session_state["dis2snp_df"],
+                viral_proteins=st.session_state["viral_prot"],
+                kg_name=st.session_state["kg_name"],
+            )
 
-            graph = kgg_utils.finalizeKG(filtered_df, session_inputs=st.session_state)
+            if "graph" not in st.session_state:
+                st.session_state["graph"] = graph
+            else:
+                try:
+                    assert graph == st.session_state["graph"]
+                except AssertionError:
+                    st.session_state["graph"] = graph
+                    # destroy the previous session state
+                    session_state_keys_11 = []
+                    kgg_utils.refactor_state(session_state_keys_11)
 
-            st.session_state["graph"] = graph
+            st.session_state["adv_effect"] = ad_effect
 
             st.header("Graph summary", anchor="graph-summary", divider="grey")
 
-            rv_base, rv_stats = kgg_utils.get_graph_summary(st.session_state["graph"])
+            rv_base, rv_stats = kgg_utils.get_graph_summary(
+                graph=st.session_state["graph"]
+            )
 
             with st.container():
                 st.markdown(
@@ -282,18 +412,20 @@ with tab2:
                 graph=st.session_state["graph"],
             )
 
-            # for key in st.session_state.keys():
-            #     st.write(key)
+            # zip_data = kgg_utils.create_zip()
 
-            zip_data = kgg_utils.create_zip()
-            folder_name = f"{st.session_state.disease_name}.zip"
+            zip_path = kgg_utils.save_files()
+            with open(zip_path, "rb") as f:
+                st.download_button(
+                    label="Click here to download",
+                    data=f,
+                    file_name=f"{st.session_state['kg_name']}.zip",
+                    mime="application/zip",
+                )
+                os.remove(zip_path)
+                shutil.rmtree(st.session_state["kg_name"])
+                st.stop()
 
-            st.download_button(
-                label="Download all files",
-                data=zip_data,
-                file_name=folder_name,
-                mime="application/zip"
-            )
 
 with tab3:
     st.markdown("### Drug-likeness profile and beyond")
@@ -303,26 +435,29 @@ with tab3:
         """
     )
     # File uploader
-    uploaded_file = st.file_uploader("Choose the CSV file named 'diseaseAssociatedDrugs' from a KGG output folder", type="csv")
+    uploaded_file = st.file_uploader(
+        "Choose the CSV file named 'diseaseAssociatedDrugs' from a KGG output folder",
+        type="csv",
+    )
 
     if uploaded_file is not None:
         # Read the CSV file
-        df = pd.read_csv(uploaded_file,index_col=0)
-        #st.write(len(df))
+        df = pd.read_csv(uploaded_file, index_col=0)
+        # st.write(len(df))
 
         st.write(
             f"Total number of unique drugs is {len(set(df['drugId']))}. Please remember that a same drug can be in different phases of clinical trials."
         )
 
-        calc_filters,unusedDrugs_df = kgg_utils.calculate_filters(df, 'drugId')
+        calc_filters, unusedDrugs_df = kgg_utils.calculate_filters(df, "drugId")
 
         st.write(calc_filters)
 
-        calc_filters = calc_filters.to_csv(index=False).encode('utf-8')
+        calc_filters = calc_filters.to_csv(index=False).encode("utf-8")
 
-        unusedDrugs_df = unusedDrugs_df.to_csv(index=False).encode('utf-8')
+        unusedDrugs_df = unusedDrugs_df.to_csv(index=False).encode("utf-8")
 
-        #st.write(unusedDrugs_df)
+        # st.write(unusedDrugs_df)
 
         st.download_button(
             label="Download druglikeness profile",
@@ -331,7 +466,9 @@ with tab3:
             mime="text/csv",
         )
 
-        st.write('Some drugs may not have SMILES representation because their type is either antibody, protein or unknown. The unparsed drugs can be downloaded here.')
+        st.write(
+            "Some drugs may not have SMILES representation because their type is either antibody, protein or unknown. The unparsed drugs can be downloaded here."
+        )
 
         st.download_button(
             label="Download unparsed drugs file",

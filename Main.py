@@ -5,6 +5,7 @@ import pandas as pd
 import streamlit as st
 import base64
 from streamlit_card import card
+from st_social_media_links import SocialMediaIcons
 
 st.set_page_config(
     layout="wide",
@@ -181,7 +182,7 @@ with tab2:
                 title="KGG",
                 text="Automated workflow for disease-specific KGs",
                 image=load_logo("images/app_logos/kgg.png"),
-                url="/KGGapp",
+                url="/KG_Generator",
                 styles={
                     "card": {
                         "border-radius": "10px",
@@ -270,7 +271,6 @@ with tab2:
                     }
                 },
             )
-
 
     with st.expander(label=r"$\textsf{\Large Screening data preprocessing tools}$"):
         col1, col2, col3 = st.columns(3)
@@ -423,7 +423,7 @@ with tab2:
         with col1:
             card(
                 title="FAIR Cookbook",
-                text="Resource for the Life Sciences with recipes that help you to make and keep data FAIR",
+                text="Resource for the life sciences recipes that help you to make and keep data FAIR",
                 image=load_logo("images/app_logos/faircookbook.png"),
                 url="https://faircookbook.elixir-europe.org/",
                 styles={
@@ -465,40 +465,34 @@ with tab2:
                 },
             )
 
-    st.markdown("### Our presence on web platforms")
-
     col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
 
-    linkedin = "https://content.linkedin.com/content/dam/me/business/en-us/amp/brand-site/v2/bg/LI-Bug.svg.original.svg"
-    col1.markdown(
-        f"""<a href='https://www.linkedin.com/company/fraunhofer-itmp'><img src='{linkedin}' width='300px'/></a>""",
-        unsafe_allow_html=True,
-    )
+    col1.markdown("Find us on:")
 
-    github = "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
     col2.markdown(
-        f"""<a href='https://github.com/Fraunhofer-ITMP'><img src='{github}' width='300px'/></a>""",
+        f"""<a href='https://www.linkedin.com/company/fraunhofer-itmp'>**LinkedIn**</a>""",
         unsafe_allow_html=True,
     )
 
-    twitter = "https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg"
     col3.markdown(
-        f"""<a href='https://twitter.com/FraunhoferITMP'><img src='{twitter}' width='300px'/></a>""",
+        f"""<a href='https://github.com/Fraunhofer-ITMP'>**GitHub**</a>""",
         unsafe_allow_html=True,
     )
 
-    # zendo = "images/social_media/zenodo-mark.png"
-    # col4.markdown(
-    #     f"""<a href='https://zenodo.org/communities/fraunhoferitmp'><img src='{zendo}' width='500px'/></a>""",
-    #     unsafe_allow_html=True,
-    # )
+    col4.markdown(
+        f"""<a href='https://twitter.com/FraunhoferITMP'>**X**</a>""",
+        unsafe_allow_html=True,
+    )
 
-    # knime = "https://mahmoudelgendi.com/wp-content/uploads/2022/03/Knime-White.svg"
-    # col5.markdown(
-    #     f"""<a href='https://hub.knime.com/fraunhoferitmp'><img src='{knime}' width='500px'/></a>""",
-    #     unsafe_allow_html=True,
-    # )
+    col5.markdown(
+        f"""<a href='https://zenodo.org/communities/fraunhoferitmpscreeningport'>**Zenodo**</a>""",
+        unsafe_allow_html=True,
+    )
 
+    col6.markdown(
+        f"""<a href='https://hub.knime.com/fraunhoferitmp'>**KINMEHub**</a>""",
+        unsafe_allow_html=True,
+    )
 
 # publications tab
 with tab3:
@@ -524,10 +518,32 @@ with tab4:
     )
 
     member_df = pd.read_csv("data/members.csv")
+    active_members = member_df[member_df["alumni"] == "no"]
+    alumni_members = member_df[member_df["alumni"] == "yes"]
 
-    member_chunk_df = [member_df[i : i + 3] for i in range(0, len(member_df), 3)]
+    member_chunk_df1 = [
+        active_members[i : i + 3] for i in range(0, len(active_members), 3)
+    ]
+    member_chunk_df2 = [
+        alumni_members[i : i + 3] for i in range(0, len(alumni_members), 3)
+    ]
 
-    for sub_df in member_chunk_df:
+    # Current members
+    st.header("Current members", divider="grey")
+    for sub_df in member_chunk_df1:
+        sub_df.reset_index(drop=True, inplace=True)
+        columns = st.columns(3)
+        for i, row in sub_df.iterrows():
+            with columns[i]:
+                st.write(f"### {row['member_name']}")
+                st.markdown(
+                    f"**Email**: {row['member_email']} <br> **ORCID**: https://orcid.org/{row['member_orcid']}",
+                    unsafe_allow_html=True,
+                )
+
+    # Alumni members
+    st.header(":orange[Alumni members]", divider="grey")
+    for sub_df in member_chunk_df2:
         sub_df.reset_index(drop=True, inplace=True)
         columns = st.columns(3)
         for i, row in sub_df.iterrows():
