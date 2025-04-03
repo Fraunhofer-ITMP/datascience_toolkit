@@ -556,8 +556,9 @@ with tab3:
         file_type = uploaded_file.name.split(".")[-1]
 
         if file_type == "csv":
-            sep = st.text_input("Enter CSV separator", ";")
-            df = pd.read_csv(uploaded_file, sep=sep)
+            #sep = st.text_input("Enter CSV separator", ",")
+            #df = pd.read_csv(uploaded_file, sep=sep)
+            df = pd.read_csv(uploaded_file)
         else:  # Excel
             sheet_name = st.text_input(
                 "Enter sheet name (leave blank for first sheet)", ""
@@ -567,10 +568,11 @@ with tab3:
 
             df = pd.read_excel(uploaded_file, sheet_name=sheet_name, engine="openpyxl")
 
-        # Convert SMILES column to string if it exists
-        if "SMILES" in df.columns:
-            df["SMILES"] = df["SMILES"].astype(str)
-            df["molecule_img"] = df["SMILES"].apply(get_molecule_image_src)
+        # # Convert SMILES column to string if it exists
+        # if "smiles" in df.columns:
+        #     st.write('Generating structures')
+        #     df["smiles"] = df["smiles"].astype(str)
+        #     df["molecule_img"] = df["smiles"].apply(get_molecule_image_src)
 
         return df
 
@@ -590,10 +592,15 @@ with tab3:
             st.error("The CSV file must contain 'smiles' and 'type' columns.")
         else:
             st.info("Reading the CSV file...")
+
+            #remove empty instances
+            df = df.dropna(subset=['smiles'])
+
             # Convert SMILES to RDKit molecules
             mols = [Chem.MolFromSmiles(smiles) for smiles in df["smiles"]]
 
             # Convert SMILES column to string if it exists
+
             if "smiles" in df.columns:
                 df["smiles"] = df["smiles"].astype(str)
                 df["molecule_img"] = df["smiles"].apply(get_molecule_image_src)
