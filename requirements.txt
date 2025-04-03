@@ -13,3 +13,4 @@ chembl-webresource-client==0.10.9
 umap==0.1.1
 umap-learn==0.5.7
 pandasgwas
+kaleido==0.2.1

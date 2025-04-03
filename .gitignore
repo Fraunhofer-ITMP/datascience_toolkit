@@ -897,3 +897,6 @@ FodyWeavers.xsd
 # PyPi file
 .pypirc
 
+*.json
+*.csv
+*.ipynb

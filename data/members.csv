@@ -1,13 +1,13 @@
-member_name,member_email,member_orcid
-Andrea Zaliani,andrea.zaliani@itmp.fraunhofer.de,0000-0002-1740-8390
-Jeanette Reinshagen,jeanette.reinshagen@itmp.fraunhofer.de,0000-0002-8080-9170
-Reagon Karki,reagon.karki@itmp.fraunhofer.de,0000-0002-1815-0037
-Yojana Gadiya,yojana.gadiya@itmp.fraunhofer.de,0000-0002-7683-0452
-Leonie Von Berlin,leonie.von.berlin@itmp.fraunhofer.de,0000-0002-7790-0395
-Axel Pahl, axel.pahl@itmp.fraunhofer.de,0000-0003-2068-7543
-Holger Hennig,holger.hennig@itmp.fraunhofer.de,0000-0002-4272-2445
-Katja Herzog,katja.herzog@itmp.fraunhofer.de,0000-0002-1389-8118
-Juergen Mueller,juergen.mueller@itmp.fraunhofer.de,0009-0005-5226-3448
-Sheraz Gul,sheraz.gul@itmp.fraunhofer.de,0000-0003-2543-1643
-Philip Gribbon,philip.gribbon@itmp.fraunhofer.de,0000-0001-7655-2459
-Carsten Claussen,carsten.claussen@itmp.fraunhofer.de,0000-0002-5831-8498
+member_name,member_email,member_orcid,alumni
+Andrea Zaliani,andrea.zaliani@itmp.fraunhofer.de,0000-0002-1740-8390,yes
+Jeanette Reinshagen,jeanette.reinshagen@itmp.fraunhofer.de,0000-0002-8080-9170,no
+Reagon Karki,reagon.karki@itmp.fraunhofer.de,0000-0002-1815-0037,no
+Yojana Gadiya,yojana.gadiya@itmp.fraunhofer.de,0000-0002-7683-0452,yes
+Leonie Von Berlin,leonie.von.berlin@itmp.fraunhofer.de,0000-0002-7790-0395,no
+Axel Pahl, axel.pahl@itmp.fraunhofer.de,0000-0003-2068-7543,no
+Holger Hennig,holger.hennig@itmp.fraunhofer.de,0000-0002-4272-2445,yes
+Katja Herzog,katja.herzog@itmp.fraunhofer.de,0000-0002-1389-8118,no
+Juergen Mueller,juergen.mueller@itmp.fraunhofer.de,0009-0005-5226-3448,no
+Sheraz Gul,sheraz.gul@itmp.fraunhofer.de,0000-0003-2543-1643,no
+Philip Gribbon,philip.gribbon@itmp.fraunhofer.de,0000-0001-7655-2459,no
+Carsten Claussen,carsten.claussen@itmp.fraunhofer.de,0000-0002-5831-8498,no
