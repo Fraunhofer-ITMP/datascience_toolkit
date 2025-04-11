@@ -134,6 +134,12 @@ def disease_figures(disease_name, graph: BELGraph = None):
 
     st.plotly_chart(figure_ns, use_container_width=True)
 
+    if "figures" not in st.session_state:
+        st.session_state["figures"] = {}
+
+    st.session_state["figures"]["graph_summary"] = fig
+    st.session_state["figures"]["namespace_summary"] = figure_ns
+
     # TODO: Add drug specific information
 
 
@@ -916,6 +922,11 @@ def GetDiseaseAssociatedProteinsPlot(df):
         yaxis_title="Score",
     )
     st.plotly_chart(prot_fig, use_container_width=True)
+
+    if "figures" not in st.session_state:
+        st.session_state["figures"] = {}
+
+    st.session_state["figures"]["protein_score"] = prot_fig
 
     # score = st.number_input(
     #     "Enter threshold score (recommended > 0.3):",
@@ -2040,6 +2051,13 @@ def create_zip():
             )
         except NameError:
             viralProtDict = None
+
+        if "figures" in st.session_state:
+            for fig_name, fig in st.session_state["figures"].items():
+                fig_buffer = io.BytesIO()
+                fig.write_image(fig_buffer, format="png", engine="kaleido")
+                fig_buffer.seek(0)
+                zip_file.writestr(f"{fig_name}.png", fig_buffer.getvalue())
 
     # zip_buffer.seek(0)
 
