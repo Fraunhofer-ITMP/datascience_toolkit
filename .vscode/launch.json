@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python:Streamlit",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "streamlit",
+            "args": [
+                "run",
+                "2_KG_Generator.py",
+                "--server.port",
+                "2000"
+            ],
+            "python": "${workspaceFolder}/venv/Scripts/python.exe"
+        }
+    ]
+}
