@@ -14,7 +14,7 @@ import streamlit as st
 from pybel.struct.summary import supersummary as ss
 from tabulate import tabulate
 
-import kgg_utils
+import kgg_utils_bishab
 
 st.set_page_config(
     layout="wide",
@@ -71,7 +71,7 @@ with tab1:
         index=0,
     )
 
-    kgg_utils.disease_figures(option)
+    kgg_utils_bishab.disease_figures(option)
 
 with tab2:
     st.markdown(
@@ -108,7 +108,7 @@ with tab2:
     if st.session_state["user_disease"] != disease_name:
         st.session_state["user_disease"] = disease_name
 
-    disease_df = kgg_utils.searchDisease(st.session_state["user_disease"])
+    disease_df = kgg_utils_bishab.searchDisease(st.session_state["user_disease"])
     if disease_df.empty:
         st.write("No results found for the disease. Please try again.")
         st.stop()
@@ -167,7 +167,7 @@ with tab2:
         + str(st.session_state["ct_phase"])
     )
 
-    viral_prot = kgg_utils.GetViralProteins(st.session_state["user_disease"])
+    viral_prot = kgg_utils_bishab.GetViralProteins(st.session_state["user_disease"])
     if "viral_prot" not in st.session_state:
         st.session_state["viral_prot"] = viral_prot
     elif not st.session_state["viral_prot"] == viral_prot:
@@ -216,7 +216,7 @@ with tab2:
         # st.write(st.session_state)
         st.write(st.session_state["user_disease"])
         st.write(st.session_state["disease_id"])
-        drugs_df, dis2prot_df, dis2snp_df = kgg_utils.createInitialKG(
+        drugs_df, dis2prot_df, dis2snp_df = kgg_utils_bishab.createInitialKG(
             disease_id=st.session_state["disease_id"],
             ct_phase=st.session_state["ct_phase"],
         )
@@ -238,7 +238,7 @@ with tab2:
 
         #        st.session_state["dis2prot_df"] = dis2prot_df
         #        st.session_state["dis2snp_df"] = dis2snp_df
-        kgg_utils.GetDiseaseAssociatedProteinsPlot(st.session_state["dis2prot_df"])
+        kgg_utils_bishab.GetDiseaseAssociatedProteinsPlot(st.session_state["dis2prot_df"])
 
         score = st.number_input(
             "Enter threshold score (recommended > 0.3):",
@@ -267,13 +267,13 @@ with tab2:
 
             st.session_state.filtered_protein_df = filtered_df
 
-            graph = kgg_utils.finalizeKG(filtered_df, session_inputs=st.session_state)
+            graph = kgg_utils_bishab.finalizeKG(filtered_df, session_inputs=st.session_state)
 
             st.session_state["graph"] = graph
 
             st.header("Graph summary", anchor="graph-summary", divider="grey")
 
-            rv_base, rv_stats = kgg_utils.get_graph_summary(st.session_state["graph"])
+            rv_base, rv_stats = kgg_utils_bishab.get_graph_summary(st.session_state["graph"])
 
             with st.container():
                 st.markdown(
@@ -291,12 +291,12 @@ with tab2:
                     unsafe_allow_html=True,
                 )
 
-            kgg_utils.disease_figures(
+            kgg_utils_bishab.disease_figures(
                 disease_name=st.session_state["user_disease"],
                 graph=st.session_state["graph"],
             )
             if "graph" in st.session_state and st.session_state["graph"] is not None:
-                zip_data = kgg_utils.create_zip()
+                zip_data = kgg_utils_bishab.create_zip()
                 folder_name = f"{st.session_state.disease_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:4]}.zip"
 
                 st.download_button(
@@ -314,7 +314,7 @@ with tab2:
                 st.session_state["graph"].nodes["protein"]["threshold_score"] = score
                 st.success(f"Threshold score updated to {score}.")
                 st.session_state["graph"].nodes["protein"]["threshold_score"] = score
-                rv_base, rv_stats = kgg_utils.get_graph_summary(
+                rv_base, rv_stats = kgg_utils_bishab.get_graph_summary(
                     st.session_state["graph"]
                 )
                 with st.container():
@@ -332,7 +332,7 @@ with tab2:
                         {ss.edges_str(graph, examples=True, add_count=False, tablefmt="html")}""",
                         unsafe_allow_html=True,
                     )
-                    zip_data = kgg_utils.create_zip()
+                    zip_data = kgg_utils_bishab.create_zip()
                     folder_name = f"{st.session_state.disease_name}.zip"
                     st.download_button(
                         label="Download updated files",
@@ -382,7 +382,7 @@ with tab3:
             f"Total number of unique drugs is {len(set(df['drugId']))}. Please remember that a same drug can be in different phases of clinical trials."
         )
 
-        calc_filters, unusedDrugs_df = kgg_utils.calculate_filters(df, "drugId")
+        calc_filters, unusedDrugs_df = kgg_utils_bishab.calculate_filters(df, "drugId")
 
         st.write(calc_filters)
 
