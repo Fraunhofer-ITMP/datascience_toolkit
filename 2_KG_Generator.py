@@ -2,8 +2,10 @@
 
 import base64
 import datetime
+import os
 import zipfile
-#from zipfile import ZipFile
+
+# from zipfile import ZipFile
 from io import BytesIO
 
 import pandas as pd
@@ -40,13 +42,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-tab1, tab2, tab3 = st.tabs(
-    [
-        "Description",
-        "KG Generator",
-        "Drug-likeness assessment"
-    ]
-)
+tab1, tab2, tab3 = st.tabs(["Description", "KG Generator", "Drug-likeness assessment"])
 
 
 with tab1:
@@ -118,7 +114,7 @@ with tab2:
     if "disease_df" not in st.session_state:
         st.session_state["disease_df"] = disease_df
 
-    if not st.session_state['disease_df'].equals(disease_df):
+    if not st.session_state["disease_df"].equals(disease_df):
         st.session_state["disease_df"] = disease_df
 
     col1, col2 = st.columns(2)
@@ -134,12 +130,16 @@ with tab2:
 
         if "disease_id" not in st.session_state:
             st.session_state["disease_id"] = disease_id
-            st.session_state["disease_name"] = disease_df[disease_df["id"] == disease_id]["name"].values[0]
+            st.session_state["disease_name"] = disease_df[
+                disease_df["id"] == disease_id
+            ]["name"].values[0]
 
         elif disease_id != st.session_state["disease_id"]:
             st.session_state["disease_id"] = disease_id  # Update the session
-            #st.session_state["disease_name"] = st.session_state["disease_df"][st.session_state["disease_df"]["id"] == disease_id]["name"].values[0]
-            st.session_state["disease_name"] = disease_df[disease_df["id"] == disease_id]["name"].values[0]
+            # st.session_state["disease_name"] = st.session_state["disease_df"][st.session_state["disease_df"]["id"] == disease_id]["name"].values[0]
+            st.session_state["disease_name"] = disease_df[
+                disease_df["id"] == disease_id
+            ]["name"].values[0]
 
     with col2:
         st.markdown(
@@ -166,8 +166,8 @@ with tab2:
     viral_prot = kgg_utils.GetViralProteins(st.session_state["user_disease"])
     if "viral_prot" not in st.session_state:
         st.session_state["viral_prot"] = viral_prot
-    elif not st.session_state['viral_prot'] == viral_prot:
-    #elif viral_prot != st.session_state["viral_prot"]:
+    elif not st.session_state["viral_prot"] == viral_prot:
+        # elif viral_prot != st.session_state["viral_prot"]:
         st.session_state["viral_prot"] = viral_prot
 
     # st.markdown(
@@ -194,35 +194,45 @@ with tab2:
     if "button_clicked" not in st.session_state:
         st.session_state.button_clicked = False
 
+    def delete_old_cache_and_files():
+        """
+        This function deletes all graphs and photos that were just created. This function will be called when the user clicks the "Start over" button or updates the threshold score.
+        """
+        for key in st.session_state.keys():
+            if key.startswith("graph_") or key.startswith("dis2prot_"):
+                del st.session_state[key]
+        st.cache_resource.clear()
+
     def callback():
         st.session_state.button_clicked = True
 
-    if st.button("Generate Base Knowledge Graph",on_click=callback) or st.session_state.button_clicked:
-        #st.write(st.session_state)
+    if (
+        st.button("Generate Base Knowledge Graph", on_click=callback)
+        or st.session_state.button_clicked
+    ):
+        # st.write(st.session_state)
 
-        drugs_df, dis2prot_df,dis2snp_df = kgg_utils.createInitialKG(st.session_state)
+        drugs_df, dis2prot_df, dis2snp_df = kgg_utils.createInitialKG(st.session_state)
 
         if "drugs_df" not in st.session_state:
             st.session_state["drugs_df"] = drugs_df
-        elif not st.session_state['drugs_df'].equals(drugs_df):
+        elif not st.session_state["drugs_df"].equals(drugs_df):
             st.session_state["drugs_df"] = drugs_df
 
         if "dis2prot_df" not in st.session_state:
             st.session_state["dis2prot_df"] = dis2prot_df
-        elif not st.session_state['dis2prot_df'].equals(dis2prot_df):
+        elif not st.session_state["dis2prot_df"].equals(dis2prot_df):
             st.session_state["dis2prot_df"] = dis2prot_df
 
         if "dis2snp_df" not in st.session_state:
             st.session_state["dis2snp_df"] = dis2snp_df
-        elif not st.session_state['dis2snp_df'].equals(dis2snp_df):
+        elif not st.session_state["dis2snp_df"].equals(dis2snp_df):
             st.session_state["dis2snp_df"] = dis2snp_df
 
-        #st.session_state["dis2prot_df"] = dis2prot_df
-        #st.session_state["dis2snp_df"] = dis2snp_df
+        # st.session_state["dis2prot_df"] = dis2prot_df
+        # st.session_state["dis2snp_df"] = dis2snp_df
 
-        kgg_utils.GetDiseaseAssociatedProteinsPlot(
-            st.session_state["dis2prot_df"]
-        )
+        kgg_utils.GetDiseaseAssociatedProteinsPlot(st.session_state["dis2prot_df"])
 
         score = st.number_input(
             "Enter threshold score (recommended > 0.3):",
@@ -236,17 +246,14 @@ with tab2:
         elif score != st.session_state["protein_score"]:
             st.session_state["protein_score"] = score
 
-        #st.write(st.session_state)
+        # st.write(st.session_state)
 
         if st.button("Submit"):
-
-            # dis2prot_df = st.session_state["dis2prot_df"]
-            # disease_df = st.session_state["disease_df"]
-            # dis2snp_df = st.session_state["dis2snp_df"]
-
+            dis2prot_df = st.session_state["dis2prot_df"]
+            disease_df = st.session_state["disease_df"]
+            dis2snp_df = st.session_state["dis2snp_df"]
 
             filtered_df = dis2prot_df[dis2prot_df["Score"] >= score]
-
 
             st.warning(
                 f"""ℹ️ Filter of protein score (> {score}) has been applied. This reduced the number of proteins from {len(dis2prot_df)} to {len(filtered_df)}."""
@@ -266,15 +273,15 @@ with tab2:
                 st.markdown(
                     f"""\
                     <h3>Metadata</h3>
-                    {tabulate(rv_base, tablefmt='html')}
+                    {tabulate(rv_base, tablefmt="html")}
                     <h3>Statistics</h3>
-                    {tabulate(rv_stats, tablefmt='html')}
+                    {tabulate(rv_stats, tablefmt="html")}
                     <h3>Nodes</h3>
-                    {ss.functions_str(graph, examples=True, add_count=False, tablefmt='html')}
+                    {ss.functions_str(graph, examples=True, add_count=False, tablefmt="html")}
                     <h3>Namespaces</h3>
-                    {ss.namespaces_str(graph, examples=True, add_count=False, tablefmt='html')}
+                    {ss.namespaces_str(graph, examples=True, add_count=False, tablefmt="html")}
                     <h3>Edges</h3>
-                    {ss.edges_str(graph, examples=True, add_count=False, tablefmt='html')}""",
+                    {ss.edges_str(graph, examples=True, add_count=False, tablefmt="html")}""",
                     unsafe_allow_html=True,
                 )
 
@@ -283,18 +290,70 @@ with tab2:
                 graph=st.session_state["graph"],
             )
 
-            # for key in st.session_state.keys():
-            #     st.write(key)
+            if "graph" in st.session_state and st.session_state["graph"] is not None:
+                zip_data = kgg_utils.create_zip()
+                folder_name = f"{st.session_state.disease_name}.zip"
 
-            zip_data = kgg_utils.create_zip()
-            folder_name = f"{st.session_state.disease_name}.zip"
+                st.download_button(
+                    label="Download all files",
+                    data=zip_data,
+                    file_name=folder_name,
+                    mime="application/zip",
+                )
 
-            st.download_button(
-                label="Download all files",
-                data=zip_data,
-                file_name=folder_name,
-                mime="application/zip"
-            )
+            else:
+                st.error("No graph found. Please generate the graph first.")
+
+            if st.button("Update threshold score"):
+                delete_old_cache_and_files()
+                st.session_state["graph"].nodes["protein"]["threshold_score"] = score
+                st.success(f"Threshold score updated to {score}.")
+                st.session_state["graph"].nodes["protein"]["threshold_score"] = score
+                rv_base, rv_stats = kgg_utils.get_graph_summary(
+                    st.session_state["graph"]
+                )
+                with st.container():
+                    st.markdown(
+                        f"""\
+                        <h3>Metadata</h3>
+                        {tabulate(rv_base, tablefmt="html")}
+                        <h3>Statistics</h3>
+                        {tabulate(rv_stats, tablefmt="html")}
+                        <h3>Nodes</h3>
+                        {ss.functions_str(graph, examples=True, add_count=False, tablefmt="html")}
+                        <h3>Namespaces</h3>
+                        {ss.namespaces_str(graph, examples=True, add_count=False, tablefmt="html")}
+                        <h3>Edges</h3>
+                        {ss.edges_str(graph, examples=True, add_count=False, tablefmt="html")}""",
+                        unsafe_allow_html=True,
+                    )
+                    zip_data = kgg_utils.create_zip()
+                    folder_name = f"{st.session_state.disease_name}.zip"
+                    st.download_button(
+                        label="Download updated files",
+                        data=zip_data,
+                        file_name=folder_name,
+                        mime="application/zip",
+                    )
+
+        if "start_over" not in st.session_state:
+            st.session_state.start_over = False
+        if st.button("Start over"):
+            delete_old_cache_and_files()
+            for key in st.session_state.keys():
+                if key.startswith("graph_") or key.startswith("dis2prot_"):
+                    del st.session_state[key]
+            st.session_state["user_disease"] = disease_name
+            st.session_state["disease_id"] = disease_id
+            st.session_state["disease_name"] = disease_df[
+                disease_df["id"] == disease_id
+            ]["name"].values[0]
+            st.session_state["ct_phase"] = ct_phase
+
+            st.session_state.button_clicked = False
+            st.session_state.start_over = True
+            st.rerun()
+
 
 with tab3:
     st.markdown("### Drug-likeness profile and beyond")
@@ -304,26 +363,29 @@ with tab3:
         """
     )
     # File uploader
-    uploaded_file = st.file_uploader("Choose the CSV file named 'diseaseAssociatedDrugs' from a KGG output folder", type="csv")
+    uploaded_file = st.file_uploader(
+        "Choose the CSV file named 'diseaseAssociatedDrugs' from a KGG output folder",
+        type="csv",
+    )
 
     if uploaded_file is not None:
         # Read the CSV file
-        df = pd.read_csv(uploaded_file,index_col=0)
-        #st.write(len(df))
+        df = pd.read_csv(uploaded_file, index_col=0)
+        # st.write(len(df))
 
         st.write(
             f"Total number of unique drugs is {len(set(df['drugId']))}. Please remember that a same drug can be in different phases of clinical trials."
         )
 
-        calc_filters,unusedDrugs_df = kgg_utils.calculate_filters(df, 'drugId')
+        calc_filters, unusedDrugs_df = kgg_utils.calculate_filters(df, "drugId")
 
         st.write(calc_filters)
 
-        calc_filters = calc_filters.to_csv(index=False).encode('utf-8')
+        calc_filters = calc_filters.to_csv(index=False).encode("utf-8")
 
-        unusedDrugs_df = unusedDrugs_df.to_csv(index=False).encode('utf-8')
+        unusedDrugs_df = unusedDrugs_df.to_csv(index=False).encode("utf-8")
 
-        #st.write(unusedDrugs_df)
+        # st.write(unusedDrugs_df)
 
         st.download_button(
             label="Download druglikeness profile",
@@ -332,7 +394,9 @@ with tab3:
             mime="text/csv",
         )
 
-        st.write('Some drugs may not have SMILES representation because their type is either antibody, protein or unknown. The unparsed drugs can be downloaded here.')
+        st.write(
+            "Some drugs may not have SMILES representation because their type is either antibody, protein or unknown. The unparsed drugs can be downloaded here."
+        )
 
         st.download_button(
             label="Download unparsed drugs file",
