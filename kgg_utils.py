@@ -906,7 +906,6 @@ def GetDiseaseAssociatedProteinsPlot(df):
     st.markdown(
         f"""We have identified {len(df)} proteins (Swiss-Prot) associated with the disease. Please note that the proteins identified may not be unique if you combined two or more diseases. Following is a histogram that shows distribution of proteins based on scores provided by OpenTargets. The scores are influenced by various factors such as genetic associations, expression, mutations, known pathways, targeting drugs and so on."""
     )
-
     prot_fig = go.Figure()
     prot_fig.add_trace(
         go.Bar(
@@ -923,6 +922,7 @@ def GetDiseaseAssociatedProteinsPlot(df):
         yaxis_title="Score",
     )
     st.plotly_chart(prot_fig, use_container_width=True)
+    st.caption(f"Top 20 proteins based on OpenTargets score")
 
     if "figures" not in st.session_state:
         st.session_state["figures"] = {}

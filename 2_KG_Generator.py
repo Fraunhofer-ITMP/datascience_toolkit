@@ -297,7 +297,7 @@ with tab2:
             )
             if "graph" in st.session_state and st.session_state["graph"] is not None:
                 zip_data = kgg_utils.create_zip()
-                folder_name = f"{st.session_state.disease_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}.zip"
+                folder_name = f"{st.session_state.disease_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:4]}.zip"
 
                 st.download_button(
                     label="Download all files",
