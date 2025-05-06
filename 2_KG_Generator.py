@@ -3,6 +3,7 @@
 import base64
 import datetime
 import os
+import uuid
 import zipfile
 
 # from zipfile import ZipFile
@@ -93,11 +94,14 @@ with tab2:
         anchor="disease-search",
         divider="grey",
     )
+
     disease_name = st.text_input(
         "Enter the disease your are interested in generating a graph.",
-        value="COVID-19",
+        value=st.session_state.get("user_disease", "COVID-19"),
     )
-
+    if disease_name == "":
+        st.warning("Please enter a disease name.")
+        st.stop()
     if "user_disease" not in st.session_state:
         st.session_state["user_disease"] = disease_name
 
@@ -185,11 +189,10 @@ with tab2:
         st.session_state["user_disease"].lower().replace(" ", "_").replace("-", "_")
     )
     kg_name = f"kgg_{dis_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
-
     if "kg_name" not in st.session_state:
         st.session_state["kg_name"] = kg_name
     elif kg_name != st.session_state["kg_name"]:
-        st.session_state["kg_name"] = kg_name  # Update the session
+        st.session_state["kg_name"] = kg_name
 
     if "button_clicked" not in st.session_state:
         st.session_state.button_clicked = False
@@ -211,8 +214,12 @@ with tab2:
         or st.session_state.button_clicked
     ):
         # st.write(st.session_state)
-
-        drugs_df, dis2prot_df, dis2snp_df = kgg_utils.createInitialKG(st.session_state)
+        st.write(st.session_state["user_disease"])
+        st.write(st.session_state["disease_id"])
+        drugs_df, dis2prot_df, dis2snp_df = kgg_utils.createInitialKG(
+            disease_id=st.session_state["disease_id"],
+            ct_phase=st.session_state["ct_phase"],
+        )
 
         if "drugs_df" not in st.session_state:
             st.session_state["drugs_df"] = drugs_df
@@ -229,9 +236,8 @@ with tab2:
         elif not st.session_state["dis2snp_df"].equals(dis2snp_df):
             st.session_state["dis2snp_df"] = dis2snp_df
 
-        # st.session_state["dis2prot_df"] = dis2prot_df
-        # st.session_state["dis2snp_df"] = dis2snp_df
-
+        #        st.session_state["dis2prot_df"] = dis2prot_df
+        #        st.session_state["dis2snp_df"] = dis2snp_df
         kgg_utils.GetDiseaseAssociatedProteinsPlot(st.session_state["dis2prot_df"])
 
         score = st.number_input(
@@ -289,10 +295,9 @@ with tab2:
                 disease_name=st.session_state["user_disease"],
                 graph=st.session_state["graph"],
             )
-
             if "graph" in st.session_state and st.session_state["graph"] is not None:
                 zip_data = kgg_utils.create_zip()
-                folder_name = f"{st.session_state.disease_name}.zip"
+                folder_name = f"{st.session_state.disease_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}.zip"
 
                 st.download_button(
                     label="Download all files",
@@ -341,8 +346,8 @@ with tab2:
         if st.button("Start over"):
             delete_old_cache_and_files()
             for key in st.session_state.keys():
-                if key.startswith("graph_") or key.startswith("dis2prot_"):
-                    del st.session_state[key]
+                #                if key.startswith("graph_") or key.startswith("dis2prot_"):
+                del st.session_state[key]
             st.session_state["user_disease"] = disease_name
             st.session_state["disease_id"] = disease_id
             st.session_state["disease_name"] = disease_df[

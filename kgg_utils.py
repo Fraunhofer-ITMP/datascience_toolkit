@@ -916,6 +916,7 @@ def GetDiseaseAssociatedProteinsPlot(df):
             name="Protein",
         )
     )
+    st.write(f"The disease name is {df['disease_id'].iloc[0]}")
     prot_fig.update_layout(
         title="Distribution of top 20 proteins based on OpenTargets score",
         xaxis_title="Protein",
@@ -1223,10 +1224,10 @@ def snp2gene_rel(snp_df, graph):
 
 
 @st.cache_data
-def createInitialKG(_session_inputs):
+def createInitialKG(disease_id, ct_phase):
     """Creating the initial Knowledge Graph using the disease and protein data."""
-    efo_id = _session_inputs["disease_id"]
-    ct_phase = _session_inputs["ct_phase"]
+    efo_id = disease_id
+    ct_phase = ct_phase
 
     for functions in stqdm(
         ["disease_drugs", "disease_proteins", "disease_snp"],
