@@ -95,31 +95,77 @@ with tab2:
         divider="grey",
     )
 
-    disease_name = st.text_input(
-        "Enter the disease your are interested in generating a graph.",
-        value=st.session_state.get("user_disease", "COVID-19"),
-    )
-    if disease_name == "":
-        st.warning("Please enter a disease name.")
-        st.stop()
-    if "user_disease" not in st.session_state:
-        st.session_state["user_disease"] = disease_name
+    state = st.session_state
 
-    if st.session_state["user_disease"] != disease_name:
-        st.session_state["user_disease"] = disease_name
+    def disease_input_and_search():
+        # Initializing the session state
+        if "user_disease" not in state:
+            state["user_disease"] = "AIDS"
 
-    disease_df = kgg_utils.searchDisease(st.session_state["user_disease"])
-    if disease_df.empty:
-        st.write("No results found for the disease. Please try again.")
-        st.stop()
+        # Adding the button area with key so that it automatically synchronizes with the session state
+        disease_name = st.text_input(
+            "Enter the disease you are interested in generating a graph.",
+            placeholder="e.g. AIDS",
+            key="user_disease",
+        )
 
-    st.expander("Disease search results").dataframe(disease_df, hide_index=True)
+        if disease_name.strip():
+            df = kgg_utils.searchDisease(disease_name)
 
-    if "disease_df" not in st.session_state:
-        st.session_state["disease_df"] = disease_df
+            if df.empty:
+                st.warning("No results found for the disease. Please try again.")
+            else:
+                with st.expander("Disease search results"):
+                    st.dataframe(df, hide_index=True)
 
-    if not st.session_state["disease_df"].equals(disease_df):
-        st.session_state["disease_df"] = disease_df
+            return df
+        else:
+            st.info("Please enter a disease name to search.")
+            return pd.DataFrame()
+
+    def disease_input_component():
+        # Initializing the "user_disease" variable in session state
+        if "user_disease" not in state:
+            state["user_disease"] = "AIDS"
+
+        # Adding the button with key binding (This key will automatically synchronize with the session state)
+        disease_name = st.text_input(
+            "Enter the disease you are interested in generating a graph. Please hit the **Search for disease** button to search.",
+            placeholder="e.g. AIDS",
+            key="user_disease",
+        )
+        # Checking empty input
+        if disease_name == "":
+            st.warning("Please enter a disease name.")
+            st.stop()
+
+    def disease_search_component():
+        # Initializing disease_df in session state
+        if "disease_df" not in state:
+            state["disease_df"] = pd.DataFrame()
+        # Adding the button with key binding (This key will automatically synchronize with the session state)
+        search_button = st.button(
+            "Search for disease",
+            key="search_button",
+        )
+        # Checking if the button is clicked
+        if search_button:
+            # If the button is clicked, call the function to search for disease
+            state["disease_df"] = kgg_utils.searchDisease(state["user_disease"])
+            # Check if the dataframe is empty
+            if state["disease_df"].empty:
+                st.write("No results found for the disease. Please try again.")
+                st.stop()
+            else:
+                # Display the dataframe in an expander
+                with st.expander("Disease search results"):
+                    st.dataframe(state["disease_df"], hide_index=True)
+
+        return state["disease_df"]
+
+    #    disease_input_component()
+    #    disease_df = disease_search_component()
+    disease_df = disease_input_and_search()
 
     col1, col2 = st.columns(2)
 
@@ -127,61 +173,51 @@ with tab2:
         st.markdown(
             "**Please select the disease of interest from the table above by entering the identifier value.** \n Each disease has a unique id, which fetches associated proteins using OpenTargets API. Double click twice on the id of interest to select, copy, and paste the id into the text box."
         )
-        disease_id = st.text_input(
-            "Please enter the identifier for disease of interest.",
-            value=disease_df.iloc[0]["id"],
-        )
+        if disease_df.empty:
+            st.stop()
+        else:
+            if "disease_id" not in state:
+                state["disease_id"] = disease_df.iloc[0]["id"]
 
-        if "disease_id" not in st.session_state:
-            st.session_state["disease_id"] = disease_id
-            st.session_state["disease_name"] = disease_df[
-                disease_df["id"] == disease_id
-            ]["name"].values[0]
-
-        elif disease_id != st.session_state["disease_id"]:
-            st.session_state["disease_id"] = disease_id  # Update the session
-            # st.session_state["disease_name"] = st.session_state["disease_df"][st.session_state["disease_df"]["id"] == disease_id]["name"].values[0]
-            st.session_state["disease_name"] = disease_df[
-                disease_df["id"] == disease_id
-            ]["name"].values[0]
+            disease_id = st.text_input(
+                "Please enter the identifier for disease of interest.",
+                value=disease_df.iloc[0]["id"],
+                key="disease_id",
+            )
 
     with col2:
         st.markdown(
             """**Please enter the clinical trial phase of chemicals which should be used by the workflow.** \n Use a number between 1 (early phase) and 4 (FDA approved). Keep in mind, lower input values increase the number of identified chemicals and running time."""
         )
 
+        if "ct_phase" not in state:
+            state["ct_phase"] = 3
         ct_phase = st.number_input(
-            label="Select your clinical trial phase", min_value=1, max_value=4, value=3
+            label="Select your clinical trial phase",
+            min_value=1,
+            max_value=4,
+            value=state["ct_phase"],
+            key="ct_phase",
         )
-        if "ct_phase" not in st.session_state:
-            st.session_state["ct_phase"] = ct_phase
-        elif ct_phase != st.session_state["ct_phase"]:
-            st.session_state["ct_phase"] = ct_phase  # Update the session
 
     st.markdown(
         ":red[Selected disease:] "
-        + st.session_state["disease_name"]
+        + str(state["user_disease"])
         + ":red[ with ID:] "
-        + st.session_state["disease_id"]
+        + str(state["disease_id"])
         + ":red[ and clinical trial phase:] "
-        + str(st.session_state["ct_phase"])
+        + str(state["ct_phase"])
     )
+    state["viral_prot"] = kgg_utils.GetViralProteins(
+        state["user_disease"]
+    )  # This updates automatically when the user_disease is changed
 
-    viral_prot = kgg_utils.GetViralProteins(st.session_state["user_disease"])
-    if "viral_prot" not in st.session_state:
-        st.session_state["viral_prot"] = viral_prot
-    elif not st.session_state["viral_prot"] == viral_prot:
-        # elif viral_prot != st.session_state["viral_prot"]:
-        st.session_state["viral_prot"] = viral_prot
+    # if "viral_prot" not in st.session_state:
+    #     st.session_state["viral_prot"] = viral_prot
+    # elif not st.session_state["viral_prot"] == viral_prot:
+    #     # elif viral_prot != st.session_state["viral_prot"]:
+    #     st.session_state["viral_prot"] = viral_prot
 
-    # st.markdown(
-    #     ":red[Selected disease:] "
-    #     + st.session_state["disease_name"]
-    #     + ":red[ with ID:] "
-    #     + st.session_state["disease_id"]
-    #     + ":red[ and clinical trial phase:] "
-    #     + str(st.session_state["ct_phase"])
-    # )
     st.write(st.session_state)
 
     st.header("Generating the graph", anchor="generate-graph", divider="grey")
@@ -189,56 +225,56 @@ with tab2:
         st.session_state["user_disease"].lower().replace(" ", "_").replace("-", "_")
     )
     kg_name = f"kgg_{dis_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    if "kg_name" not in st.session_state:
-        st.session_state["kg_name"] = kg_name
-    elif kg_name != st.session_state["kg_name"]:
-        st.session_state["kg_name"] = kg_name
+    if "kg_name" not in state:
+        state["kg_name"] = kg_name
+    elif kg_name != state["kg_name"]:
+        state["kg_name"] = kg_name
 
-    if "button_clicked" not in st.session_state:
-        st.session_state.button_clicked = False
+    if "button_clicked" not in state:
+        state["button_clicked"] = False
 
     def delete_old_cache_and_files():
         """
         This function deletes all graphs and photos that were just created. This function will be called when the user clicks the "Start over" button or updates the threshold score.
         """
-        for key in st.session_state.keys():
+        for key in state.keys():
             if key.startswith("graph_") or key.startswith("dis2prot_"):
-                del st.session_state[key]
+                del state[key]
         st.cache_resource.clear()
 
     def callback():
-        st.session_state.button_clicked = True
+        state["button_clicked"] = True
 
     if (
         st.button("Generate Base Knowledge Graph", on_click=callback)
-        or st.session_state.button_clicked
+        or state["button_clicked"]
     ):
         # st.write(st.session_state)
         st.write(st.session_state["user_disease"])
         st.write(st.session_state["disease_id"])
         drugs_df, dis2prot_df, dis2snp_df = kgg_utils.createInitialKG(
-            disease_id=st.session_state["disease_id"],
-            ct_phase=st.session_state["ct_phase"],
+            disease_id=state["disease_id"],
+            ct_phase=state["ct_phase"],
         )
 
-        if "drugs_df" not in st.session_state:
-            st.session_state["drugs_df"] = drugs_df
-        elif not st.session_state["drugs_df"].equals(drugs_df):
-            st.session_state["drugs_df"] = drugs_df
+        if "drugs_df" not in state:
+            state["drugs_df"] = drugs_df
+        elif not state["drugs_df"].equals(drugs_df):
+            state["drugs_df"] = drugs_df
 
-        if "dis2prot_df" not in st.session_state:
-            st.session_state["dis2prot_df"] = dis2prot_df
-        elif not st.session_state["dis2prot_df"].equals(dis2prot_df):
-            st.session_state["dis2prot_df"] = dis2prot_df
+        if "dis2prot_df" not in state:
+            state["dis2prot_df"] = dis2prot_df
+        elif not state["dis2prot_df"].equals(dis2prot_df):
+            state["dis2prot_df"] = dis2prot_df
 
-        if "dis2snp_df" not in st.session_state:
-            st.session_state["dis2snp_df"] = dis2snp_df
-        elif not st.session_state["dis2snp_df"].equals(dis2snp_df):
-            st.session_state["dis2snp_df"] = dis2snp_df
+        if "dis2snp_df" not in state:
+            state["dis2snp_df"] = dis2snp_df
+        elif not state["dis2snp_df"].equals(dis2snp_df):
+            state["dis2snp_df"] = dis2snp_df
 
-        #        st.session_state["dis2prot_df"] = dis2prot_df
-        #        st.session_state["dis2snp_df"] = dis2snp_df
-        kgg_utils.GetDiseaseAssociatedProteinsPlot(st.session_state["dis2prot_df"])
+        #        state["dis2prot_df"] = dis2prot_df
+        #        state["dis2snp_df"] = dis2snp_df
+        kgg_utils.GetDiseaseAssociatedProteinsPlot(state["dis2prot_df"])
 
         score = st.number_input(
             "Enter threshold score (recommended > 0.3):",
