@@ -100,7 +100,7 @@ with tab2:
     def disease_input_and_search():
         # Initializing the session state
         if "user_disease" not in state:
-            state["user_disease"] = "AIDS"
+            state["user_disease"] = ""
 
         # Adding the button area with key so that it automatically synchronizes with the session state
         disease_name = st.text_input(
@@ -150,14 +150,11 @@ with tab2:
         )
         # Checking if the button is clicked
         if search_button:
-            # If the button is clicked, call the function to search for disease
             state["disease_df"] = kgg_utils.searchDisease(state["user_disease"])
-            # Check if the dataframe is empty
             if state["disease_df"].empty:
                 st.write("No results found for the disease. Please try again.")
                 st.stop()
             else:
-                # Display the dataframe in an expander
                 with st.expander("Disease search results"):
                     st.dataframe(state["disease_df"], hide_index=True)
 
@@ -208,9 +205,7 @@ with tab2:
         + ":red[ and clinical trial phase:] "
         + str(state["ct_phase"])
     )
-    state["viral_prot"] = kgg_utils.GetViralProteins(
-        state["user_disease"]
-    )  # This updates automatically when the user_disease is changed
+    state["viral_prot"] = kgg_utils.GetViralProteins(state["user_disease"])
 
     # if "viral_prot" not in st.session_state:
     #     st.session_state["viral_prot"] = viral_prot
@@ -221,6 +216,7 @@ with tab2:
     st.write(st.session_state)
 
     st.header("Generating the graph", anchor="generate-graph", divider="grey")
+
     dis_name = (
         st.session_state["user_disease"].lower().replace(" ", "_").replace("-", "_")
     )
@@ -233,25 +229,24 @@ with tab2:
     if "button_clicked" not in state:
         state["button_clicked"] = False
 
-    def delete_old_cache_and_files():
+    def clear_state_and_rerun():
         """
         This function deletes all graphs and photos that were just created. This function will be called when the user clicks the "Start over" button or updates the threshold score.
         """
-        for key in state.keys():
-            if key.startswith("graph_") or key.startswith("dis2prot_"):
-                del state[key]
-        st.cache_resource.clear()
+        for key in list(state.keys()):
+            del state[key]
+        st.session_state.clear()
+        st.rerun()
 
     def callback():
         state["button_clicked"] = True
 
-    if (
-        st.button("Generate Base Knowledge Graph", on_click=callback)
-        or state["button_clicked"]
+    if st.button("Generate Base Knowledge Graph", on_click=callback) or state.get(
+        "button_clicked", False
     ):
         # st.write(st.session_state)
-        st.write(st.session_state["user_disease"])
-        st.write(st.session_state["disease_id"])
+        st.write(state["user_disease"])
+        st.write(state["disease_id"])
         drugs_df, dis2prot_df, dis2snp_df = kgg_utils.createInitialKG(
             disease_id=state["disease_id"],
             ct_phase=state["ct_phase"],
@@ -276,45 +271,41 @@ with tab2:
         #        state["dis2snp_df"] = dis2snp_df
         kgg_utils.GetDiseaseAssociatedProteinsPlot(state["dis2prot_df"])
 
-        score = st.number_input(
-            "Enter threshold score (recommended > 0.3):",
-            min_value=0.0,
-            max_value=1.0,
-            value=0.55,
-            step=0.1,
-        )
-        if "protein_score" not in st.session_state:
-            st.session_state["protein_score"] = score
-        elif score != st.session_state["protein_score"]:
-            st.session_state["protein_score"] = score
+        def threshold_input_component():
+            if "protein_score" not in state:
+                state["protein_score"] = None
 
-        # st.write(st.session_state)
-
-        if st.button("Submit"):
-            dis2prot_df = st.session_state["dis2prot_df"]
-            disease_df = st.session_state["disease_df"]
-            dis2snp_df = st.session_state["dis2snp_df"]
-
-            filtered_df = dis2prot_df[dis2prot_df["Score"] >= score]
-
-            st.warning(
-                f"""ℹ️ Filter of protein score (> {score}) has been applied. This reduced the number of proteins from {len(dis2prot_df)} to {len(filtered_df)}."""
+            score = st.number_input(
+                "Enter threshold score (recommended > 0.3):",
+                min_value=0.0,
+                max_value=1.0,
+                step=0.1,
+                key="protein_score",
             )
 
-            st.session_state.filtered_protein_df = filtered_df
+            if score is None:
+                st.warning("Please enter a score.")
+                st.stop()
+            return score
 
-            graph = kgg_utils.finalizeKG(filtered_df, session_inputs=st.session_state)
+        def apply_threshold_and_update(score):
+            filtered_df = state["dis2prot_df"][state["dis2prot_df"]["Score"] >= score]
+            state["filtered_df"] = filtered_df
 
-            st.session_state["graph"] = graph
+            st.warning(
+                f"""ℹ️ Filter of protein score (> {score}) has been applied. 
+                This reduced the number of proteins from {len(state["dis2prot_df"])} to {len(filtered_df)}."""
+            )
+
+            graph = kgg_utils.finalizeKG(filtered_df, session_inputs=state)
+            state["graph"] = graph
 
             st.header("Graph summary", anchor="graph-summary", divider="grey")
-
-            rv_base, rv_stats = kgg_utils.get_graph_summary(st.session_state["graph"])
+            rv_base, rv_stats = kgg_utils.get_graph_summary(graph)
 
             with st.container():
                 st.markdown(
-                    f"""\
-                    <h3>Metadata</h3>
+                    f"""\n<h3>Metadata</h3>
                     {tabulate(rv_base, tablefmt="html")}
                     <h3>Statistics</h3>
                     {tabulate(rv_stats, tablefmt="html")}
@@ -327,73 +318,41 @@ with tab2:
                     unsafe_allow_html=True,
                 )
 
-            kgg_utils.disease_figures(
-                disease_name=st.session_state["user_disease"],
-                graph=st.session_state["graph"],
-            )
-            if "graph" in st.session_state and st.session_state["graph"] is not None:
-                zip_data = kgg_utils.create_zip()
-                folder_name = f"{st.session_state.disease_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:4]}.zip"
+        score = threshold_input_component()
+        apply_threshold_and_update(score)
 
-                st.download_button(
-                    label="Download all files",
-                    data=zip_data,
-                    file_name=folder_name,
-                    mime="application/zip",
-                )
+        kgg_utils.disease_figures(
+            disease_name=state["user_disease"],
+            graph=state["graph"],
+        )
 
-            else:
-                st.error("No graph found. Please generate the graph first.")
+        state["button_clicked"] = False
 
-            if st.button("Update threshold score"):
-                delete_old_cache_and_files()
-                st.session_state["graph"].nodes["protein"]["threshold_score"] = score
-                st.success(f"Threshold score updated to {score}.")
-                st.session_state["graph"].nodes["protein"]["threshold_score"] = score
-                rv_base, rv_stats = kgg_utils.get_graph_summary(
-                    st.session_state["graph"]
-                )
-                with st.container():
-                    st.markdown(
-                        f"""\
-                        <h3>Metadata</h3>
-                        {tabulate(rv_base, tablefmt="html")}
-                        <h3>Statistics</h3>
-                        {tabulate(rv_stats, tablefmt="html")}
-                        <h3>Nodes</h3>
-                        {ss.functions_str(graph, examples=True, add_count=False, tablefmt="html")}
-                        <h3>Namespaces</h3>
-                        {ss.namespaces_str(graph, examples=True, add_count=False, tablefmt="html")}
-                        <h3>Edges</h3>
-                        {ss.edges_str(graph, examples=True, add_count=False, tablefmt="html")}""",
-                        unsafe_allow_html=True,
-                    )
-                    zip_data = kgg_utils.create_zip()
-                    folder_name = f"{st.session_state.disease_name}.zip"
-                    st.download_button(
-                        label="Download updated files",
-                        data=zip_data,
-                        file_name=folder_name,
-                        mime="application/zip",
-                    )
+        if "graph" in state and state["graph"] is not None:
+            zip_data = kgg_utils.create_zip()
+            folder_name = f"{state['user_disease']}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:4]}.zip"
 
-        if "start_over" not in st.session_state:
-            st.session_state.start_over = False
-        if st.button("Start over"):
-            delete_old_cache_and_files()
-            for key in st.session_state.keys():
-                #                if key.startswith("graph_") or key.startswith("dis2prot_"):
-                del st.session_state[key]
-            st.session_state["user_disease"] = disease_name
-            st.session_state["disease_id"] = disease_id
-            st.session_state["disease_name"] = disease_df[
-                disease_df["id"] == disease_id
-            ]["name"].values[0]
-            st.session_state["ct_phase"] = ct_phase
+            if st.download_button(
+                label="Download all files",
+                data=zip_data,
+                file_name=folder_name,
+                mime="application/zip",
+                key="download_button",
+            ):
+                state["download_triggered"] = True
+            if "download_triggered" in state and state["download_triggered"]:
+                st.success("Download successful!")
+                st.stop()
 
-            st.session_state.button_clicked = False
-            st.session_state.start_over = True
-            st.rerun()
+            state["graph"] = None
+
+            if st.button("Start over"):
+                state["button_clicked"] = False
+                clear_state_and_rerun()
+        else:
+            st.warning("No graph found. Please generate a graph first.")
+    else:
+        st.warning("Please click the button to generate the base knowledge graph.")
 
 
 with tab3:
