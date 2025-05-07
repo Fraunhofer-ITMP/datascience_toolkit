@@ -899,7 +899,6 @@ def GetDiseaseAssociatedProteins(disease_id, index_counter=0, merged_list=[]):
 # return df
 
 
-@st.cache_data
 def GetDiseaseAssociatedProteinsPlot(df):
     """Plotting the protein confidence scores associated with a disease."""
     st.markdown("**Protein-Disease Association summary**")
@@ -1223,7 +1222,6 @@ def snp2gene_rel(snp_df, graph):
     return graph
 
 
-@st.cache_data
 def createInitialKG(disease_id, ct_phase):
     """Creating the initial Knowledge Graph using the disease and protein data."""
     efo_id = disease_id

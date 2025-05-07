@@ -229,15 +229,6 @@ with tab2:
     if "button_clicked" not in state:
         state["button_clicked"] = False
 
-    def clear_state_and_rerun():
-        """
-        This function deletes all graphs and photos that were just created. This function will be called when the user clicks the "Start over" button or updates the threshold score.
-        """
-        for key in list(state.keys()):
-            del state[key]
-        st.session_state.clear()
-        st.rerun()
-
     def callback():
         state["button_clicked"] = True
 
@@ -326,33 +317,37 @@ with tab2:
             graph=state["graph"],
         )
 
-        state["button_clicked"] = False
+    #        state["button_clicked"] = False
 
-        if "graph" in state and state["graph"] is not None:
-            zip_data = kgg_utils.create_zip()
-            folder_name = f"{state['user_disease']}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:4]}.zip"
+    if "graph" in state and state["graph"] is not None:
+        zip_data = kgg_utils.create_zip()
+        folder_name = f"{state['user_disease']}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:4]}.zip"
 
-            if st.download_button(
-                label="Download all files",
-                data=zip_data,
-                file_name=folder_name,
-                mime="application/zip",
-                key="download_button",
-            ):
-                state["download_triggered"] = True
-            if "download_triggered" in state and state["download_triggered"]:
-                st.success("Download successful!")
-                st.stop()
+        #                st.balloons()
 
-            state["graph"] = None
+        st.download_button(
+            label="Download all files",
+            data=zip_data,
+            file_name=folder_name,
+            mime="application/zip",
+            on_click="ignore",
+            help="Click to download the zip file containing all graphs and CSVs.",
+        )
 
-            if st.button("Start over"):
-                state["button_clicked"] = False
-                clear_state_and_rerun()
-        else:
-            st.warning("No graph found. Please generate a graph first.")
+        def clear_state():
+            """
+            This function deletes all graphs and photos that were just created. This function will be called when the user clicks the "Start over" button or updates the threshold score.
+            """
+            for key in list(state.keys()):
+                del state[key]
+            st.session_state.clear()
+
+        #            st.rerun()
+
+        st.button("Start over", on_click=clear_state)
+
     else:
-        st.warning("Please click the button to generate the base knowledge graph.")
+        st.warning("No graph found. Please generate a graph first.")
 
 
 with tab3:
