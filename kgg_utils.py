@@ -758,7 +758,7 @@ def GetDiseaseAssociatedDrugs(disease_id, CT_phase):
 @st.cache_data(ttl=3600, show_spinner="Fetching protein data...")
 def GetDiseaseAssociatedProteins(efo_id):
     """Fixed version that properly handles cache invalidation"""
-    st.write(f"🔄 Disease Lookup: {efo_id}")
+    #    st.write(f"🔄 Disease Lookup: {efo_id}")
 
     if not efo_id:
         st.error("No disease ID provided")
@@ -910,7 +910,7 @@ def GetDiseaseAssociatedProteinsPlot(df):
     )
 
     current_disease = st.session_state.get("user_disease", "Unknown Disease")
-    st.write(f"The disease name is {current_disease}")
+    #    st.write(f"The disease name is {current_disease}")
 
     prot_fig.update_layout(
         title=f"Distribution of top 20 proteins for {current_disease} based on OpenTargets score",
@@ -1236,7 +1236,7 @@ def createInitialKG(_ct_phase):
     drugs_df = pd.DataFrame()
     dis2prot_df = pd.DataFrame()
     dis2snp = pd.DataFrame()
-    st.write(f"Disease ID inside createinitialkg: {efo_id}")
+#    st.write(f"Disease ID inside createinitialkg: {efo_id}")
     for functions in stqdm(
         ["disease_drugs", "disease_proteins", "disease_snp"],
         "Fetching real-time data from databases. Be patient!",

@@ -192,7 +192,7 @@ with tab2:
         if disease_df.empty:
             st.stop()
         else:
-            st.write(f"Disease ID at this point: {disease_df.iloc[0]['id']}")
+            #            st.write(f"Disease ID at this point: {disease_df.iloc[0]['id']}")
             if "disease_id" not in state:
                 state["disease_id"] = disease_df.iloc[0]["id"]
 
@@ -254,8 +254,8 @@ with tab2:
         "button_clicked", False
     ):
         # st.write(state)
-        st.write(state["user_disease"])
-        st.write(state["disease_id"])
+        #        st.write(state["user_disease"])
+        #        st.write(state["disease_id"])
         state["drugs_df"] = pd.DataFrame()
         state["dis2prot_df"] = pd.DataFrame()
         state["dis2snp_df"] = pd.DataFrame()
@@ -270,9 +270,9 @@ with tab2:
         if not state["dis2prot_df"].empty:
             st.write("Current protein data preview:")
             st.dataframe(state["dis2prot_df"].head())
-            st.write(
-                f"Current disease in session state: {st.session_state.get('user_disease')}"
-            )
+        #            st.write(
+        #                f"Current disease in session state: {st.session_state.get('user_disease')}"
+        #            )
         kgg_utils.GetDiseaseAssociatedProteinsPlot(state["dis2prot_df"])
 
         def threshold_input_component():
