@@ -941,6 +941,23 @@ def GetDiseaseAssociatedProteinsPlot(df):
     #     return score
 
 
+def clearPlotsandGraphs():
+    """
+    This function clears the plots and graphs from the session state.
+    """
+    if "figures" in st.session_state:
+        del st.session_state["figures"]
+
+    if "graphs" in st.session_state:
+        del st.session_state["graphs"]
+
+    if "graph_summary" in st.session_state:
+        del st.session_state["graph_summary"]
+
+    if "namespace_summary" in st.session_state:
+        del st.session_state["namespace_summary"]
+
+
 def ExtractFromUniProt(uniprot_id) -> dict:
     """Uniprot parser to retrieve information about OMIM disease, reactome pathway, biological process,
      and molecular functions.
