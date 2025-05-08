@@ -36,6 +36,9 @@ def load_kg(path):
     return kg
 
 
+state = st.session_state
+
+
 def disease_figures(disease_name, graph: BELGraph = None):
     """Function to generate figures for the disease overview."""
 
@@ -134,11 +137,11 @@ def disease_figures(disease_name, graph: BELGraph = None):
 
     st.plotly_chart(figure_ns, use_container_width=True)
 
-    if "figures" not in st.session_state:
-        st.session_state["figures"] = {}
+    if "figures" not in state:
+        state["figures"] = {}
 
-    st.session_state["figures"]["graph_summary"] = fig
-    st.session_state["figures"]["namespace_summary"] = figure_ns
+    state["figures"]["graph_summary"] = fig
+    state["figures"]["namespace_summary"] = figure_ns
 
     # TODO: Add drug specific information
 
@@ -701,7 +704,7 @@ def getDrugCount(disease_id):
 
 def GetDiseaseAssociatedDrugs(disease_id, CT_phase):
     """Finding drugs associated with a disease using OpenTargets API"""
-    efo_id = disease_id
+    efo_id = state.get("disease_id", "")
     size = getDrugCount(efo_id)
 
     query_string = """
@@ -752,86 +755,69 @@ def GetDiseaseAssociatedDrugs(disease_id, CT_phase):
     return df
 
 
-def GetDiseaseAssociatedProteins(disease_id, index_counter=0, merged_list=[]):
-    efo_id = str(disease_id)
+@st.cache_data(ttl=3600, show_spinner="Fetching protein data...")
+def GetDiseaseAssociatedProteins(efo_id):
+    """Fixed version that properly handles cache invalidation"""
+    st.write(f"🔄 Disease Lookup: {efo_id}")
 
-    query_string = """
-        query associatedTargets($efoId: String!,$index:Int!){
-          disease(efoId: $efoId){
-            id
-            name
-            associatedTargets(page:{size:3000,index:$index}){
-              count
-              rows {
-                target {
-                  id
-                  approvedSymbol
-                  proteinIds {
-                    id
-                    source
-                  }
-                }
-                score
-              }
+    if not efo_id:
+        st.error("No disease ID provided")
+        return pd.DataFrame()
+
+    base_url = "https://api.platform.opentargets.org/api/v4/graphql"
+    query = """
+    query associatedTargets($efoId: String!, $index: Int!) {
+      disease(efoId: $efoId) {
+        associatedTargets(page: {size: 3000, index: $index}) {
+          rows {
+            target {
+              id
+              approvedSymbol
+              proteinIds { id source }
             }
+            score
           }
         }
-
+      }
+    }
     """
 
-    # replace $efo_id with value from efo_id
-    # query_string = query_string.replace("$efoId",f'"{efo_id}"')
+    all_results = []
+    index = 0
 
-    variables = {"efoId": efo_id, "index": index_counter}
+    while True:
+        response = requests.post(
+            base_url,
+            json={"query": query, "variables": {"efoId": efo_id, "index": index}},
+        )
+        response.raise_for_status()
+        data = response.json()
 
-    # Set base URL of GraphQL API endpoint
-    base_url = "https://api.platform.opentargets.org/api/v4/graphql"
+        batch = data["data"]["disease"]["associatedTargets"]["rows"]
+        if not batch:
+            break
 
-    # Perform POST request and check status code of response
-    r = requests.post(base_url, json={"query": query_string, "variables": variables})
-    # r = requests.post(base_url, json={"query": query_string})
-    # print(r.status_code)
+        all_results.extend(batch)
+        index += 1
 
-    # Transform API response from JSON into Python dictionary and print in console
-    api_response = json.loads(r.text)
+    processed = []
+    for item in all_results:
+        target = item["target"]
+        for protein in target["proteinIds"]:
+            if protein["source"] == "uniprot_swissprot":
+                processed.append(
+                    {
+                        "Protein": target["approvedSymbol"],
+                        "ENSG": target["id"],
+                        "UniProt": protein["id"],
+                        "Source": protein["source"],
+                        "Score": item["score"],
+                        "disease_id": efo_id,
+                    }
+                )
 
-    result = api_response["data"]["disease"]["associatedTargets"]["rows"]
-    # print(len(result))
-
-    merged_list.extend(result)
-
-    if result:
-        counter = index_counter + 1
-        # print('Counter',counter)
-        GetDiseaseAssociatedProteins(disease_id, counter, merged_list)
-
-    # return(merged_list)
-
-    temp_list = []
-    for item in merged_list:
-        # api_response['data']['disease']['associatedTargets']['rows']
-        # print(item['target'])
-        # break
-        for obj in item["target"]["proteinIds"]:
-            if obj["source"] == "uniprot_swissprot":
-                # print(obj)
-                uprot = obj["id"]
-                source = obj["source"]
-                score = item["score"]
-                ensg = item["target"]["id"]
-                name = item["target"]["approvedSymbol"]
-                temp = {
-                    "Protein": name,
-                    "ENSG": ensg,
-                    "UniProt": uprot,
-                    "Source": source,
-                    "Score": score,
-                }
-                temp_list.append(temp)
-
-    df = pd.DataFrame(temp_list)
-    df["disease_id"] = efo_id
-
+    df = pd.DataFrame(processed)
+    st.write(f"✅ Retrieved {len(df)} proteins for {efo_id}")
     return df
 
 
@@ -901,10 +887,18 @@ def GetDiseaseAssociatedProteins(disease_id, index_counter=0, merged_list=[]):
 
 def GetDiseaseAssociatedProteinsPlot(df):
     """Plotting the protein confidence scores associated with a disease."""
+    if "figures" in st.session_state and "protein_score" in st.session_state.figures:
+        del st.session_state.figures["protein_score"]
+
     st.markdown("**Protein-Disease Association summary**")
     st.markdown(
-        f"""We have identified {len(df)} proteins (Swiss-Prot) associated with the disease. Please note that the proteins identified may not be unique if you combined two or more diseases. Following is a histogram that shows distribution of proteins based on scores provided by OpenTargets. The scores are influenced by various factors such as genetic associations, expression, mutations, known pathways, targeting drugs and so on."""
+        f"""We have identified {len(df)} proteins (Swiss-Prot) associated with the disease. 
+        Please note that the proteins identified may not be unique if you combined two or more diseases. 
+        Following is a histogram that shows distribution of proteins based on scores provided by OpenTargets. 
+        The scores are influenced by various factors such as genetic associations, expression, 
+        mutations, known pathways, targeting drugs and so on."""
     )
+
     prot_fig = go.Figure()
     prot_fig.add_trace(
         go.Bar(
@@ -914,48 +908,39 @@ def GetDiseaseAssociatedProteinsPlot(df):
             name="Protein",
         )
     )
-    st.write(f"The disease name is {df['disease_id'].iloc[0]}")
+
+    current_disease = st.session_state.get("user_disease", "Unknown Disease")
+    st.write(f"The disease name is {current_disease}")
+
     prot_fig.update_layout(
-        title="Distribution of top 20 proteins based on OpenTargets score",
+        title=f"Distribution of top 20 proteins for {current_disease} based on OpenTargets score",
         xaxis_title="Protein",
         yaxis_title="Score",
     )
+
     st.plotly_chart(prot_fig, use_container_width=True)
     st.caption(f"Top 20 proteins based on OpenTargets score")
 
     if "figures" not in st.session_state:
-        st.session_state["figures"] = {}
-
-    st.session_state["figures"]["protein_score"] = prot_fig
-
-    # score = st.number_input(
-    #     "Enter threshold score (recommended > 0.3):",
-    #     min_value=0.0,
-    #     max_value=1.0,
-    #     value=0.55,
-    #     step=0.1,
-    # )
-    #
-    # if st.button("Submit"):
-    #
-    #     return score
+        st.session_state.figures = {}
+    st.session_state.figures["protein_score"] = prot_fig
 
 
 def clearPlotsandGraphs():
     """
     This function clears the plots and graphs from the session state.
     """
-    if "figures" in st.session_state:
-        del st.session_state["figures"]
+    if "figures" in state:
+        del state["figures"]
 
-    if "graphs" in st.session_state:
-        del st.session_state["graphs"]
+    if "graphs" in state:
+        del state["graphs"]
 
-    if "graph_summary" in st.session_state:
-        del st.session_state["graph_summary"]
+    if "graph_summary" in state:
+        del state["graph_summary"]
 
-    if "namespace_summary" in st.session_state:
-        del st.session_state["namespace_summary"]
+    if "namespace_summary" in state:
+        del state["namespace_summary"]
 
 
 def ExtractFromUniProt(uniprot_id) -> dict:
@@ -1031,8 +1016,9 @@ def ExtractFromUniProt(uniprot_id) -> dict:
     return Uniprot_Dict
 
 
-def GetDiseaseSNPs(disease_id):
+def GetDiseaseSNPs():
     try:
+        disease_id = state.get("disease_id", "")
         snps = get_variants_by_efo_id(disease_id)
         snps_df = snps.genomic_contexts
         snps_df["disease_id"] = disease_id
@@ -1239,11 +1225,18 @@ def snp2gene_rel(snp_df, graph):
     return graph
 
 
-def createInitialKG(disease_id, ct_phase):
+@st.cache_data(ttl=300, show_spinner="Fetching new disease data...")
+def createInitialKG(_ct_phase):
     """Creating the initial Knowledge Graph using the disease and protein data."""
-    efo_id = disease_id
-    ct_phase = ct_phase
-
+    efo_id = state.get("disease_id", "")
+    if not efo_id:
+        st.error("No disease ID found in session state.")
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
+    ct_phase = _ct_phase
+    drugs_df = pd.DataFrame()
+    dis2prot_df = pd.DataFrame()
+    dis2snp = pd.DataFrame()
+    st.write(f"Disease ID inside createinitialkg: {efo_id}")
     for functions in stqdm(
         ["disease_drugs", "disease_proteins", "disease_snp"],
         "Fetching real-time data from databases. Be patient!",
@@ -1255,12 +1248,12 @@ def createInitialKG(disease_id, ct_phase):
 
         elif functions == "disease_proteins":
             st.write("Fetching Proteins")
-            dis2prot_df = GetDiseaseAssociatedProteins(efo_id)
+            dis2prot_df = GetDiseaseAssociatedProteins(state.get("disease_id", ""))
             dis2prot_df = dis2prot_df.reset_index(drop=True)
 
         elif functions == "disease_snp":
             st.write("Fetching SNPs")
-            dis2snp = GetDiseaseSNPs(efo_id)
+            dis2snp = GetDiseaseSNPs()
             # dis2snp = dis2snp.reset_index(drop=True)
 
     return drugs_df, dis2prot_df, dis2snp
@@ -1558,12 +1551,12 @@ def finalizeKG(filtered_protein_df: pd.DataFrame, session_inputs: dict):
             kg = uniprot_rel(uprot_ext, "HGNC", kg)
             kg = gene_ontology_annotation(kg, uprot_ext)
 
-            if "human_protein" not in st.session_state:
-                st.session_state["human_protein"] = uprot_ext
-            elif uprot_ext != st.session_state["human_protein"]:
-                st.session_state["human_protein"] = uprot_ext
+            if "human_protein" not in state:
+                state["human_protein"] = uprot_ext
+            elif uprot_ext != state["human_protein"]:
+                state["human_protein"] = uprot_ext
 
-            viral_prot = st.session_state.viral_prot
+            viral_prot = state.viral_prot
             if viral_prot:
                 vir_uprot_ext = ExtractFromUniProt(viral_prot)
                 # st.write(vir_uprot_ext)
@@ -1571,13 +1564,13 @@ def finalizeKG(filtered_protein_df: pd.DataFrame, session_inputs: dict):
 
                 # kg = gene_ontology_annotation(kg, vir_uprot_ext)
 
-                if "viral_protein" not in st.session_state:
-                    st.session_state["viral_protein"] = vir_uprot_ext
-                elif vir_uprot_ext != st.session_state["viral_protein"]:
-                    st.session_state["viral_protein"] = vir_uprot_ext
+                if "viral_protein" not in state:
+                    state["viral_protein"] = vir_uprot_ext
+                elif vir_uprot_ext != state["viral_protein"]:
+                    state["viral_protein"] = vir_uprot_ext
 
         elif metadata_functions == "cmpds":
-            drugs_df = st.session_state.drugs_df
+            drugs_df = state.drugs_df
             if not drugs_df.empty:
                 # for rel_function_1 in stqdm(
                 #     ["chembl2mech", "chembl2act"], desc="Fetching chemical relations"
@@ -1632,25 +1625,25 @@ def finalizeKG(filtered_protein_df: pd.DataFrame, session_inputs: dict):
 
                 adv_effect = GetAdverseEvents(list(set(drugs_df["drugId"])))
 
-                # viral_prot = kgg_utils.GetViralProteins(st.session_state["user_disease"])
+                # viral_prot = kgg_utils.GetViralProteins(state["user_disease"])
                 #
-                # if "viral_prot" not in st.session_state:
-                #     st.session_state["viral_prot"] = viral_prot
-                # elif not st.session_state['viral_prot'] == viral_prot:
-                #     st.session_state["viral_prot"] = viral_prot
+                # if "viral_prot" not in state:
+                #     state["viral_prot"] = viral_prot
+                # elif not state['viral_prot'] == viral_prot:
+                #     state["viral_prot"] = viral_prot
 
-                if "adv_effect" not in st.session_state:
-                    st.session_state["adv_effect"] = adv_effect
-                elif not st.session_state["adv_effect"].equals(adv_effect):
-                    st.session_state["adv_effect"] = adv_effect
+                if "adv_effect" not in state:
+                    state["adv_effect"] = adv_effect
+                elif not state["adv_effect"].equals(adv_effect):
+                    state["adv_effect"] = adv_effect
 
                 kg = chembl2adverseEffect_rel(adv_effect, kg)
 
                 kg = chembl_name_annotation(kg, drugs_df)
 
         elif metadata_functions == "snps":
-            dis2snp_df = st.session_state.dis2snp_df
-            # st.write(st.session_state)
+            dis2snp_df = state.dis2snp_df
+            # st.write(state)
             # if not dis2snp_df.empty:
             #     kg = snp2gene_rel(dis2snp_df, kg)
             try:
@@ -1658,7 +1651,7 @@ def finalizeKG(filtered_protein_df: pd.DataFrame, session_inputs: dict):
             except:
                 continue
 
-    st.write(st.session_state)
+    st.write(state)
 
     st.write("Your KG is now generated!", "\n")
     return kg
@@ -2009,14 +2002,14 @@ def calculate_filters(df, colname_chembl):
 
 
 def create_zip():
-    drugs_df = st.session_state["drugs_df"].to_csv(index=False)
-    dis2prot_df = st.session_state["dis2prot_df"].to_csv(index=False)
-    dis2snp_df = st.session_state["dis2snp_df"].to_csv(index=False)
-    advEff_df = st.session_state["adv_effect"].to_csv(index=False)
-    humanProtDict = st.session_state["human_protein"]
-    kg = st.session_state["graph"]
-    if "viral_protein" in st.session_state:
-        viralProtDict = st.session_state["viral_protein"]
+    drugs_df = state["drugs_df"].to_csv(index=False)
+    dis2prot_df = state["dis2prot_df"].to_csv(index=False)
+    dis2snp_df = state["dis2snp_df"].to_csv(index=False)
+    advEff_df = state["adv_effect"].to_csv(index=False)
+    humanProtDict = state["human_protein"]
+    kg = state["graph"]
+    if "viral_protein" in state:
+        viralProtDict = state["viral_protein"]
 
     files = {
         "DiseaseAssociatedDrugs.csv": drugs_df,
@@ -2032,29 +2025,25 @@ def create_zip():
 
         pickle_buffer_kg = io.BytesIO()
         pickle.dump(kg, pickle_buffer_kg)
-        zip_file.writestr(
-            f"{st.session_state.kg_name}.pkl", pickle_buffer_kg.getvalue()
-        )
+        zip_file.writestr(f"{state.kg_name}.pkl", pickle_buffer_kg.getvalue())
 
         # Save the DataFrame as a CSV in memory and add it to the zip
         kg_csv_buffer = io.StringIO()
         pybel.to_csv(kg, kg_csv_buffer)
-        zip_file.writestr(f"{st.session_state.kg_name}.csv", kg_csv_buffer.getvalue())
+        zip_file.writestr(f"{state.kg_name}.csv", kg_csv_buffer.getvalue())
 
         kg_bel_buffer = io.StringIO()
         pybel.to_bel_script(kg, kg_bel_buffer)
-        zip_file.writestr(f"{st.session_state.kg_name}.bel", kg_bel_buffer.getvalue())
+        zip_file.writestr(f"{state.kg_name}.bel", kg_bel_buffer.getvalue())
 
         kg_graphml_buffer = io.BytesIO()
         pybel.to_graphml(kg, kg_graphml_buffer)
-        zip_file.writestr(
-            f"{st.session_state.kg_name}.graphml", kg_graphml_buffer.getvalue()
-        )
+        zip_file.writestr(f"{state.kg_name}.graphml", kg_graphml_buffer.getvalue())
 
         pickle_buffer_humanProt = io.BytesIO()
         pickle.dump(humanProtDict, pickle_buffer_humanProt)
         zip_file.writestr(
-            f"{st.session_state.kg_name}_UniProtDict.pkl",
+            f"{state.kg_name}_UniProtDict.pkl",
             pickle_buffer_humanProt.getvalue(),
         )
 
@@ -2062,14 +2051,14 @@ def create_zip():
             pickle_buffer_viralProt = io.BytesIO()
             pickle.dump(viralProtDict, pickle_buffer_viralProt)
             zip_file.writestr(
-                f"{st.session_state.kg_name}_UniProtDict.pkl",
+                f"{state.kg_name}_UniProtDict.pkl",
                 pickle_buffer_viralProt.getvalue(),
             )
         except NameError:
             viralProtDict = None
 
-        if "figures" in st.session_state:
-            for fig_name, fig in st.session_state["figures"].items():
+        if "figures" in state:
+            for fig_name, fig in state["figures"].items():
                 fig_buffer = io.BytesIO()
                 fig.write_image(fig_buffer, format="png", engine="kaleido")
                 fig_buffer.seek(0)
