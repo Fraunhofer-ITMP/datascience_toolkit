@@ -376,7 +376,7 @@ with tab2:
             st.rerun()
 
     else:
-        st.warning("No graph found. Please generate a graph first.")
+        st.warning("KG will be generated once all inputs are given.")
 
 
 with tab3:
