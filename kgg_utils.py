@@ -660,10 +660,13 @@ def searchDisease(keyword):
     api_response = json.loads(r.text)
 
     df = pd.DataFrame(api_response["data"]["search"]["hits"])
-    df = df[df["entity"] == "disease"]
-    df.drop(columns=["entity"], inplace=True)
-
-    return df
+    if not df.empty:
+        df = df[df["entity"] == "disease"]
+        df.drop(columns=["entity"], inplace=True)
+        return df
+    else:
+        st.warning("Disease with given keyword is not found. Please try again!")
+        st.stop()
 
 
 def getDrugCount(disease_id):
@@ -1236,7 +1239,7 @@ def createInitialKG(_ct_phase):
     drugs_df = pd.DataFrame()
     dis2prot_df = pd.DataFrame()
     dis2snp = pd.DataFrame()
-#    st.write(f"Disease ID inside createinitialkg: {efo_id}")
+    #    st.write(f"Disease ID inside createinitialkg: {efo_id}")
     for functions in stqdm(
         ["disease_drugs", "disease_proteins", "disease_snp"],
         "Fetching real-time data from databases. Be patient!",
