@@ -82,7 +82,6 @@ python-dateutil==2.9.0.post0
 python-utils==3.9.1
 PyTrie==0.4.0
 pytz==2025.2
-pywin32==310
 PyYAML==6.0.2
 pyzmq==26.4.0
 ratelimit==2.2.1
