@@ -10,7 +10,7 @@ import zipfile
 
 import pandas as pd
 import streamlit as st
-import umap  # Major Fix
+import umap.umap_ as umap
 from bokeh.io import export_svgs
 from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.palettes import Category10
