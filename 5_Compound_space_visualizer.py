@@ -8,44 +8,20 @@ import tempfile
 import uuid
 import zipfile
 
-import numpy as np
 import pandas as pd
 import streamlit as st
-import umap.umap_ as UMAP  # Major fix in a new update
 from bokeh.io import export_svgs
 from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.palettes import Category10
 from bokeh.plotting import figure
 from bokeh.transform import factor_cmap
-from openpyxl import Workbook
-from openpyxl.utils.dataframe import dataframe_to_rows
 from rdkit import Chem
 from rdkit.Chem import Descriptors, Draw
 from sklearn.manifold import TSNE
+from umap import UMAP  # Major Fix
 
-st.set_page_config(
-    layout="wide", page_title="Chemical space exploration tool", page_icon="🔎"
-)
-
-st.markdown(
-    """
-        <style>
-            .block-container {
-                padding-top: 1.5rem;
-                padding-bottom: 1.5rem;
-                padding-left: 5rem;
-                padding-right: 5rem;
-            }
-            .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {font-size:1.3rem;}
-            [data-testid="stExpander"] details:hover summary{background-color: #d0e9e2;}
-        </style>
-        """,
-    unsafe_allow_html=True,
-)  # .block-conatiner controls the padding of the page, .stTabs controls the font size of the text in the tabs
 
 ################# Utility Functions ################################
-
-
 def plot_molecule(smiles):
     try:
         mol = Chem.MolFromSmiles(str(smiles))
@@ -79,6 +55,13 @@ def get_svg_download_content(fig):
     os.unlink(temp_file.name)
 
     return svg_content
+
+
+def get_file_hash(uploaded_file):
+    """
+    Returns a hash as a unique identifier of the file.
+    """
+    return hash(uploaded_file.getvalue())
 
 
 def create_zip(chem_df, plot):
@@ -132,7 +115,80 @@ def safe_calc(mol):
         return [None] * len(desc_functions)
 
 
+def validate_df_based_on_smiles(df):
+    """
+    Takes a dataframe and returns an updated df
+    Args:
+    df: pandas DataFrame with at least a 'smiles' column.
+    Returns:
+    valid_df: DataFrame with rows containing valid SMILES.
+    invalid_df: DataFrame with rows containing invalid SMILES.
+    """
+    df.columns = [col.lower() for col in df.columns]
+    smile_colnames = [col for col in df.columns if "smile" in col]
+    if not smile_colnames:
+        st.error("The DataFrame must contain a column with 'smile' in its name.")
+        st.stop()
+    smiles_column = smile_colnames[0]
+    df.rename(columns={smiles_column: "smiles"}, inplace=True)
+
+    df["smiles"] = df["smiles"].astype(str)
+
+    def is_valid_smiles(smiles):
+        """
+        Returns Boolean for valid smiles
+        """
+        return Chem.MolFromSmiles(smiles) is not None
+
+    df["valid_smiles"] = df["smiles"].apply(is_valid_smiles)
+    return df
+
+
+def display_valid_invalid_smiles(df):
+    """
+    Provides information to the user about the no. of valid and invalid smiles in their data.
+    Args:
+        df: DataFrame
+    """
+    number_of_valid_smiles = df["valid_smiles"].sum()
+    total_data_size = df.shape[0]
+
+    if number_of_valid_smiles == total_data_size:
+        st.info(
+            f"Among {total_data_size}, every SMILES notation in your data is valid.",
+            icon="ℹ️",
+        )
+    else:
+        st.info(
+            f"Out of {total_data_size} total entries in your dataset, only {number_of_valid_smiles} of them contain valid SMILES notation. You can download the files below to find which SMILES notations did not parse.",
+            icon="ℹ️",
+        )
+
+
 ################# Utility Functions End ################################
+
+state = st.session_state
+
+st.set_page_config(
+    layout="wide", page_title="Chemical space exploration tool", page_icon="🔎"
+)
+
+st.markdown(
+    """
+        <style>
+            .block-container {
+                padding-top: 1.5rem;
+                padding-bottom: 1.5rem;
+                padding-left: 5rem;
+                padding-right: 5rem;
+            }
+            .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {font-size:1.3rem;}
+            [data-testid="stExpander"] details:hover summary{background-color: #d0e9e2;}
+        </style>
+        """,
+    unsafe_allow_html=True,
+)  # .block-conatiner controls the padding of the page, .stTabs controls the font size of the text in the tabs
+
 
 st.markdown(
     "<h1 style='text-align: center; color: #149372;'> Chemical Space Analysis </h1> <br>",
@@ -177,7 +233,7 @@ tab_1, tab_2 = st.tabs(
 with tab_1:
     st.header("🔎 2D chemical space presentation", anchor="chem-space", divider="gray")
     st.markdown(
-        "*This app* allows user to upload **any** :blue-background[CSV file] containing a column named ***SMILES*** and a label column named ***Type***. It generates a [t-SNE plot](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding) or [UMAP plot](https://umap-learn.readthedocs.io/) which shows the chemical space calculated on a selection of most common RDKIT 2D descriptors. Plot colors are dependent on ***Type*** column indicating the groups."
+        "This app allows user to upload **any** :blue-background[CSV file] containing a column named ***SMILES*** and a label column named ***Type***. It generates a [t-SNE plot](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding) or [UMAP plot](https://umap-learn.readthedocs.io/) which shows the chemical space calculated on a selection of most common RDKIT 2D descriptors. Plot colors are dependent on ***Type*** column indicating the groups."
     )
 
     st.header("Data loader", anchor="data-loader", divider="gray")
@@ -189,151 +245,146 @@ with tab_1:
         key="chem-space",
     )
 
-    def validate_df_based_on_smiles(df):
-        """
-        Takes a dataframe and returns an updated df
-        Args:
-        df: pandas DataFrame with at least a 'smiles' column.
-        Returns:
-        valid_df: DataFrame with rows containing valid SMILES.
-        invalid_df: DataFrame with rows containing invalid SMILES.
-        """
-        df.columns = [col.lower() for col in df.columns]
-        smile_colnames = [col for col in df.columns if "smile" in col]
-        if not smile_colnames:
-            st.error("The DataFrame must contain a column with 'smile' in its name.")
-            st.stop()
-        smiles_column = smile_colnames[0]
-        df.rename(columns={smiles_column: "smiles"}, inplace=True)
-
-        df["smiles"] = df["smiles"].astype(str)
-
-        def is_valid_smiles(smiles):
-            """
-            Returns Boolean for valid smiles
-            """
-            return Chem.MolFromSmiles(smiles) is not None
-
-        df["valid_smiles"] = df["smiles"].apply(is_valid_smiles)
-        return df
-
     if uploaded_file is None:
         st.info(
-            "Please upload a CSV or Excel file to proceed! Loading an example file",
+            "Please upload a CSV file to proceed!",
             icon="ℹ️",
         )
     else:
-        chem_df = load_dataset(uploaded_file)
+        file_hash_value = get_file_hash(uploaded_file)
 
-        st.info("Reading the CSV file...")
-        chem_df = validate_df_based_on_smiles(chem_df)
-        mols = [Chem.MolFromSmiles(smiles) for smiles in chem_df["smiles"]]
+        if "loaded_file_hash" not in state or state.loaded_file_hash != file_hash_value:
+            with st.spinner("🔄 Loading data..."):
+                state["chem_df"] = load_dataset(uploaded_file)
+                state.loaded_file_hash = file_hash_value
 
-        chem_df["molecule_img"] = chem_df["smiles"].apply(get_molecule_image_src)
+        if "processed_data" not in state:
+            with st.spinner("🔄 Processing data..."):
+                chem_df = validate_df_based_on_smiles(state["chem_df"])
+                mols = [
+                    Chem.MolFromSmiles(smiles) for smiles in state["chem_df"]["smiles"]
+                ]
+
+                state["chem_df"]["molecule_img"] = state["chem_df"]["smiles"].apply(
+                    get_molecule_image_src
+                )
+                state["processed_data"] = {"chem_df": chem_df, "mols": mols}
+
+        chem_df = state["processed_data"]["chem_df"]
+        mols = state["processed_data"]["mols"]
 
         st.header("Data plotter", anchor="data-plot", divider="gray")
-        st.markdown("### Select plot type and calculate 2D RDKit descriptors")
 
         plot_type = st.radio("Plotting type", ["t-SNE", "UMAP"], horizontal=True)
 
         if st.button("Calculate Descriptors and Plot"):
-            # Calculate 2D RDKit descriptors
-            desc_names = [
-                "MolWt",
-                "FractionCSP3",
-                "HeavyAtomCount",
-                "NumAliphaticCarbocycles",
-                "NumAliphaticHeterocycles",
-                "NumAliphaticRings",
-                "NumAromaticCarbocycles",
-                "NumAromaticHeterocycles",
-                "NumAromaticRings",
-                "NumHAcceptors",
-                "NumHDonors",
-                "NumHeteroatoms",
-                "NumRotatableBonds",
-                "NumSaturatedCarbocycles",
-                "NumSaturatedHeterocycles",
-                "NumSaturatedRings",
-                "RingCount",
-                "MolLogP",
-                "MolMR",
-            ]
+            if "descriptors" not in state:
+                desc_names = [
+                    "MolWt",
+                    "FractionCSP3",
+                    "HeavyAtomCount",
+                    "NumAliphaticCarbocycles",
+                    "NumAliphaticHeterocycles",
+                    "NumAliphaticRings",
+                    "NumAromaticCarbocycles",
+                    "NumAromaticHeterocycles",
+                    "NumAromaticRings",
+                    "NumHAcceptors",
+                    "NumHDonors",
+                    "NumHeteroatoms",
+                    "NumRotatableBonds",
+                    "NumSaturatedCarbocycles",
+                    "NumSaturatedHeterocycles",
+                    "NumSaturatedRings",
+                    "RingCount",
+                    "MolLogP",
+                    "MolMR",
+                ]
 
-            desc_functions = [(name, getattr(Descriptors, name)) for name in desc_names]
-            calc = lambda m: [func(m) for _, func in desc_functions if m is not None]
-            descriptors = [calc(mol) for mol in mols]
-            descriptors_df = pd.DataFrame(descriptors, columns=desc_names)
+                desc_functions = [
+                    (name, getattr(Descriptors, name)) for name in desc_names
+                ]
+                calc = lambda m: [
+                    func(m) for _, func in desc_functions if m is not None
+                ]
+                descriptors = [calc(mol) for mol in mols]
+                state["descriptors_df"] = pd.DataFrame(descriptors, columns=desc_names)
 
-            if plot_type == "t-SNE":
-                tsne = TSNE(
-                    n_components=2,
-                    random_state=42,
-                    init="random",
-                    perplexity=30,
-                    n_iter=500,
-                    learning_rate="auto",
+            with st.spinner("🔄 Generating Plots..."):
+                descriptors_df = state["descriptors_df"]
+
+                if plot_type == "t-SNE":
+                    tsne = TSNE(
+                        n_components=2,
+                        random_state=42,
+                        init="random",
+                        perplexity=30,
+                        n_iter=500,
+                        learning_rate="auto",
+                    )
+                    descriptors_df_valid = descriptors_df.dropna()
+                    results = tsne.fit_transform(descriptors_df_valid)
+                elif plot_type == "UMAP":
+                    umap_model = UMAP(
+                        n_components=2, random_state=42, n_neighbors=15, metric="cosine"
+                    )
+                    descriptors_df_valid = descriptors_df.dropna()
+                    results = umap_model.fit_transform(descriptors_df_valid)
+
+                source = ColumnDataSource(
+                    data=dict(
+                        x=results[:, 0],
+                        y=results[:, 1],
+                        smiles=state["chem_df"]["smiles"],
+                        type=state["chem_df"]["type"],
+                        molecule_img=state["chem_df"]["molecule_img"],
+                    )
                 )
-                descriptors_df_valid = descriptors_df.dropna()
-                results = tsne.fit_transform(descriptors_df_valid)
-            elif plot_type == "UMAP":
-                umap_model = UMAP(
-                    n_components=2, random_state=42, n_neighbors=15, metric="cosine"
+
+                # Create Bokeh figure
+                p = figure(
+                    width=800,
+                    height=600,
+                    title=f"{plot_type} Plot of 2D RDKit Descriptors",
                 )
-                descriptors_df_valid = descriptors_df.dropna()
-                results = umap_model.fit_transform(descriptors_df_valid)
-
-            source = ColumnDataSource(
-                data=dict(
-                    x=results[:, 0],
-                    y=results[:, 1],
-                    smiles=chem_df["smiles"],
-                    type=chem_df["type"],
-                    molecule_img=chem_df["molecule_img"],
+                # Create a color mapper
+                colors = Category10[10][: len(state["chem_df"]["type"].unique())]
+                color_mapper = factor_cmap(
+                    "type", palette=colors, factors=state["chem_df"]["type"].unique()
                 )
-            )
 
-            # Create Bokeh figure
-            p = figure(
-                width=800, height=600, title=f"{plot_type} Plot of 2D RDKit Descriptors"
-            )
-            # Create a color mapper
-            colors = Category10[10][: len(chem_df["type"].unique())]
-            color_mapper = factor_cmap(
-                "type", palette=colors, factors=chem_df["type"].unique()
-            )
+                # Create the scatter plot
+                scatter = p.scatter(
+                    "x",
+                    "y",
+                    source=source,
+                    color=color_mapper,
+                    legend_field="type",
+                    size=10,
+                    alpha=0.8,
+                )
 
-            # Create the scatter plot
-            scatter = p.scatter(
-                "x",
-                "y",
-                source=source,
-                color=color_mapper,
-                legend_field="type",
-                size=10,
-                alpha=0.8,
-            )
-
-            # Create tooltip HTML
-            tooltip_html = """
-            <div>
+                # Create tooltip HTML
+                tooltip_html = """
                 <div>
-                    <img src="@molecule_img" height="200" alt="@molecule_img" width="200">
+                    <div>
+                        <img src="@molecule_img" height="200" alt="@molecule_img" width="200">
+                    </div>
+                    <div>
+                        <span style="font-size: 12px; color: #666;">Type: @type</span>
+                    </div>
+                    <div>
+                        <span style="font-size: 12px; color: #666;">SMILES: @smiles</span>
+                    </div>
                 </div>
-                <div>
-                    <span style="font-size: 12px; color: #666;">Type: @type</span>
-                </div>
-                <div>
-                    <span style="font-size: 12px; color: #666;">SMILES: @smiles</span>
-                </div>
-            </div>
-            """
+                """
 
-            hover = HoverTool(renderers=[scatter], tooltips=tooltip_html)
-            p.add_tools(hover)
+                hover = HoverTool(renderers=[scatter], tooltips=tooltip_html)
+                p.add_tools(hover)
 
-            # Show the plot in Streamlit
             st.bokeh_chart(p, use_container_width=True)
+
+            display_valid_invalid_smiles(state["chem_df"])
 
             uploaded_file_name = uploaded_file.name.split(".")[0]
             if plot_type == "t-SNE":
@@ -342,13 +393,19 @@ with tab_1:
                 file_name = f"umap_plot_{uploaded_file_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}_{uuid.uuid4()}.svg"
 
             # Downloading the zip file
-            zip_buffer, zip_file_name = create_zip(chem_df, p)
+            zip_buffer, zip_file_name = create_zip(state["chem_df"], p)
+
+            def reset_session_state():
+                st.session_state.clear()
+                st.rerun()
+
             st.download_button(
-                label="Download ZIP file containing plot and classified SMILES info.",
+                label="Download Data and Plot",
                 data=zip_buffer,
                 file_name=zip_file_name,
                 mime="application/zip",
-                on_click="ignore",
+                on_click=reset_session_state,
+                help="Downloads a ZIP file containing plot and classified SMILES info.",
             )
 
 
