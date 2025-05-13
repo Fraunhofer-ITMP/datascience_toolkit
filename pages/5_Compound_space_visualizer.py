@@ -10,6 +10,7 @@ import zipfile
 
 import pandas as pd
 import streamlit as st
+import umap  # Major Fix
 from bokeh.io import export_svgs
 from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.palettes import Category10
@@ -18,7 +19,6 @@ from bokeh.transform import factor_cmap
 from rdkit import Chem
 from rdkit.Chem import Descriptors, Draw
 from sklearn.manifold import TSNE
-from umap import UMAP  # Major Fix
 
 
 ################# Utility Functions ################################
@@ -325,7 +325,7 @@ with tab_1:
                     descriptors_df_valid = descriptors_df.dropna()
                     results = tsne.fit_transform(descriptors_df_valid)
                 elif plot_type == "UMAP":
-                    umap_model = UMAP(
+                    umap_model = umap.UMAP(
                         n_components=2, random_state=42, n_neighbors=15, metric="cosine"
                     )
                     descriptors_df_valid = descriptors_df.dropna()
