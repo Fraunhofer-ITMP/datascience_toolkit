@@ -1,24 +1,27 @@
 """App for Chemical space analysis of compounds."""
 
+import base64
+import datetime
 import io
 import os
-import base64
-import streamlit as st
-import pandas as pd
-import numpy as np
-from umap import UMAP
-from bokeh.plotting import figure
-from bokeh.palettes import Category10
-from bokeh.models import ColumnDataSource, HoverTool
-from bokeh.transform import factor_cmap
-
 import tempfile
+import uuid
+import zipfile
+
+import numpy as np
+import pandas as pd
+import streamlit as st
+import umap.umap_ as UMAP  # Major fix in a new update
+from bokeh.io import export_svgs
+from bokeh.models import ColumnDataSource, HoverTool
+from bokeh.palettes import Category10
+from bokeh.plotting import figure
+from bokeh.transform import factor_cmap
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from rdkit import Chem
 from rdkit.Chem import Descriptors, Draw
 from sklearn.manifold import TSNE
-from bokeh.io import export_svgs
 
 st.set_page_config(
     layout="wide", page_title="Chemical space exploration tool", page_icon="🔎"
@@ -39,6 +42,8 @@ st.markdown(
         """,
     unsafe_allow_html=True,
 )  # .block-conatiner controls the padding of the page, .stTabs controls the font size of the text in the tabs
+
+################# Utility Functions ################################
 
 
 def plot_molecule(smiles):
@@ -63,8 +68,7 @@ def get_molecule_image_src(smiles):
     return ""
 
 
-def get_svg_download_link(fig):
-    """Create a download link for an SVG file."""
+def get_svg_download_content(fig):
     with tempfile.NamedTemporaryFile(suffix=".svg", delete=False) as temp_file:
         fig.output_backend = "svg"
         export_svgs(fig, filename=temp_file.name)
@@ -72,16 +76,51 @@ def get_svg_download_link(fig):
     with open(temp_file.name, "rb") as file:
         svg_content = file.read()
 
-    os.unlink(temp_file.name)  # Delete the temporary file
+    os.unlink(temp_file.name)
 
-    b64 = base64.b64encode(svg_content).decode()
-    return f"data:image/svg+xml;base64,{b64}"
+    return svg_content
 
 
-st.markdown(
-    "<h1 style='text-align: center; color: #149372;'> Chemical Space Analysis </h1> <br>",
-    unsafe_allow_html=True,
-)
+def create_zip(chem_df, plot):
+    """
+    Performs filtration of the dataframe and creates a zip file with the SVG files and XLSX file.
+    Args:
+        chem_df: DataFrame containing the chemical data.
+        plot: Bokeh plot object to be saved as SVG.
+    Returns:
+        zip_buffer: BytesIO object containing the zip file.
+        zip_file_name: Name of the zip file.
+    """
+    with tempfile.TemporaryDirectory() as temp_dir:
+        excel_file_path = os.path.join(temp_dir, "chem_data.xlsx")
+        chem_df = chem_df.drop(columns=["molecule_img"])
+        chem_df.to_excel(
+            excel_file_path, index=False, engine="openpyxl", sheet_name="chem_data"
+        )
+
+        svg_file_path = os.path.join(temp_dir, "plot.svg")
+        with open(svg_file_path, "wb") as svg_file:
+            svg_file.write(get_svg_download_content(plot))
+
+        uploaded_file_name = uploaded_file.name.split(".")[0]
+
+        base_name = f"{uploaded_file_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}_{uuid.uuid4()}"
+        folder_name = base_name
+        zip_file_name = f"{base_name}.zip"
+
+        files = {
+            "chem_data.xlsx": excel_file_path,
+            "plot.svg": svg_file_path,
+        }
+
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w") as zip_file:
+            for file_name, file_path in files.items():
+                arcname = os.path.join(folder_name, file_name)
+                zip_file.write(file_path, arcname=arcname)
+
+        zip_buffer.seek(0)
+        return zip_buffer, zip_file_name
 
 
 def safe_calc(mol):
@@ -91,6 +130,14 @@ def safe_calc(mol):
         return [func(mol) for _, func in desc_functions]
     except:
         return [None] * len(desc_functions)
+
+
+################# Utility Functions End ################################
+
+st.markdown(
+    "<h1 style='text-align: center; color: #149372;'> Chemical Space Analysis </h1> <br>",
+    unsafe_allow_html=True,
+)
 
 
 @st.fragment  # Prevents the app from running the code below all the time
@@ -142,6 +189,34 @@ with tab_1:
         key="chem-space",
     )
 
+    def validate_df_based_on_smiles(df):
+        """
+        Takes a dataframe and returns an updated df
+        Args:
+        df: pandas DataFrame with at least a 'smiles' column.
+        Returns:
+        valid_df: DataFrame with rows containing valid SMILES.
+        invalid_df: DataFrame with rows containing invalid SMILES.
+        """
+        df.columns = [col.lower() for col in df.columns]
+        smile_colnames = [col for col in df.columns if "smile" in col]
+        if not smile_colnames:
+            st.error("The DataFrame must contain a column with 'smile' in its name.")
+            st.stop()
+        smiles_column = smile_colnames[0]
+        df.rename(columns={smiles_column: "smiles"}, inplace=True)
+
+        df["smiles"] = df["smiles"].astype(str)
+
+        def is_valid_smiles(smiles):
+            """
+            Returns Boolean for valid smiles
+            """
+            return Chem.MolFromSmiles(smiles) is not None
+
+        df["valid_smiles"] = df["smiles"].apply(is_valid_smiles)
+        return df
+
     if uploaded_file is None:
         st.info(
             "Please upload a CSV or Excel file to proceed! Loading an example file",
@@ -151,13 +226,10 @@ with tab_1:
         chem_df = load_dataset(uploaded_file)
 
         st.info("Reading the CSV file...")
-        # Convert SMILES to RDKit molecules
+        chem_df = validate_df_based_on_smiles(chem_df)
         mols = [Chem.MolFromSmiles(smiles) for smiles in chem_df["smiles"]]
 
-        # Convert SMILES column to string if it exists
-        if "smiles" in chem_df.columns:
-            chem_df["smiles"] = chem_df["smiles"].astype(str)
-            chem_df["molecule_img"] = chem_df["smiles"].apply(get_molecule_image_src)
+        chem_df["molecule_img"] = chem_df["smiles"].apply(get_molecule_image_src)
 
         st.header("Data plotter", anchor="data-plot", divider="gray")
         st.markdown("### Select plot type and calculate 2D RDKit descriptors")
@@ -189,12 +261,11 @@ with tab_1:
             ]
 
             desc_functions = [(name, getattr(Descriptors, name)) for name in desc_names]
-            calc = lambda m: [func(m) for _, func in desc_functions]
+            calc = lambda m: [func(m) for _, func in desc_functions if m is not None]
             descriptors = [calc(mol) for mol in mols]
             descriptors_df = pd.DataFrame(descriptors, columns=desc_names)
 
             if plot_type == "t-SNE":
-                # Perform t-SNE
                 tsne = TSNE(
                     n_components=2,
                     random_state=42,
@@ -203,22 +274,22 @@ with tab_1:
                     n_iter=500,
                     learning_rate="auto",
                 )
-                results = tsne.fit_transform(descriptors_df)
+                descriptors_df_valid = descriptors_df.dropna()
+                results = tsne.fit_transform(descriptors_df_valid)
             elif plot_type == "UMAP":
-                # Perform UMAP
                 umap_model = UMAP(
                     n_components=2, random_state=42, n_neighbors=15, metric="cosine"
                 )
-                results = umap_model.fit_transform(descriptors_df)
+                descriptors_df_valid = descriptors_df.dropna()
+                results = umap_model.fit_transform(descriptors_df_valid)
 
-            # Create a Bokeh ColumnDataSource
             source = ColumnDataSource(
                 data=dict(
                     x=results[:, 0],
                     y=results[:, 1],
-                    smiles=df["smiles"],
-                    type=df["type"],
-                    molecule_img=df["molecule_img"],
+                    smiles=chem_df["smiles"],
+                    type=chem_df["type"],
+                    molecule_img=chem_df["molecule_img"],
                 )
             )
 
@@ -226,11 +297,10 @@ with tab_1:
             p = figure(
                 width=800, height=600, title=f"{plot_type} Plot of 2D RDKit Descriptors"
             )
-
             # Create a color mapper
-            colors = Category10[10][: len(df["type"].unique())]
+            colors = Category10[10][: len(chem_df["type"].unique())]
             color_mapper = factor_cmap(
-                "type", palette=colors, factors=df["type"].unique()
+                "type", palette=colors, factors=chem_df["type"].unique()
             )
 
             # Create the scatter plot
@@ -265,18 +335,21 @@ with tab_1:
             # Show the plot in Streamlit
             st.bokeh_chart(p, use_container_width=True)
 
+            uploaded_file_name = uploaded_file.name.split(".")[0]
             if plot_type == "t-SNE":
-                file_name = "tsne_plot.svg"
+                file_name = f"tsne_plot_{uploaded_file_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}_{uuid.uuid4()}.svg"
             elif plot_type == "UMAP":
-                file_name = "umap_plot.svg"
+                file_name = f"umap_plot_{uploaded_file_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}_{uuid.uuid4()}.svg"
 
-            # Add download button
-            if st.button("Download Plot as SVG"):
-                svg_href = get_svg_download_link(p)
-                st.markdown(
-                    f'<a href="{svg_href}" download=f"{file_name}">Download Plot as SVG</a>',
-                    unsafe_allow_html=True,
-                )
+            # Downloading the zip file
+            zip_buffer, zip_file_name = create_zip(chem_df, p)
+            st.download_button(
+                label="Download ZIP file containing plot and classified SMILES info.",
+                data=zip_buffer,
+                file_name=zip_file_name,
+                mime="application/zip",
+                on_click="ignore",
+            )
 
 
 with tab_2:
