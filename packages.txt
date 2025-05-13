@@ -1,1 +1,3 @@
 libxrender1
+chromium
+chromium-driver
