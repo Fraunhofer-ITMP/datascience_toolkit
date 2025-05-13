@@ -160,7 +160,7 @@ def display_valid_invalid_smiles(df):
         )
     else:
         st.info(
-            f"Out of {total_data_size} total entries in your dataset, only {number_of_valid_smiles} of them contain valid SMILES notation. You can download the files below to find which SMILES notations did not parse.",
+            f"Out of {total_data_size} total entries in your dataset, only {number_of_valid_smiles} of them contain valid SMILES notation. You can download the files below to find out which SMILES notations did not parse.",
             icon="ℹ️",
         )
 
