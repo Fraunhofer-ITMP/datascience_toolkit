@@ -1,2 +1,2 @@
 libxrender1
-geckodriver
+chromium-chromedriver
