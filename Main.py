@@ -1,9 +1,11 @@
 """Landing page for all Fraunhofer apps."""
 
+import base64
+import datetime
 import os
+
 import pandas as pd
 import streamlit as st
-import base64
 from streamlit_card import card
 
 st.set_page_config(
@@ -156,7 +158,6 @@ with tab1:
 
 # tools tab
 with tab2:
-
     st.markdown("### Explore our tools and workflows")
     with st.expander(label=r"$\textsf{\Large Dashboards and Databases}$"):
         col1, col2, col3 = st.columns(3)
@@ -512,7 +513,7 @@ with tab3:
 
         for i, row in tmp.iterrows():
             st.markdown(
-                f"{i+1}. {row['chicago_authors']} {row['chicago_title']} *{row['chicago_journal']}* {row['chicago_meta']} doi: {row['doi']}"
+                f"{i + 1}. {row['chicago_authors']} {row['chicago_title']} *{row['chicago_journal']}* {row['chicago_meta']} doi: {row['doi']}"
             )
 
 # team tab
@@ -540,9 +541,11 @@ with tab4:
     st.image("./images/clinical_ds.png", use_column_width=True)
 
 # footer with text and green background
+
+current_year = datetime.datetime.today().year
 st.markdown(
-    "<footer style='background-color: #149372; padding: 10px; border-radius: 10px;'>"
-    "<p style='color: white; text-align: center;'>Fraunhofer ITMP © 2024</p>"
+    f"<footer style='background-color: #149372; padding: 10px; border-radius: 10px;'>"
+    f"<p style='color: white; text-align: center;'>Fraunhofer ITMP © {current_year}</p>"
     "<p style='color: white; text-align: center;'>This work has been conducted across several key projects in which ITMP has been actively involved.</p>"
     "</footer>",
     unsafe_allow_html=True,
