@@ -233,7 +233,7 @@ with tab2:
     #     # elif viral_prot != st.session_state["viral_prot"]:
     #     st.session_state["viral_prot"] = viral_prot
 
-    st.write(state)
+    #    st.write(state)
 
     st.header("Generating the graph", anchor="generate-graph", divider="grey")
 
@@ -267,9 +267,9 @@ with tab2:
 
         #        state["dis2prot_df"] = dis2prot_df
         #        state["dis2snp_df"] = dis2snp_df
-        if not state["dis2prot_df"].empty:
-            st.write("Current protein data preview:")
-            st.dataframe(state["dis2prot_df"].head())
+        #        if not state["dis2prot_df"].empty:
+        #            st.write("Current protein data preview:")
+        #            st.dataframe(state["dis2prot_df"].head())
         #            st.write(
         #                f"Current disease in session state: {st.session_state.get('user_disease')}"
         #            )
