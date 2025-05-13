@@ -124,4 +124,4 @@ wcwidth==0.2.13
 websocket-client==1.8.0
 wsproto==1.2.0
 xyzservices==2025.4.0
-./pip_packages/kaleido-0.1.0.post1-py2.py3-none-win_amd64.whl
+kaleido==0.1.0
