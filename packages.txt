@@ -1,1 +1,3 @@
 libxrender1
+firefox
+geckodriver
