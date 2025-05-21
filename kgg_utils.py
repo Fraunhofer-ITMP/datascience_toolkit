@@ -2004,6 +2004,59 @@ def calculate_filters(df, colname_chembl):
     return (df, unusedDrugs_df)
 
 
+def create_charts_with_calc_filters(df):
+    """
+    This functions filters the dataframe obtained from calculate_filters(), and creates a stacked barchart and a piechart.
+    """
+    filter_cols = ["Lipinski_ro5", "Ghose", "Veber", "REOS", "QED"]
+    df_filters = df[filter_cols]
+
+    df_filters = df_filters.replace({0: "Yes", 1: "No"})
+
+    grouped_stacked_filters = (
+        df_filters.stack().groupby(level=[1]).value_counts().unstack()
+    )
+
+    stack_order = ["Yes", "No"]
+    ordered_stacked_df = grouped_stacked_filters.reindex(
+        columns=stack_order, fill_value=0
+    )
+
+    calc_fig = go.Figure()
+
+    bar_colors = {
+        "Yes": "#1f77b4",
+        "No": "#ff7f0e",
+    }  # Setting the colors exactly to match the github notebook color scheme
+
+    for col in ordered_stacked_df.columns:
+        calc_fig.add_trace(
+            go.Bar(
+                name=col,
+                x=ordered_stacked_df.index,
+                y=ordered_stacked_df[col],
+                marker=dict(
+                    color=bar_colors.get(col, "#CCCCCC"),
+                    line=dict(width=2, color="white"),
+                ),
+            )
+        )
+
+    calc_fig.update_layout(
+        barmode="stack",
+        title="Bar plots showing drug-likeness across various filters",
+        xaxis_title="Filters for drug-likeness",
+        yaxis_title="Total number of drugs",
+        width=800,
+        height=700,
+        plot_bgcolor="white",
+        xaxis_tickangle=0,
+        showlegend=True,
+    )
+
+    st.plotly_chart(calc_fig)
+
+
 def create_zip():
     drugs_df = state["drugs_df"].to_csv(index=False)
     dis2prot_df = state["dis2prot_df"].to_csv(index=False)
