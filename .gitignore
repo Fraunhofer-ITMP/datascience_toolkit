@@ -408,7 +408,7 @@ celerybeat.pid
 env/
 venv/
 ENV/
-newenv/
+*env/
 env.bak/
 venv.bak/
 
@@ -483,6 +483,9 @@ tags
 .ionide
 
 # Support for Project snippet scope
+
+# Streamlit Deployment files
+.devcontainer
 
 ### Windows ###
 # Windows thumbnail cache files
