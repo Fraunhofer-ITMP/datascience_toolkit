@@ -104,31 +104,32 @@ with tab3:
         )
 
         calc_filters, unusedDrugs_df = kgg_utils.calculate_filters(df, "drugId")
-        st.write(calc_filters)
-        kgg_utils.create_charts_with_calc_filters(calc_filters)
+        filter_cols = ["Lipinski_ro5", "Ghose", "Veber", "REOS", "QED"]
+        df_filters = calc_filters[filter_cols]
+        calc_figures = kgg_utils.create_charts_with_calc_filters(df_filters)
+        pie_figures = kgg_utils.create_pie_chart_from_calc_filters(
+            calc_filters, df_filters
+        )
+        formatted_calc_filters = kgg_utils.formulate_calc_filters_df(
+            calc_filters, df_filters
+        )
 
-        calc_filters = calc_filters.to_csv(index=False).encode("utf-8")
-        unusedDrugs_df = unusedDrugs_df.to_csv(index=False).encode("utf-8")
-
-        # st.write(unusedDrugs_df)
-
+        zip_data = kgg_utils.create_drug_likeness_zip(
+            calc_figures, pie_figures, formatted_calc_filters
+        )
         st.download_button(
-            label="Download druglikeness profile",
-            data=calc_filters,
-            file_name="druglikeness_df.csv",
-            mime="text/csv",
+            label="Download Drug Likeness Results",
+            data=zip_data,
+            file_name=f"{uploaded_file.name.split('.')[0]}_drug_likeness_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}_{uuid.uuid4().hex[:4]}.zip",
+            mime="application/zip",
+            on_click="ignore",
+            help="Click to download the zip file containing above interactive plots and CSV.",
         )
 
-        st.write(
-            "Some drugs may not have SMILES representation because their type is either antibody, protein or unknown. The unparsed drugs can be downloaded here."
-        )
 
-        st.download_button(
-            label="Download unparsed drugs file",
-            data=unusedDrugs_df,
-            file_name="unparsedDrugs_df.csv",
-            mime="text/csv",
-        )
+#        st.write(
+#            "Some drugs may not have SMILES representation because their type is either antibody, protein or unknown. The unparsed drugs can be downloaded here."
+#        )
 
 
 with tab2:

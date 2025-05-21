@@ -5,11 +5,14 @@ import json
 import logging
 import os
 import pickle
+import tempfile
 import zipfile
 from collections import defaultdict
 
 import networkx as nx
 import pandas as pd
+import plotly
+import plotly.express as px
 import plotly.graph_objects as go
 import pybel
 import requests
@@ -2004,17 +2007,17 @@ def calculate_filters(df, colname_chembl):
     return (df, unusedDrugs_df)
 
 
-def create_charts_with_calc_filters(df):
+def create_charts_with_calc_filters(df_filters_df):
     """
     This functions filters the dataframe obtained from calculate_filters(), and creates a stacked barchart and a piechart.
     """
-    filter_cols = ["Lipinski_ro5", "Ghose", "Veber", "REOS", "QED"]
-    df_filters = df[filter_cols]
+    #    filter_cols = ["Lipinski_ro5", "Ghose", "Veber", "REOS", "QED"]
+    #    df_filters = calc_filters_df[filter_cols]
 
-    df_filters = df_filters.replace({0: "Yes", 1: "No"})
+    df_filters_df = df_filters_df.replace({0: "Yes", 1: "No"})
 
     grouped_stacked_filters = (
-        df_filters.stack().groupby(level=[1]).value_counts().unstack()
+        df_filters_df.stack().groupby(level=[1]).value_counts().unstack()
     )
 
     stack_order = ["Yes", "No"]
@@ -2055,6 +2058,106 @@ def create_charts_with_calc_filters(df):
     )
 
     st.plotly_chart(calc_fig)
+    # save this as html
+    return calc_fig
+
+
+def create_pie_chart_from_calc_filters(calc_filters_df, df_filters):
+    """
+    This function creates a pie chart from the filtered dataframe obtained from calculate_filters().
+    """
+    #    filter_cols = ["Lipinski_ro5", "Ghose", "Veber", "REOS", "QED"]
+    #    df_filters = calc_filters_df[filter_cols]
+
+    calc_filters_df["Flag"] = df_filters.sum(axis=1, numeric_only=True)
+
+    df_drugType = (
+        calc_filters_df.groupby(["Flag"])["Flag"].count().reset_index(name="count")
+    )
+
+    df_drugType = df_drugType.rename(
+        index={
+            0: "Passed All Filters",
+            1: "1 Violation",
+            2: "2 Violations",
+            3: "3 Violations",
+            4: "4 Violations",
+            5: "5 Violations",
+        }
+    )
+
+    fig = go.Figure(
+        data=[
+            go.Pie(
+                labels=df_drugType.index,
+                values=df_drugType["count"],
+                textinfo="label+percent",
+                textposition="inside",
+                marker=dict(
+                    colors=[
+                        "#1f77b4",
+                        "#ff7f0e",
+                        "#2ca02c",
+                        "#d62728",
+                        "#9467bd",
+                        "#8c564b",
+                    ],
+                    line=dict(color="white", width=2),
+                ),
+            )
+        ]
+    )
+
+    fig.update_layout(
+        title="Pie Chart Showing the Number of Drugs Passing the Filters",
+        width=800,
+        height=700,
+        plot_bgcolor="white",
+    )
+
+    st.plotly_chart(fig)
+    return fig
+
+
+def formulate_calc_filters_df(calc_filters_df, df_filters):
+    """
+    This function is used to restructure calc_filters dataframe before exporting to CSV.
+    """
+    #    filter_cols = ["Lipinski_ro5", "Ghose", "Veber", "REOS", "QED"]
+    #    df_filters = calc_filters_df[filter_cols]
+    calc_filters_df["Flag"] = df_filters.sum(axis=1, numeric_only=True)
+    calc_filters_df.rename(
+        columns={"smiles": "SMILES", "drugId": "DrugID"}, inplace=True
+    )
+    new_col_order = (
+        ["DrugID", "SMILES"] + list(calc_filters_df.columns[2:-1]) + ["Flag"]
+    )
+    calc_filters_df = calc_filters_df[new_col_order]
+    st.write(calc_filters_df)
+    return calc_filters_df
+
+
+def create_drug_likeness_zip(
+    calc_figures, pie_figures, calc_filters_df, zip_filename="drug_likeness_results.zip"
+):
+    """
+    Creates a zip file containing two interactive Plotly HTML charts and a CSV file.
+    """
+    zip_buffer = io.BytesIO()
+
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        bar_html = calc_figures.to_html(full_html=False, include_plotlyjs="cdn")
+        zip_file.writestr("drug_likeness_calc_figures.html", bar_html)
+
+        pie_html = pie_figures.to_html(full_html=False, include_plotlyjs="cdn")
+        zip_file.writestr("drug_likeness_pie_figures.html", pie_html)
+
+        csv_buffer = io.StringIO()
+        calc_filters_df.to_csv(csv_buffer, index=False)
+        zip_file.writestr("drug_likeness_results.csv", csv_buffer.getvalue())
+
+    zip_buffer.seek(0)
+    return zip_buffer.getvalue()
 
 
 def create_zip():
