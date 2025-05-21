@@ -2141,7 +2141,7 @@ def create_drug_likeness_zip(
     calc_figures, pie_figures, calc_filters_df, zip_filename="drug_likeness_results.zip"
 ):
     """
-    Creates a zip file containing two interactive Plotly HTML charts and a CSV file.
+    Creates a zip file containing two interactive Plotly HTML charts and a XLSX file.
     """
     zip_buffer = io.BytesIO()
 
@@ -2152,9 +2152,12 @@ def create_drug_likeness_zip(
         pie_html = pie_figures.to_html(full_html=False, include_plotlyjs="cdn")
         zip_file.writestr("drug_likeness_pie_figures.html", pie_html)
 
-        csv_buffer = io.StringIO()
-        calc_filters_df.to_csv(csv_buffer, index=False)
-        zip_file.writestr("drug_likeness_results.csv", csv_buffer.getvalue())
+        excel_buffer = io.BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine="openpyxl") as writer:
+            calc_filters_df.to_excel(writer, index=False, sheet_name="Results")
+        excel_buffer.seek(0)
+
+        zip_file.writestr("drug_likeness_results.xlsx", excel_buffer.getvalue())
 
     zip_buffer.seek(0)
     return zip_buffer.getvalue()
@@ -2186,7 +2189,6 @@ def create_zip():
         pickle.dump(kg, pickle_buffer_kg)
         zip_file.writestr(f"{state.kg_name}.pkl", pickle_buffer_kg.getvalue())
 
-        # Save the DataFrame as a CSV in memory and add it to the zip
         kg_csv_buffer = io.StringIO()
         pybel.to_csv(kg, kg_csv_buffer)
         zip_file.writestr(f"{state.kg_name}.csv", kg_csv_buffer.getvalue())

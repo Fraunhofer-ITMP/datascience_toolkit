@@ -123,7 +123,7 @@ with tab3:
             file_name=f"{uploaded_file.name.split('.')[0]}_drug_likeness_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}_{uuid.uuid4().hex[:4]}.zip",
             mime="application/zip",
             on_click="ignore",
-            help="Click to download the zip file containing above interactive plots and CSV.",
+            help="Click to download the zip file containing above interactive plots and XLSX file.",
         )
 
 
