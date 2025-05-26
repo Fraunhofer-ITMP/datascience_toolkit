@@ -239,6 +239,21 @@ with tab2:
                 },
             )
 
+        with col6:
+            hasClicked = card(
+                title="EU-OPENSCREEN IMPULSE",
+                text="European Infrastructure of Open Screening Platforms for Chemical Biology",
+                image=load_logo("images/app_logos/openscreen_impulse.PNG"),
+                url="/OpenScreen_Impulse",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
+            )
+
     with st.expander(label=r"$\textsf{\Large Machine learning models}$"):
         col1, col2, col3 = st.columns(3)
 
