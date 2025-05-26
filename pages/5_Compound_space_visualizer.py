@@ -11,10 +11,13 @@ import zipfile
 import pandas as pd
 import streamlit as st
 import umap.umap_ as umap
-from bokeh.io import export_svgs
+from bokeh.embed import file_html
+
+# from bokeh.io import export_svgs
 from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.palettes import Category10
 from bokeh.plotting import figure
+from bokeh.resources import CDN
 from bokeh.transform import factor_cmap
 from rdkit import Chem
 from rdkit.Chem import Descriptors, Draw
@@ -44,17 +47,17 @@ def get_molecule_image_src(smiles):
     return ""
 
 
-def get_svg_download_content(fig):
-    with tempfile.NamedTemporaryFile(suffix=".svg", delete=False) as temp_file:
-        fig.output_backend = "svg"
-        export_svgs(fig, filename=temp_file.name)
+# def get_svg_download_content(fig):
+#     with tempfile.NamedTemporaryFile(suffix=".svg", delete=False) as temp_file:
+#         fig.output_backend = "svg"
+#         export_svgs(fig, filename=temp_file.name)
 
-    with open(temp_file.name, "rb") as file:
-        svg_content = file.read()
+#     with open(temp_file.name, "rb") as file:
+#         svg_content = file.read()
 
-    os.unlink(temp_file.name)
+#     os.unlink(temp_file.name)
 
-    return svg_content
+#     return svg_content
 
 
 def get_file_hash(uploaded_file):
@@ -81,9 +84,14 @@ def create_zip(chem_df, plot):
             excel_file_path, index=False, engine="openpyxl", sheet_name="chem_data"
         )
 
-        svg_file_path = os.path.join(temp_dir, "plot.svg")
-        with open(svg_file_path, "wb") as svg_file:
-            svg_file.write(get_svg_download_content(plot))
+        #        svg_file_path = os.path.join(temp_dir, "plot.svg")
+        #        with open(svg_file_path, "wb") as svg_file:
+        #            svg_file.write(get_svg_download_content(plot))
+
+        html_file_path = os.path.join(temp_dir, "plot.html")
+        html = file_html(plot, CDN, "Interactive Chemical Plot")
+        with open(html_file_path, "w", encoding="utf-8") as f:
+            f.write(html)
 
         uploaded_file_name = uploaded_file.name.split(".")[0]
 
@@ -93,7 +101,7 @@ def create_zip(chem_df, plot):
 
         files = {
             "chem_data.xlsx": excel_file_path,
-            "plot.svg": svg_file_path,
+            "plot.html": html_file_path,
         }
 
         zip_buffer = io.BytesIO()
