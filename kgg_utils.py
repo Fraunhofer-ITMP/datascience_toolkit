@@ -2058,7 +2058,6 @@ def create_charts_with_calc_filters(df_filters_df):
     )
 
     st.plotly_chart(calc_fig)
-    # save this as html
     return calc_fig
 
 
