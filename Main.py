@@ -553,7 +553,7 @@ with tab4:
                     unsafe_allow_html=True,
                 )
 
-    st.image("./images/clinical_ds.png", use_column_width=True)
+    st.image("./images/clinical_ds.png", use_container_width=True)
 
 # footer with text and green background
 
