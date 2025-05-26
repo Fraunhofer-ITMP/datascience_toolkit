@@ -99,6 +99,12 @@ with tab3:
         df = pd.read_csv(uploaded_file, index_col=0)
         # st.write(len(df))
 
+        if "drugId" not in df.columns:
+            st.error(
+                "Looks like you uploaded the wrong file. The DataFrame must contain a column with 'drugId' in its name."
+            )
+            st.stop()
+
         st.write(
             f"Total number of unique drugs is {len(set(df['drugId']))}. Please remember that a same drug can be in different phases of clinical trials."
         )
