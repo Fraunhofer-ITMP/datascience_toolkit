@@ -59,6 +59,6 @@ st.markdown(
     """
 )
 
-st.markdown("### Cataloguing Screening")
+st.markdown("### Cataloging Screening")
 st.image("images/pages/openscreen_cataloguing_screening.png")
-st.caption("Cataloguing Screening Visualized based on Site, Types and Assays.")
+st.caption("Cataloging Screening Visualized based on Site, Types and Assays.")
