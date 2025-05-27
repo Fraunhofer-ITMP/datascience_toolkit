@@ -7,7 +7,7 @@ import os
 import pickle
 import tempfile
 import zipfile
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 import networkx as nx
 import pandas as pd
@@ -15,6 +15,8 @@ import plotly
 import plotly.express as px
 import plotly.graph_objects as go
 import pybel
+import pybel.struct.mutation.induction as induction
+import pybel_jupyter
 import requests
 import streamlit as st
 from chembl_webresource_client.new_client import new_client
@@ -2229,39 +2231,79 @@ def create_zip():
     return zip_buffer.getvalue()
 
 
-
 def load_pickle_file(uploaded_file):
-    import pybel
-    import pandas as pd
-    import pickle
     """
-    Loads the pickle file and returns the graph object.
+    Loads the uploaded .pkl file and returns the BELGraph object if valid.
     """
-    given_file = open(uploaded_file,"rb")
     try:
-        query_graph = pickle.load(given_file)
-        query_graph_type = type(query_graph)
-        if str(query_graph_type) != "<class 'pybel.struct.graph.BELGraph'>":
-            st.error("Uploaded pickle file does not contain BEL Graph.")
+        # uploaded_file is already a file-like object
+        query_graph = pickle.load(uploaded_file)
+
+        # Check if it's a valid BELGraph
+        if not isinstance(query_graph, pybel.BELGraph):
+            st.error("Uploaded pickle file does not contain a BELGraph object.")
             st.stop()
-        given_file.close()
+
         return query_graph
-    except:
-        st.error("Uploaded file is either corrupted or is not a valid pickle file.")
+
+    except Exception as e:
+        st.error(f"Failed to load pickle file: {e}")
         st.stop()
-        return None
+
 
 def query_graph_info(graph_data):
     """
     Reads the graph and displays information about the graph.
     """
-    from collections import Counter
-    total_nodes = [node for node in graph_data.nodes()]
-    total_edges = [edge for edge in graph_data.edges()]
-    total_relations = Counter(data['relation'] for _, _, data in graph_data.edges(data=True))
-    overall_summary = graph_data.summarize
-    st.markdown(f"### Summary of your graph:\n{overall_summary}")
-    st.markdown(f"**Total no. of relations: {total_relations}")
+    total_nodes = graph_data.number_of_nodes()
+    total_edges = graph_data.number_of_edges()
+    total_relations = Counter(
+        data["relation"] for _, _, data in graph_data.edges(data=True)
+    )
+
+    # Create a manual summary if summarize() doesn't work
+    summary = (
+        f"Nodes: {total_nodes}, Edges: {total_edges}, Relations: {len(total_relations)}"
+    )
+
+    st.markdown(f"### Summary of your graph:\n{summary}")
+    st.markdown(f"**Total no. of relations: {len(total_relations)}")
     st.markdown(f"**Total no. of edges: {total_edges}")
     st.markdown(f"**Total no. of nodes: {total_nodes}")
-    
+    st.markdown("**Relation types:**")
+    for rel, count in total_relations.most_common():
+        st.markdown(f"- {rel}: {count}")
+
+
+def display_interactive_belgraph(graph_data):
+    graph_subset = induction.get_random_subgraph(graph_data)
+
+    total_nodes = graph_subset.number_of_nodes()
+    total_edges = graph_subset.number_of_edges()
+    st.markdown(
+        f"Taking a random subgraph with **{total_nodes} nodes** and **{total_edges} edges...**"
+    )
+    graph_subset_html = pybel_jupyter.to_html(graph_subset)
+    st.components.v1.html(graph_subset_html, height=600, scrolling=True)
+
+    return graph_subset_html
+
+
+def download_interactive_belgraph(graph_html):
+    """Lets the user download the BELGraph visualization as an HTML file."""
+
+    if not isinstance(graph_html, str):
+        st.error("Error: The graph visualization must be generated first.")
+        return
+
+    html_bytes = graph_html.encode("utf-8")
+    buffer = io.BytesIO(html_bytes)
+
+    st.download_button(
+        label="Download BELGraph as HTML",
+        data=buffer,
+        file_name="belgraph_visualization.html",
+        mime="text/html",
+        help="Download the HTML format of this interactive graph.",
+        on_click="ignore",
+    )
