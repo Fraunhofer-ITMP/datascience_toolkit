@@ -46,7 +46,7 @@ st.markdown(
 )
 
 
-tab1, tab2, tab3 = st.tabs(["Description", "KG Generator", "Drug-likeness assessment"])
+tab1, tab2, tab3, tab4 = st.tabs(["Description", "KG Generator", "Drug-likeness assessment", "Query KG Visualizer"])
 
 
 with tab1:
@@ -136,6 +136,31 @@ with tab3:
 #        st.write(
 #            "Some drugs may not have SMILES representation because their type is either antibody, protein or unknown. The unparsed drugs can be downloaded here."
 #        )
+
+with tab4:
+    st.markdown("### Query KG Visualizer")
+    st.markdown(
+        """ This page allows users to get insights of a PyBEL Knowledge Graph...
+        """
+    )
+    st.info(
+        "**Important:** Please only upload the pickle file of a graph. Other types of files (CSV,XLSX) are not supported.",
+        icon="ℹ️",
+    )
+
+    # File uploader
+    uploaded_file = st.file_uploader(
+        "Choose the CSV file named 'diseaseAssociatedDrugs' from a KGG output folder",
+        type="pkl",
+    )
+
+    if uploaded_file is not None:
+        query_graph = kgg_utils.load_pickle_file(uploaded_file=uploaded_file)
+        if query_graph is None:
+            st.error("Uploaded file is either corrupt or the file format is wrong. Please upload the right file.")
+            st.stop()
+        kgg_utils.query_graph_info(query_graph)
+
 
 
 with tab2:

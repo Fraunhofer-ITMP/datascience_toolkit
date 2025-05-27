@@ -2227,3 +2227,41 @@ def create_zip():
     # zip_buffer.seek(0)
 
     return zip_buffer.getvalue()
+
+
+
+def load_pickle_file(uploaded_file):
+    import pybel
+    import pandas as pd
+    import pickle
+    """
+    Loads the pickle file and returns the graph object.
+    """
+    given_file = open(uploaded_file,"rb")
+    try:
+        query_graph = pickle.load(given_file)
+        query_graph_type = type(query_graph)
+        if str(query_graph_type) != "<class 'pybel.struct.graph.BELGraph'>":
+            st.error("Uploaded pickle file does not contain BEL Graph.")
+            st.stop()
+        given_file.close()
+        return query_graph
+    except:
+        st.error("Uploaded file is either corrupted or is not a valid pickle file.")
+        st.stop()
+        return None
+
+def query_graph_info(graph_data):
+    """
+    Reads the graph and displays information about the graph.
+    """
+    from collections import Counter
+    total_nodes = [node for node in graph_data.nodes()]
+    total_edges = [edge for edge in graph_data.edges()]
+    total_relations = Counter(data['relation'] for _, _, data in graph_data.edges(data=True))
+    overall_summary = graph_data.summarize
+    st.markdown(f"### Summary of your graph:\n{overall_summary}")
+    st.markdown(f"**Total no. of relations: {total_relations}")
+    st.markdown(f"**Total no. of edges: {total_edges}")
+    st.markdown(f"**Total no. of nodes: {total_nodes}")
+    
