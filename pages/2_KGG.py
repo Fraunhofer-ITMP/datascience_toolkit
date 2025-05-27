@@ -463,6 +463,7 @@ with tab2:
         )
 
         if st.button("Start Over"):
+            st.info("Please have patience. Clearing cache...")
             kgg_utils.createInitialKG.clear()
             state.clear()
             state["button_clicked"] = False

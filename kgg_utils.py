@@ -638,7 +638,9 @@ def uniprot_rel(named_uprotList, org, graph) -> BELGraph:
 def searchDisease(keyword):
     """Finding disease identifiers using OpenTargets API"""
     disease_name = str(keyword)
-
+    if disease_name is None:
+        st.error("Please resubmit the disease.")
+        st.stop()
     query_string = """
         query searchAnything ($disname:String!){
             search(queryString:$disname,entityNames:"disease",page:{size:20,index:0}){
@@ -662,6 +664,9 @@ def searchDisease(keyword):
     r = requests.post(base_url, json={"query": query_string, "variables": variables})
 
     # Transform API response from JSON into Python dictionary and print in console
+    # if r is None:
+    #     st.error("Please resubmit the disease.")
+    #     st.stop()
     api_response = json.loads(r.text)
 
     df = pd.DataFrame(api_response["data"]["search"]["hits"])
@@ -1233,7 +1238,7 @@ def snp2gene_rel(snp_df, graph):
     return graph
 
 
-@st.cache_data(ttl=300, show_spinner="Fetching new disease data...")
+@st.cache_data(ttl=5, show_spinner="Fetching new disease data...")
 def createInitialKG(_ct_phase):
     """Creating the initial Knowledge Graph using the disease and protein data."""
     efo_id = state.get("disease_id", "")
@@ -1659,7 +1664,7 @@ def finalizeKG(filtered_protein_df: pd.DataFrame, session_inputs: dict):
             except:
                 continue
 
-    st.write(state)
+    #    st.write(state)
 
     st.write("Your KG is now generated!", "\n")
     return kg
