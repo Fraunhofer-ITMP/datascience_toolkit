@@ -462,8 +462,10 @@ with tab2:
             help="Click to download the zip file containing all graphs and CSVs. This will also download the CSV file *diseaseAssociatedDrugs.csv* that you can utilize for Drug-likeness assessment on the next tab.",
         )
 
-        if st.button("Start Over"):
-            st.info("Please have patience. Clearing cache...")
+        if st.button(
+            "Start Over",
+            help="This button usually takes a while. Please have patience.",
+        ):
             kgg_utils.createInitialKG.clear()
             state.clear()
             state["button_clicked"] = False
