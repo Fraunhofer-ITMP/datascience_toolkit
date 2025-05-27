@@ -46,7 +46,9 @@ st.markdown(
 )
 
 
-tab1, tab2, tab3 = st.tabs(["Description", "KG Generator", "Drug-likeness assessment"])
+tab1, tab2, tab3, tab4 = st.tabs(
+    ["Description", "KG Generator", "Drug-likeness assessment", "KG Visualizer"]
+)
 
 
 with tab1:
@@ -137,6 +139,34 @@ with tab3:
 #            "Some drugs may not have SMILES representation because their type is either antibody, protein or unknown. The unparsed drugs can be downloaded here."
 #        )
 
+with tab4:
+    st.markdown("### KG Visualizer")
+    st.markdown(
+        """ This page allows users to get insights of a PyBEL Knowledge Graph...
+        """
+    )
+    st.info(
+        "**Important:** Please only upload the pickle file of a graph. Other types of files (CSV,XLSX) are not supported.",
+        icon="ℹ️",
+    )
+
+    # File uploader
+    uploaded_file = st.file_uploader(
+        "Choose the CSV file named 'diseaseAssociatedDrugs' from a KGG output folder",
+        type="pkl",
+    )
+
+    if uploaded_file is not None:
+        query_graph = kgg_utils.load_pickle_file(uploaded_file=uploaded_file)
+        if query_graph is None:
+            st.error(
+                "Uploaded file is either corrupt or the file format is wrong. Please upload the right file."
+            )
+            st.stop()
+        kgg_utils.query_graph_info(query_graph)
+        st.markdown("### Display of your graph:")
+        graph_subset_html = kgg_utils.display_interactive_belgraph(query_graph)
+        kgg_utils.download_interactive_belgraph(graph_subset_html)
 
 with tab2:
     st.markdown(
@@ -432,7 +462,10 @@ with tab2:
             help="Click to download the zip file containing all graphs and CSVs. This will also download the CSV file *diseaseAssociatedDrugs.csv* that you can utilize for Drug-likeness assessment on the next tab.",
         )
 
-        if st.button("Start Over"):
+        if st.button(
+            "Start Over",
+            help="This button usually takes a while. Please have patience.",
+        ):
             kgg_utils.createInitialKG.clear()
             state.clear()
             state["button_clicked"] = False

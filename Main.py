@@ -182,7 +182,7 @@ with tab2:
                 title="KGG",
                 text="Automated workflow for disease-specific KGs",
                 image=load_logo("images/app_logos/kgg.png"),
-                url="/KG_Generator",
+                url="/KGG",
                 styles={
                     "card": {
                         "border-radius": "10px",

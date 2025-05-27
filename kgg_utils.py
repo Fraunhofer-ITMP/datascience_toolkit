@@ -7,7 +7,7 @@ import os
 import pickle
 import tempfile
 import zipfile
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 import networkx as nx
 import pandas as pd
@@ -15,6 +15,8 @@ import plotly
 import plotly.express as px
 import plotly.graph_objects as go
 import pybel
+import pybel.struct.mutation.induction as induction
+import pybel_jupyter
 import requests
 import streamlit as st
 from chembl_webresource_client.new_client import new_client
@@ -636,7 +638,9 @@ def uniprot_rel(named_uprotList, org, graph) -> BELGraph:
 def searchDisease(keyword):
     """Finding disease identifiers using OpenTargets API"""
     disease_name = str(keyword)
-
+    if disease_name is None:
+        st.error("Please resubmit the disease.")
+        st.stop()
     query_string = """
         query searchAnything ($disname:String!){
             search(queryString:$disname,entityNames:"disease",page:{size:20,index:0}){
@@ -660,6 +664,9 @@ def searchDisease(keyword):
     r = requests.post(base_url, json={"query": query_string, "variables": variables})
 
     # Transform API response from JSON into Python dictionary and print in console
+    # if r is None:
+    #     st.error("Please resubmit the disease.")
+    #     st.stop()
     api_response = json.loads(r.text)
 
     df = pd.DataFrame(api_response["data"]["search"]["hits"])
@@ -1231,7 +1238,7 @@ def snp2gene_rel(snp_df, graph):
     return graph
 
 
-@st.cache_data(ttl=300, show_spinner="Fetching new disease data...")
+@st.cache_data(ttl=5, show_spinner="Fetching new disease data...")
 def createInitialKG(_ct_phase):
     """Creating the initial Knowledge Graph using the disease and protein data."""
     efo_id = state.get("disease_id", "")
@@ -1657,7 +1664,7 @@ def finalizeKG(filtered_protein_df: pd.DataFrame, session_inputs: dict):
             except:
                 continue
 
-    st.write(state)
+    #    st.write(state)
 
     st.write("Your KG is now generated!", "\n")
     return kg
@@ -2227,3 +2234,81 @@ def create_zip():
     # zip_buffer.seek(0)
 
     return zip_buffer.getvalue()
+
+
+def load_pickle_file(uploaded_file):
+    """
+    Loads the uploaded .pkl file and returns the BELGraph object if valid.
+    """
+    try:
+        # uploaded_file is already a file-like object
+        query_graph = pickle.load(uploaded_file)
+
+        # Check if it's a valid BELGraph
+        if not isinstance(query_graph, pybel.BELGraph):
+            st.error("Uploaded pickle file does not contain a BELGraph object.")
+            st.stop()
+
+        return query_graph
+
+    except Exception as e:
+        st.error(f"Failed to load pickle file: {e}")
+        st.stop()
+
+
+def query_graph_info(graph_data):
+    """
+    Reads the graph and displays information about the graph.
+    """
+    total_nodes = graph_data.number_of_nodes()
+    total_edges = graph_data.number_of_edges()
+    total_relations = Counter(
+        data["relation"] for _, _, data in graph_data.edges(data=True)
+    )
+
+    # Create a manual summary if summarize() doesn't work
+    summary = (
+        f"Nodes: {total_nodes}, Edges: {total_edges}, Relations: {len(total_relations)}"
+    )
+
+    st.markdown(f"### Summary of your graph:\n{summary}")
+    st.markdown(f"**Total no. of relations: {len(total_relations)}")
+    st.markdown(f"**Total no. of edges: {total_edges}")
+    st.markdown(f"**Total no. of nodes: {total_nodes}")
+    st.markdown("**Relation types:**")
+    for rel, count in total_relations.most_common():
+        st.markdown(f"- {rel}: {count}")
+
+
+def display_interactive_belgraph(graph_data):
+    graph_subset = induction.get_random_subgraph(graph_data)
+
+    total_nodes = graph_subset.number_of_nodes()
+    total_edges = graph_subset.number_of_edges()
+    st.markdown(
+        f"Taking a random subgraph with **{total_nodes} nodes** and **{total_edges} edges...**"
+    )
+    graph_subset_html = pybel_jupyter.to_html(graph_subset)
+    st.components.v1.html(graph_subset_html, height=600, scrolling=True)
+
+    return graph_subset_html
+
+
+def download_interactive_belgraph(graph_html):
+    """Lets the user download the BELGraph visualization as an HTML file."""
+
+    if not isinstance(graph_html, str):
+        st.error("Error: The graph visualization must be generated first.")
+        return
+
+    html_bytes = graph_html.encode("utf-8")
+    buffer = io.BytesIO(html_bytes)
+
+    st.download_button(
+        label="Download BELGraph as HTML",
+        data=buffer,
+        file_name="belgraph_visualization.html",
+        mime="text/html",
+        help="Download the HTML format of this interactive graph.",
+        on_click="ignore",
+    )
