@@ -1,5 +1,5 @@
 # Select base image (can be ubuntu, python, shiny etc)
-FROM python:3.10-slim
+FROM python:3.11
 
 # Create user name and home directory variables. 
 # The variables are later used as $USER and $HOME. 
@@ -20,7 +20,6 @@ RUN apt-get install libxrender1 --no-install-recommends -y
 RUN apt-get install libxext6 --no-install-recommends -y
 # RUN apt-get install libx11-6 --no-install-recommends -y
 # RUN apt-get install libglib2.0-0 --no-install-recommends -y
-
 # Copy code and start script (this will place the files in home/username/)
 COPY .streamlit $HOME/datascience_toolkit/.streamlit
 COPY requirements.txt $HOME/datascience_toolkit/requirements.txt

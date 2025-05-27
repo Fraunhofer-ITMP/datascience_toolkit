@@ -233,9 +233,10 @@ if uploaded_file is not None:
 
 
 # footer with text and green background
+current_year = datetime.datetime.today().year
 st.markdown(
-    "<footer style='background-color: #149372; padding: 10px; border-radius: 10px;'>"
-    "<p style='color: white; text-align: center;'>Fraunhofer ITMP © 2024</p>"
+    f"<footer style='background-color: #149372; padding: 10px; border-radius: 10px;'>"
+    f"<p style='color: white; text-align: center;'>Fraunhofer ITMP © {current_year}</p>"
     "<p style='color: white; text-align: center;'>This work has been conducted across several key projects in which ITMP has been actively involved.</p>"
     "</footer>",
     unsafe_allow_html=True,
