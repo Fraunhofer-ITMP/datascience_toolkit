@@ -13,7 +13,6 @@ import pandas as pd
 import streamlit as st
 import streamlit_antd_components as sac
 from pybel.struct.summary import supersummary as ss
-from streamlit_pills import pills
 from tabulate import tabulate
 
 import kgg_utils
