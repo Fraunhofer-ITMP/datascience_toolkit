@@ -1238,7 +1238,7 @@ def snp2gene_rel(snp_df, graph):
     return graph
 
 
-@st.cache_data(ttl=5, show_spinner="Fetching new disease data...")
+# @st.cache_data(ttl=5, show_spinner="Fetching new disease data...")
 def createInitialKG(_ct_phase):
     """Creating the initial Knowledge Graph using the disease and protein data."""
     efo_id = state.get("disease_id", "")
@@ -2170,12 +2170,53 @@ def create_drug_likeness_zip(
 
 
 def create_zip():
-    drugs_df = state["drugs_df"].to_csv(index=False)
-    dis2prot_df = state["dis2prot_df"].to_csv(index=False)
-    dis2snp_df = state["dis2snp_df"].to_csv(index=False)
-    advEff_df = state["adv_effect"].to_csv(index=False)
-    humanProtDict = state["human_protein"]
-    kg = state["graph"]
+    drugs_df = (
+        state["drugs_df"].to_csv(index=False)
+        if "drugs_df" in state
+        and state["drugs_df"] is not None
+        and not state["drugs_df"].empty
+        else ""
+    )
+    dis2prot_df = (
+        state["dis2prot_df"].to_csv(index=False)
+        if "dis2prot_df" in state
+        and state["dis2prot_df"] is not None
+        and not state["dis2prot_df"].empty
+        else ""
+    )
+    dis2snp_df = (
+        state["dis2snp_df"].to_csv(index=False)
+        if "dis2snp_df" in state
+        and state["dis2snp_df"] is not None
+        and not state["dis2snp_df"].empty
+        else ""
+    )
+    advEff_df = (
+        state["adv_effect"].to_csv(index=False)
+        if "adv_effect" in state
+        and state["adv_effect"] is not None
+        and not state["adv_effect"].empty
+        else ""
+    )
+    humanProtDict = (
+        state["human_protein"]
+        if "human_protein" in state
+        and state["human_protein"] is not None
+        and state["human_protein"]
+        else ""
+    )
+    kg = (
+        state["graph"]
+        if "graph" in state and isinstance(state["graph"], BELGraph)
+        else None
+    )
+
+    # drugs_df = state["drugs_df"].to_csv(index=False)
+    # dis2prot_df = state["dis2prot_df"].to_csv(index=False)
+    # dis2snp_df = state["dis2snp_df"].to_csv(index=False)
+    # advEff_df = state["adv_effect"].to_csv(index=False)
+    # humanProtDict = state["human_protein"]
+    # kg = state["graph"]
     if "viral_protein" in state:
         viralProtDict = state["viral_protein"]
 
