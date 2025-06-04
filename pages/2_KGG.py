@@ -173,7 +173,7 @@ if kgg_tabs == "KG Visualizer":
 
     # File uploader
     uploaded_file = st.file_uploader(
-        "Choose the CSV file named 'diseaseAssociatedDrugs' from a KGG output folder",
+        "Please upload your pickle file.",
         type="pkl",
     )
 
