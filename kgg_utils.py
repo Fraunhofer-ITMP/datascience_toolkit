@@ -2312,11 +2312,11 @@ def query_graph_info(graph_data):
         f"Nodes: {total_nodes}, Edges: {total_edges}, Relations: {len(total_relations)}"
     )
 
-    st.markdown(f"### Summary of your graph:\n{summary}")
-    st.markdown(f"**Total no. of relations: {len(total_relations)}")
-    st.markdown(f"**Total no. of edges: {total_edges}")
-    st.markdown(f"**Total no. of nodes: {total_nodes}")
-    st.markdown("**Relation types:**")
+    st.markdown(f"### Graph Summary:\n")
+    st.markdown(f"**Total no. of relations:** {len(total_relations)}")
+    st.markdown(f"**Total no. of edges:** {total_edges}")
+    st.markdown(f"**Total no. of nodes:** {total_nodes}")
+    st.markdown("### Relation types:")
     for rel, count in total_relations.most_common():
         st.markdown(f"- {rel}: {count}")
 

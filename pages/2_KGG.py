@@ -5,7 +5,7 @@ import datetime
 import os
 import uuid
 import zipfile
-
+import pickle
 # from zipfile import ZipFile
 from io import BytesIO
 
@@ -153,6 +153,33 @@ if kgg_tabs == "Drug-likeness assessment":
             on_click="ignore",
             help="Click to download the zip file containing above interactive plots and XLSX file.",
         )
+    elif uploaded_file is None:
+        default_data = pd.read_csv("data/kgg_initial_loadfiles/diseaseAssociatedDrugs.csv")
+        default_filename = "diseaseAssociatedDrugs.csv"
+        st.markdown("Below is a sample data for Parkinson's disease.")
+        calc_filters, unusedDrugs_df = kgg_utils.calculate_filters(default_data, "drugId")
+        filter_cols = ["Lipinski_ro5", "Ghose", "Veber", "REOS", "QED"]
+        df_filters = calc_filters[filter_cols]
+        calc_figures = kgg_utils.create_charts_with_calc_filters(df_filters)
+        pie_figures = kgg_utils.create_pie_chart_from_calc_filters(
+            calc_filters, df_filters
+        )
+        formatted_calc_filters = kgg_utils.formulate_calc_filters_df(
+            calc_filters, df_filters
+        )
+
+        zip_data = kgg_utils.create_drug_likeness_zip(
+            calc_figures, pie_figures, formatted_calc_filters
+        )
+        st.download_button(
+            label="Download Drug Likeness Results",
+            data=zip_data,
+            file_name=f"{default_filename}_drug_likeness_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}_{uuid.uuid4().hex[:4]}.zip",
+            mime="application/zip",
+            on_click="ignore",
+            help="Click to download the zip file containing above interactive plots and XLSX file.",
+        )
+
 
 
 #        st.write(
@@ -175,6 +202,7 @@ if kgg_tabs == "KG Visualizer":
     uploaded_file = st.file_uploader(
         "Please upload your pickle file.",
         type="pkl",
+        
     )
 
     if uploaded_file is not None:
@@ -186,6 +214,18 @@ if kgg_tabs == "KG Visualizer":
             st.stop()
         kgg_utils.query_graph_info(query_graph)
         st.markdown("### Display of your graph:")
+        graph_subset_html = kgg_utils.display_interactive_belgraph(query_graph)
+        kgg_utils.download_interactive_belgraph(graph_subset_html)
+    elif uploaded_file is None:
+        query_graph = pickle.load(
+            open(
+                "data/kgg_initial_loadfiles/drugRepurposing.pkl",
+                "rb",
+            )
+        )
+        st.markdown("Below is a sample graph for Parkinson's disease.")
+        kgg_utils.query_graph_info(query_graph)
+        st.markdown("### Display of the initial graph:")
         graph_subset_html = kgg_utils.display_interactive_belgraph(query_graph)
         kgg_utils.download_interactive_belgraph(graph_subset_html)
 
