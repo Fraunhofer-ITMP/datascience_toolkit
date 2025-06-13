@@ -8,7 +8,7 @@ To run the app locally for debuging and testing purposes, do as follows:
 ```bash
 git clone https://github.com/Fraunhofer-ITMP/datascience_toolkit.git
 cd datasicence_toolkit
-conda create --name=streamlit-app python=3.9
+conda create --name=streamlit-app python=3.11
 conda activate streamlit-app
 pip install -r requirements.txt
 streamlit run Main.py
