@@ -502,6 +502,12 @@ with tab2:
         unsafe_allow_html=True,
     )
 
+    cycle_img=load_logo("images/app_logos/city_cycling.png")
+    col4.markdown(
+        f"""<a href='/cycle'><img src='{cycle_img}' width='300px'/></a>""",
+        unsafe_allow_html=True,
+    )
+
     # zendo = "images/social_media/zenodo-mark.png"
     # col4.markdown(
     #     f"""<a href='https://zenodo.org/communities/fraunhoferitmp'><img src='{zendo}' width='500px'/></a>""",
