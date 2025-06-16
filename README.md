@@ -28,4 +28,4 @@ To add new members to the group, check out the [data](https://github.com/Fraunho
 
 To update the website, you need access to the [SERVE platform](https://serve.scilifelab.se/accounts/login/). If you do not have an account, please create one and reach out to Yojana to assist you in the account creation.
 
-Once you have an account, ask Yojana or Andrea to add you to the project.
+Once you have an account, ask Reagon or Leonie to add you to the project.
