@@ -79,7 +79,7 @@ if kgg_tabs == "Description":
     )
 
     st.markdown(
-        "Additional information about KGG can be found [here](https://www.infectious-diseases-toolkit.org/showcase/knowledge-graph-generator)"
+        "Additional information about KGG can be found [here](https://www.infectious-diseases-toolkit.org/showcase/knowledge-graph-generator). You can also read the full paper in [Oxford Academic (Bioinformatics)](https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btaf383/8177146)."
     )
 
     kg_worklow = "./images/pages/KGG_workflow_updated.png"
