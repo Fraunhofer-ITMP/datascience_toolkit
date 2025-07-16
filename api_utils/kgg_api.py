@@ -109,6 +109,10 @@ async def generate_kg(kgg: KGG, request: Request):
     logging_setup(request)
     
     logging.info(f"Received parameters: {kgg.dict()}")
+    
+    # Checking security
+    current_user = get_current_user()
+    logging.info(f"Current user: {current_user}")
 
     try:
         disease = kgg.disease.strip()
