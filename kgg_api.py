@@ -236,5 +236,5 @@ async def generate_kg(kgg_model: KGGCreation, request: Request, current_user: st
         logging.error(f"An error occurred: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
     
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8080, log_level="info")
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="0.0.0.0", port=8080, log_level="info")
