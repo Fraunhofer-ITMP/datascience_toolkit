@@ -821,6 +821,37 @@ def snp2gene_rel(snp_df,graph):
     return(graph)
 
 
+def searchDisease(keyword,logger=None):
+    """Finding disease identifiers using OpenTargets API"""
+    disease_name = str(keyword)
+    if disease_name is None:
+        return None
+    query_string = """
+        query searchAnything ($disname:String!){
+            search(queryString:$disname,entityNames:"disease",page:{size:20,index:0}){
+                total
+                hits {
+                    id
+                    entity
+                    name
+                    description
+                }
+            }
+        }
+        """
+    variables = {"disname": disease_name}
+    base_url = "https://api.platform.opentargets.org/api/v4/graphql"
+    r = requests.post(base_url, json={"query": query_string, "variables": variables})
+    api_response = json.loads(r.text)
+    df = pd.DataFrame(api_response["data"]["search"]["hits"])
+    if not df.empty:
+        df = df[df["entity"] == "disease"]
+        df.drop(columns=["entity"], inplace=True)
+        return df
+    else:
+        return None
+
+
 def createKG(disease_id: str, clinical_trial_phase: int, protein_threshold: float, logger=None):
     """Creates a Knowledge Graph for a given disease ID.
     

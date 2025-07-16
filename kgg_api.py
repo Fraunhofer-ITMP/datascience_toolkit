@@ -14,7 +14,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from jose import jwt, JWTError
 import datetime
-from api_utils import kgg_utils
+from api_utils import kgg_apiutils
 
 load_dotenv()
 app = FastAPI()
@@ -37,6 +37,10 @@ class KGGCreation(BaseModel):
     clinical_trial_phase: int = 3
     protein_threshold: float = 0.8
     created_kg: dict = None
+
+class DiseaseID(BaseModel):
+    disease_name: str = "cancer"
+    disease_ids: list = None
 
 class Token(BaseModel):
     access_token: str
@@ -62,8 +66,8 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 ###########################################################
 
 ################### LOGGING ###############################
-def logging_setup(Request):
-    request_ip_address = Request.client.host
+def logging_setup(request):
+    request_ip_address = request.client.host
     request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     if not os.path.exists('kgg_logs'):
@@ -141,7 +145,7 @@ async def read_root():
                 2.2 Output Format:
                 <pre>
                 {
-                    "disease_ids": ["MONDO_0004976", "MONDO_0004977", ...]
+                    "disease_ids": A list of dictionary containing disease IDs and other information.
                 }
                 </pre>
 
@@ -171,10 +175,28 @@ async def read_root():
     """
     return HTMLResponse(content=html_content, status_code=200)
 
-@app.post("/getDiseaseIDs")
-async def get_disease_ids(current_user: str = Depends(get_current_user)):
-    """Get available disease IDs."""
-    return {"message": "Disease IDs endpoint", "user": current_user}
+@app.post("/getDiseaseIDs",response_model=DiseaseID)
+async def get_disease_ids(disease_model:DiseaseID, request: Request, current_user: str = Depends(get_current_user)):
+    """This function returns available disease IDs using searchDisease function from kgg_apiutils.py"""
+    logging_setup(request)    
+    logging.info(f"Current user: {current_user}")
+    try:
+        disease_name = disease_model.disease_name.strip()
+        if not disease_name:
+            logging.error("Disease name is required.")
+            raise HTTPException(status_code=400, detail="Disease name is required.")
+        disease_ids = kgg_apiutils.searchDisease(keyword=disease_name,logger=logging.getLogger())
+        logging.info(f"Total disease IDs found: {len(disease_ids)} for keyword '{disease_name}'")
+        if disease_ids.empty:
+            logging.warning("No disease IDs found.")
+            raise HTTPException(status_code=404, detail="No disease IDs found.")
+        
+        disease_ids_list = disease_ids.to_dict('records')       # Converting dataframe to a list of dictionaries so that it can be returned as JSON
+        logging.info(f"Disease IDs: {disease_ids_list}")
+        return {"disease_ids": disease_ids_list}    
+    except Exception as e:
+        logging.error(f"An error occurred while fetching disease IDs: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/createKG", response_model=KGGCreation)
 async def generate_kg(kgg_model: KGGCreation, request: Request, current_user: str = Depends(get_current_user)):
@@ -198,7 +220,7 @@ async def generate_kg(kgg_model: KGGCreation, request: Request, current_user: st
             logging.info("Protein threshold not provided, defaulting to 0.0.")
             protein_threshold = 0.0
 
-        created_kg = kgg_utils.createKG(disease_id=disease_id,
+        created_kg = kgg_apiutils.createKG(disease_id=disease_id,
                                         clinical_trial_phase=clinical_trial_phase,
                                         protein_threshold=protein_threshold,
                                         logger=logging.getLogger())
