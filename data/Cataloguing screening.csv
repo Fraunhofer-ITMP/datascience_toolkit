@@ -1,0 +1,59 @@
+﻿Site,Disease Area,Type,Publication information,Model organism,Cell type,Cell Type Specifics,Assay format,Assay readout,Additional assay information,# of compounds,Single Point or Dose Response,Additional Notes
+CBCS–KI,,Primary screening,10.1101/2022.03.11.483991,mouse,co-culture,co-culture of murine pancreatic stellate cells and murine KPC PDAC tumor organoids,Scaffold,"imaging, NADPH (resazurin)","Matrigel, GFP label  (organoids), mKate2 (PSC); morphological readout",36000,SP,
+CBCS–KI,,Primary screening,unpublished,human,organoid,iPSC-derived organoids,Scaffold,Cell Titer Glo,Laminin,33000,SP,
+CBCS–KI,,Primary screening,unpublished,human,co-culture,co-culture of patient-derived GBM cells and human astrocytes,2D,CTG,"GBM–GFP, Astrocytes–mCherry",14000,SP,
+CBCS–KI,,Primary screening,10.1177/2472555218823531,mouse,primary cells,primary cells from a doxcyclin mouse model,2D,CTG,,12000,SP,
+CBCS–KI,,Primary screening,unpublished,human,co-culture,co-culture of PDAC spheroids with stellate cells,3D,imaging; Lactate assay,,7000,SP,
+CBCS–KI,,Primary screening,unpublished,human,patient-derived models,patient-derived sarcoma cells,2D,CTG,,33000,SP,
+CBCS–KI,,Primary screening,unpublished,human,organoid,iPSC-derived brain organoids,3D,imaging; FLIPPR,,1000,SP,
+CBCS–KI,,Primary screening,10.1038/s41388-024-02973-x ,human,co-culture,co-culture of breast cancer cells and fibroblasts,2D,Luciferase and imaging,Luciferase for estrogen dependence,528,DR,5pt DR
+CBCS–KI,,Disease Profiling ,10.1038/s41698-023-00463-z ,human,primary cells,22 ovarian cancer primary samples,3D & 2D,imaging,,58,DR,5pt DR
+CBCS–KI,,Disease Profiling ,unpublished,human,primary cells,161 AML primary samples,Suspension,CTG & FACS,,528,DR,5pt DR
+CBCS–KI,,Disease Profiling ,10.1073/pnas.2209856120,human,primary cells,18 breast cancer primary samples,3D,CTG,,58,DR,5pt DR
+Fraunhofer ITMP,,Disease Profiling ,10.1016/j.stemcr.2021.12.011,human,hiPSC model,"BBB model, hiPSC-derived brain capillary endothelial cells","2D, cell culture insert","Imaging, qPCR, TEER",,,,
+Fraunhofer ITMP,,Disease Profiling ,10.1186/s12987-023-00471-y,human,"patient-derived models, co-culture","BBB model, co-culture hiPSC-derived brain capillary endothelial cells with different brain cell types","2D, cell culture insert","Imaging, qPCR, TEER",,,,
+CBCS–KI,,Hit follow-up,10.1038/nm.4265 ,human,primary cells,primary biobanked AML cells,Suspension,CTG,,3,DR,11pt DR
+Fraunhofer ITMP,,Hit follow-up,unpublished,human,co-culture,co-culture of iPSC-derived cortical organoids and cancer cells,3D,Fluorescence (Imaging) and CTG (luminescence),Cancer cells (tdTomato),,,
+Fraunhofer ITMP,,Hit follow-up,unpublished,human,hiPSC model,"BBB model, hiPSC-derived brain capillary endothelial cells","2D, cell culture insert",LC-MS/MS,,10,,
+CBCS–KI,,Toxicity models,unpublished,human,primary cells,primary human hepatocytes (3 donors),3D,imaging,,150,SP,quadruplicate
+UH-FIMM,,Primary screening,10.1182/blood.2021015106,human,primary cells,"primary ALL samples, biobanked",Suspension,"Cell Titer Glo, Flow cytometry",,40,DR,
+UH-FIMM,,Primary screening,"10.1158/2159-8290.CD-21-0410, 10.3324/haematol.2022.281692",human,primary cells,"primary AML samples, fresh BM/PB",Suspension,"Cell Titer Glo, CellTox Green, Flow cytometry","translational projects, also clinical trials",10-528,DR,
+UH-FIMM,,Primary screening,unpublished,mouse,PDX,primary AML in PDX mouse ,Suspension,Flow cytometry,single drugs and combinations,40,DR,
+UH-FIMM,,Primary screening,unpublished,human,primary cells,co-cultures of healthy donor PBMCs/CD3+ cells + AML primary cells. Biobanked/fresh,Suspension,"Flow cytometry, imaging",bispecific T-cell engagers,10,DR,
+UH-FIMM,,Primary screening,10.1182/blood.2021011094 and unpublished,human,primary cells,"primary AML/MDS/MM samples, biobanked/fresh",Suspension,"Cell Titer Glo, CellTox Green, Flow cytometry",single drugs and combinations,40-300,DR,several small scale screening projects
+UH-FIMM,,Primary screening,unpublished,human,primary cells,hepatoblastoma samples and healthy control cell lines,3D,CTG & imaging,single drugs and combinations,40,DR + combo,
+UH-FIMM,,Primary screening,10.1016/j.crmeth.2023.100565,human,primary antibodies,"high-content microscopy -based mini-immunofluorescence assay (mini-IFA) for serological testing i.e., detection of antibodies",384,high-content microscopy,n/a,no compounds,n/a,Cells  (Vero E6) are expressing viral proteins and the sample is serum from patients.
+UH-FIMM,,Primary screening,"10.1186/s12885-019-5861-4, 10.1186/s40169-019-0253-6, 10.1016/j.tranon.2022.101535",human,primary cells,patient-specific glioblastoma stem cell cultures (primary  and recurrent GBM),Suspension,"Cell Titer Glo, CellTox Green",translational project (for some samples),461,DR,
+UH-FIMM,,Primary screening,unpublished,human,primary cells,meningioma,Suspension,"Cell Titer Glo, CellTox Green",translational project,461,DR,
+UH-FIMM,,Primary screening,unpublished,human,primary cells,colorectal,3D / 1536,Cell Titer Glo,n/a,396,SP,
+UH-FIMM,,Disease Profiling ,unpublished,human,primary cells,"primary AML samples, biobanked",Suspension,Flow cytometry,"surface+Intracellular staining to
+quantify population specific protein levels",10,SP,
+UH-FIMM,,Disease Profiling ,10.1158/2159-8290.CD-21-0410,human,primary cells,"primary AML samples, biobanked",Suspension,"CTG, CTxG & FACS","translational projects, also clinical trials",515,DR,
+UH-FIMM,,Disease Profiling ,https://doi.org/10.1101/2024.05.17.594648,human,primary cells,"healthy and AML primary cells, biobanked",Suspension,"Flow cytometry, imaging","Cell painting by imaging, flow validations",na,na,
+UH-FIMM,,Hit follow-up,"10.1038/s41389-024-00510-9, 10.1101/2023.06.26.546571",human,primary cells,"primary AML samples, biobanked",Suspension,"Cell Titer Glo, Flow cytometry","computational predictions, wetlab validations, combinations",20-40,DR,
+IBCH PAS,,Disease Profiling ,unpublished,human,gene-edited,DICER1 knock-out model,384,high-content microscopy,"transfection signal tracking, Cell Painting, apoptosis assay",n/a,n/a,
+CIPF,,Hit follow-up,unpublished,human,organoids,Triple negative breast cancer,3D,Cell Titer Glo,Drug sinergy validation,5,DR+combination index,
+CIPF,,Hit follow-up,DOI: 10.1016/j.jconrel.2023.01.079,human,primary cells,pedriatic cancer (glioblastoma),3D,MTS,Drug sinergy validation,,,
+CIPF,,Primary screening,unpublished,human,patient-derived cell lines,breast cancer/glioblastoma,2D/3D,MTS,Drug combination screening,,,
+UTU,,Hit follow-up,DOI: 10.1038/s41598-017-09312-z,zebrafish,in vivo,zebrafish embryo,3D,imaging,Teratology and toxicity,3-10,SP+DR,Assay in 96-well format
+UTU,,Hit follow-up,DOI: 10.1038/s41598-017-09312-z,zebrafish,in vivo,zebrafish embryo,3D,imaging,Cardiovascular physiology,3-10,SP+DR,Assay in 96-well format
+UTU,,Hit follow-up,DOI: 10.1016/j.biopha.2022.113882,zebrafish,in vivo,zebrafish embryo,3D,imaging,Angiogenesis,3-10,SP+DR,Assay in 96-well format
+UTU,,Hit follow-up,DOI: 10.1038/s41598-024-61337-3,zebrafish,in vivo,zebrafish embryo,3D,imaging,Behavioural assay,3-10,SP+DR,Assay in 96-well format
+UTU,,Hit follow-up,DOI: 10.21769/BioProtoc.3027,zebrafish,in vivo,zebrafish embryo,3D,imaging,Cancer cell xenograft,3,SP,"Assay in 96-well format, needs manual microinjection of cancer cells into embryos"
+MEDINA,,Primary screening,unpublished,human,Cancer cell lines,Cas9 expressing cell lines,2D/3D,"High content imaging, Cell Titer Glo, Flow cytometry",Drug discovery,,,
+MEDINA,,Primary screening,doi: 10.1016/j.biopha.2024.117018    doi: 10.3390/molecules29020425,human,cancer spheroids,tumoral cell lines from a battery of tissues ,3D,"High content imaging, Cell Titer Glo",Drug discovery,,,
+MEDINA,,Primary screening,unpublished,human,cancer spheroids,Triple negative breast cancer,3D,"High content imaging, Cell Titer Glo",Drug discovery,,,
+MEDINA,,Primary screening,doi: 10.1371/journal.pone.0167491    doi: 10.1007/978-1-4939-8900-3_12   doi: 10.3390/molecules27175414,human,Cancer cell line U2-OS,FOXO3A target-based assay (U2foxRELOC cell line),2D,High content imaging,Drug discovery (cancer and aging),,,
+MEDINA,,Primary screening,unpublished,human,neurons derived from human cell line,neurons derived from SH-SY5Y,2D,High content imaging,"Drug discovery, disease modeling (neurite growth)",,,
+MEDINA,,Hit follow-up,unpublished,human,dopaminergic neurons derived from SH-SY5Y,CRISPR-edited LRRK2-ki,2D,"High content imaging, Cell Titer Glo","Drug discovery, disease modeling (neurite growth)",,,
+MEDINA,,Hit follow-up,unpublished,human,dopaminergic neurons derived from iPSC,CRISPR-edited LRRK2-ki,2D,"High content imaging, Cell Titer Glo","Drug discovery, disease modeling (neurite growth)",,,
+USC,,Primary screening,10.1177/2472555218810323,human,dorsal root ganglia neuron,immortalized F11 cell line differentiated to dorsal root ganglia (DRG) neuron-like phenotype,2D 384,"FLIPR, MEA, Imaging",ATP and KCl response,2500,"SP, DR",
+USC,,Primary screening,unpublished,human,glutamatergic/dopaminergic neurons,SH-SY5Y cell line differentiated to neurons,2D 384 (morphology and MEA in 96),"FLIPR, MEA, Imaging",ATP and KCl response,2500,"SP, DR",
+USC,,Primary screening,unpublished,human,double mutant glutamatergic/dopaminergic neurons ,SH-SY5Y cell line differentiated to neurons,2D 384 (morphology and MEA in 96),"FLIPR, MEA, Imaging",ATP and KCl response,2500,"SP, DR",
+USC,,Primary screening,unpublished,human,neurospheres,SH-SY5Y in collagen matrix,3D 96,Imaging,,100,,FLIPR in progress
+USC,,Primary screening,unpublished,human,kidney cysts,MDCKC cell line in collagen matrix,3D 96,Imaging,,100,,
+i3S,,Primary screening,unpublished,human,cancer spheroids,"Brain, patient-derived",3D 96,Imaging,Drug discovery,5000,SP,
+HZI,bacterial and viral infection,Hit follow-up,unpublished,human,primary cells,"air-liquid-interface, skin and lung epithelial cells",3D 12 (aim at 96),"Cell viability, TEER, imaging",Drug validation,5 (until now),"SP, DP",
+UC,to be completed,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
