@@ -41,12 +41,12 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.markdown("**And.... we are back again representing :fast_forward: Fraunhofer ITMP Hamburg - Pedaling for Progress!!** :bike: :woman-biking: :man-biking: :right-facing_fist::left-facing_fist:")
+st.markdown("**:fast_forward: Fraunhofer ITMP Hamburg - Pedaling for Progress!!** :bike: 🚴‍♀️ 🚴‍♂️")
 
 st.markdown('**Cycling for a better climate and health:** Why not when it contributes to lesser emissions of CO<sub>2</sub> and improves your quality of life. Last year 15 of us covered ' \
 'a total distance of **3007** kms from 376 rides. We were placed **247<sup>th</sup>** out of ~1800 teams and contributed to avoiding 500 kg of CO<sub>2</sub> emission. The numbers in a bigger picture ' \
 ' are actually amazing. A total of 1.2 million cyclists covered a joint distance of 200 million kms thereby avoiding CO<sub>2</sub> emission of 35k tons. Wow!!! ' \
-'This year 17k cyclists from Hamburg including **16** ITMPians will participate in the campaign. Our live data is displayed below (right).',unsafe_allow_html=True)
+'This year 17k cyclists from Hamburg including **18** ITMPians participated in the campaign. Our final data for 2025 is displayed below (right).',unsafe_allow_html=True)
 
 col1, col2 =st.columns(2)
 
