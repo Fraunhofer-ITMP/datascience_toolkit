@@ -222,7 +222,7 @@ with tab1:
 with tab2:
 
     # Set Page Configuration
-    st.set_page_config(layout="wide")
+    #st.set_page_config(layout="wide")
 
     st.title("IMPULSE partner overview")
 
