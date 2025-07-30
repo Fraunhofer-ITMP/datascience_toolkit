@@ -244,7 +244,7 @@ with tab2:
                 title="EU-OPENSCREEN IMPULSE",
                 text="European Infrastructure of Open Screening Platforms for Chemical Biology",
                 image=load_logo("images/app_logos/openscreen_impulse.PNG"),
-                url="/OpenScreen_Impulse",
+                url="https://euos-impulse.serve.scilifelab.se/",
                 styles={
                     "card": {
                         "border-radius": "10px",
