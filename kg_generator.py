@@ -46,12 +46,12 @@ elif nav == "KG Generator":
     pass
 elif nav == "Drug-likeness assessment":
     st.markdown(
-        """<meta http-equiv="refresh" content="0; url='http://localhost:8503'" />""",
+        """<meta http-equiv="refresh" content="0; url='https://druglikeness.serve.scilifelab.se/'" />""",
         unsafe_allow_html=True,
     )
 elif nav == "KG Visualizer":
     st.markdown(
-        """<meta http-equiv="refresh" content="0; url='http://localhost:8504'" />""",
+        """<meta http-equiv="refresh" content="0; url='https://kgviz.serve.scilifelab.se/'" />""",
         unsafe_allow_html=True,
     )
 
