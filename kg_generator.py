@@ -39,7 +39,7 @@ nav = sac.buttons(
 
 if nav == "Description":
     st.markdown(
-        """<meta http-equiv="refresh" content="0; url='http://localhost:8501/KGG'" />""",
+        """<meta http-equiv="refresh" content="0; url='https://fraunhofer-itmp-ds-toolkit.serve.scilifelab.se/KGG'" />""",
         unsafe_allow_html=True,
     )
 elif nav == "KG Generator":
