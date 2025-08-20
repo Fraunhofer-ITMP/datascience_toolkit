@@ -26,7 +26,7 @@ COPY requirements.txt $HOME/drug_likeness_assessment/requirements.txt
 # COPY pages $HOME/drug_likeness_assessment/pages/
 COPY images $HOME/drug_likeness_assessment/images/
 COPY data $HOME/drug_likeness_assessment/data/
-COPY 6_OpenScreen_Impulse.py $HOME/drug_likeness_assessment/6_OpenScreen_Impulse.py
+COPY drug_likeness_assessment.py $HOME/drug_likeness_assessment/drug_likeness_assessment.py
 # COPY Main.py $HOME/drug_likeness_assessment/Main.py
 # COPY kgg_utils.py $HOME/drug_likeness_assessment/kgg_utils.py
 COPY start-script.sh $HOME/drug_likeness_assessment/start-script.sh
