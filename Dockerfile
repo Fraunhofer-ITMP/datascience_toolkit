@@ -17,8 +17,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     chromium \
     libnss3 \
-    libgconf-2-4 \
     libasound2 \
+    fonts-liberation \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    libx11-xcb1 \
     && rm -rf /var/lib/apt/lists/*
 # RUN apt-get install libx11-6 --no-install-recommends -y
 # RUN apt-get install libglib2.0-0 --no-install-recommends -y
