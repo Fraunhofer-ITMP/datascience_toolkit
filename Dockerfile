@@ -33,7 +33,7 @@ COPY images $HOME/drug_likeness_assessment/images/
 COPY data $HOME/drug_likeness_assessment/data/
 COPY drug_likeness_assessment.py $HOME/drug_likeness_assessment/drug_likeness_assessment.py
 # COPY Main.py $HOME/drug_likeness_assessment/Main.py
-# COPY kgg_utils.py $HOME/drug_likeness_assessment/kgg_utils.py
+COPY kgg_utils.py $HOME/drug_likeness_assessment/kgg_utils.py
 COPY start-script.sh $HOME/drug_likeness_assessment/start-script.sh
 
 RUN pip install --no-cache-dir -r requirements.txt \
