@@ -1,2 +1,2 @@
-# KGG- Drug Likeness Assessment
-This repository serves the purpose of drug likeness assessment app under KGG.
+# KGG- KG Generator
+This repository serves the purpose of KG Generator app under KGG.
