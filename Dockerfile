@@ -33,7 +33,7 @@ COPY images $HOME/kg_visualizer/images/
 COPY data $HOME/kg_visualizer/data/
 COPY kg_visualizer.py $HOME/kg_visualizer/kg_visualizer.py
 # COPY Main.py $HOME/kg_visualizer/Main.py
-# COPY kgg_utils.py $HOME/kg_visualizer/kgg_utils.py
+COPY kgg_utils.py $HOME/kg_visualizer/kgg_utils.py
 COPY start-script.sh $HOME/kg_visualizer/start-script.sh
 
 RUN pip install --no-cache-dir -r requirements.txt \
