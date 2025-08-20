@@ -10,7 +10,7 @@ ENV HOME=/home/$USER
 RUN useradd -m -u 1000 $USER
 
 # Set working directory (this is where the code should go)
-WORKDIR $HOME/impulse_dashboard
+WORKDIR $HOME/drug_likeness_assessment
 
 # Update system and install dependencies.
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -21,15 +21,15 @@ RUN apt-get install libxext6 --no-install-recommends -y
 # RUN apt-get install libx11-6 --no-install-recommends -y
 # RUN apt-get install libglib2.0-0 --no-install-recommends -y
 # Copy code and start script (this will place the files in home/username/)
-# COPY .streamlit $HOME/impulse_dashboard/.streamlit
-COPY requirements.txt $HOME/impulse_dashboard/requirements.txt
-# COPY pages $HOME/impulse_dashboard/pages/
-COPY images $HOME/impulse_dashboard/images/
-COPY data $HOME/impulse_dashboard/data/
-COPY 6_OpenScreen_Impulse.py $HOME/impulse_dashboard/6_OpenScreen_Impulse.py
-# COPY Main.py $HOME/impulse_dashboard/Main.py
-# COPY kgg_utils.py $HOME/impulse_dashboard/kgg_utils.py
-COPY start-script.sh $HOME/impulse_dashboard/start-script.sh
+# COPY .streamlit $HOME/drug_likeness_assessment/.streamlit
+COPY requirements.txt $HOME/drug_likeness_assessment/requirements.txt
+# COPY pages $HOME/drug_likeness_assessment/pages/
+COPY images $HOME/drug_likeness_assessment/images/
+COPY data $HOME/drug_likeness_assessment/data/
+COPY 6_OpenScreen_Impulse.py $HOME/drug_likeness_assessment/6_OpenScreen_Impulse.py
+# COPY Main.py $HOME/drug_likeness_assessment/Main.py
+# COPY kgg_utils.py $HOME/drug_likeness_assessment/kgg_utils.py
+COPY start-script.sh $HOME/drug_likeness_assessment/start-script.sh
 
 RUN pip install --no-cache-dir -r requirements.txt \
     && chmod +x start-script.sh \
@@ -37,8 +37,8 @@ RUN pip install --no-cache-dir -r requirements.txt \
     && rm -rf /var/lib/apt/lists/*
 
 USER $USER
-EXPOSE 8501
+EXPOSE 8503
 
-HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+HEALTHCHECK CMD curl --fail http://localhost:8503/_stcore/health
 
 ENTRYPOINT ["./start-script.sh"]
