@@ -13,11 +13,16 @@ RUN useradd -m -u 1000 $USER
 WORKDIR $HOME/datascience_toolkit
 
 # Update system and install dependencies.
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    software-properties-common
-RUN apt-get install libxrender1 --no-install-recommends -y
-RUN apt-get install libxext6 --no-install-recommends -y
+    chromium \
+    libnss3 \
+    libasound2 \
+    fonts-liberation \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    libx11-xcb1 \
+    && rm -rf /var/lib/apt/lists/*
 # RUN apt-get install libx11-6 --no-install-recommends -y
 # RUN apt-get install libglib2.0-0 --no-install-recommends -y
 # Copy code and start script (this will place the files in home/username/)
