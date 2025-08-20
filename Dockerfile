@@ -13,13 +13,13 @@ RUN useradd -m -u 1000 $USER
 WORKDIR $HOME/kg_generator
 
 # Update system and install dependencies.
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        build-essential \
-        ca-certificates \
-        gnupg \
-        dirmngr && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    chromium \
+    libnss3 \
+    libgconf-2-4 \
+    libasound2 \
+    && rm -rf /var/lib/apt/lists/*
 # RUN apt-get install libx11-6 --no-install-recommends -y
 # RUN apt-get install libglib2.0-0 --no-install-recommends -y
 # Copy code and start script (this will place the files in home/username/)
@@ -34,7 +34,7 @@ COPY start-script.sh $HOME/kg_generator/start-script.sh
 RUN pip install --no-cache-dir -r requirements.txt \
     && chmod +x start-script.sh \
     && chown -R $USER:$USER $HOME \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*  
 
 USER $USER
 EXPOSE 8505
