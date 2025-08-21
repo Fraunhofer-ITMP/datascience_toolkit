@@ -756,6 +756,19 @@ def GetDiseaseAssociatedDrugs(disease_id, CT_phase):
     # Transform API response from JSON into Python dictionary and print in console
     api_response = json.loads(r.text)
 
+    # Check for GraphQL errors indicating invalid disease ID
+    if "errors" in api_response:
+        error_msg = api_response["errors"][0].get("message", "Unknown error")
+        st.error(f"Invalid disease ID '{efo_id}': {error_msg}")
+        st.error("Please check that you've entered a valid disease identifier from the search results above.")
+        return pd.DataFrame()
+    
+    # Check if disease data exists
+    if not api_response.get("data") or not api_response["data"].get("disease"):
+        st.error(f"No disease found for ID '{efo_id}'. This disease identifier does not exist in the OpenTargets database.")
+        st.error("Please select a valid disease identifier from the search results above.")
+        return pd.DataFrame()
+
     df = pd.DataFrame(api_response["data"]["disease"]["knownDrugs"]["rows"])
 
     if df.empty:
@@ -805,6 +818,17 @@ def GetDiseaseAssociatedProteins(efo_id):
         )
         response.raise_for_status()
         data = response.json()
+
+        if "errors" in data:
+            error_msg = data["errors"][0].get("message", "Unknown error")
+            st.error(f"Invalid disease ID '{efo_id}': {error_msg}")
+            st.error("Please check that you've entered a valid disease identifier from the search results above.")
+            return pd.DataFrame()
+        
+        if not data.get("data") or not data["data"].get("disease"):
+            st.error(f"No disease found for ID '{efo_id}'. This disease identifier does not exist in the OpenTargets database.")
+            st.error("Please select a valid disease identifier from the search results above.")
+            return pd.DataFrame()
 
         batch = data["data"]["disease"]["associatedTargets"]["rows"]
         if not batch:
@@ -1084,35 +1108,50 @@ def GetViralProteins(query_disease):
         )
 
         # time.sleep(0.1)
-        virus_name = st.text_input(
-            "Would you like to look further for a specific virus? Please type its name or skip by typing 'no'.",
-            placeholder="no",
+        virus_choice = st.selectbox(
+            "Would you like to look further for a specific virus?",
+            ("No", "Yes"),
+            index=0
         )
 
-        # virus_name = st.selectbox(
-        #     "Would you like to look further for a specific virus?",
-        #     ("Yes", "No"),
-        #     index=None,
-        #     placeholder="Select Yes or No",
-        # )
-
-        st.write("You selected:", virus_name)
+        st.write("You selected:", virus_choice)
+        
+        # If Yes, show text input for virus name
+        if virus_choice == "Yes":
+            virus_name = st.text_input(
+                "Please enter the virus name:",
+                placeholder="e.g., SARS-CoV-2, influenza, coronavirus"
+            )
+            if virus_name:
+                st.write("Searching for virus:", virus_name)
+        else:
+            virus_name = "no"
 
         # virus_name = input(
         #     'Do you want to look further for a specific virus? Please type its name or skip it by typing \'no\': ')
 
         # subset df with virus name
-        if virus_name.lower() != "no":
+        if virus_name.lower() != "no" and virus_name.strip():
             virus_subset_2 = virus[
                 virus["virus name"].str.contains(virus_name, na=False, case=False)
             ]
-            # print(virus_subset_2)
-            # break
+            
+            # Check if the virus search returned any results
+            if virus_subset_2.empty:
+                st.warning(f"No viruses found matching '{virus_name}'. Please try a different virus name or select 'No' to use all disease-related viruses.")
+                st.write("Available viruses for this disease:")
+                st.dataframe(virus_subset_1[["virus name", "DISEASE"]])
+                st.stop()
+            else:
+                st.success(f"Found {len(virus_subset_2)} virus(es) matching '{virus_name}'")
+                # Use only the filtered virus results
+                virus_subset_merge = virus_subset_2
         else:
-            virus_subset_2 = pd.DataFrame()
+            # Use all disease-related viruses when no specific virus is requested
+            virus_subset_merge = virus_subset_1
 
-        # merge subsets of df_1 and df_2
-        virus_subset_merge = pd.concat([virus_subset_1, virus_subset_2])
+        # Remove the old merging logic that was causing confusion
+        # virus_subset_merge = pd.concat([virus_subset_1, virus_subset_2])
 
         virus_subset_merge = virus_subset_merge.drop_duplicates(keep="first")
 
@@ -1142,39 +1181,95 @@ def GetViralProteins(query_disease):
 
         # print('\n')
 
-        temp_id = temp_id.split(" ")
-        temp_id = [int(x) for x in temp_id if x.strip()]
-        # print(virus_subset_merge.loc[0]['virus tax id'])
-
+        # Validate and process the input indices
         uprot_list = []
+        
+        if temp_id and temp_id.strip():
+            try:
+                # Split the input and validate each index
+                temp_id_list = temp_id.split()
+                valid_indices = []
+                invalid_inputs = []
+                out_of_range_indices = []
+                
+                for x in temp_id_list:
+                    if x.strip():  # Skip empty strings
+                        try:
+                            idx = int(x)
+                            if 0 <= idx < len(virus_subset_merge):
+                                valid_indices.append(idx)
+                            else:
+                                out_of_range_indices.append(x)
+                        except ValueError:
+                            invalid_inputs.append(x)
+                
+                # Display error messages for invalid inputs
+                if invalid_inputs:
+                    st.error(f"Invalid input(s): {', '.join(invalid_inputs)}. Please enter only numbers.")
+                
+                if out_of_range_indices:
+                    st.error(f"Index(es) out of range: {', '.join(out_of_range_indices)}. Available indices are 0 to {len(virus_subset_merge)-1}.")
+                
+                # Process only valid indices
+                temp_id = valid_indices
+                
+                if not temp_id:
+                    st.warning("No valid indices provided. Please enter valid index numbers from the table above.")
+                    return []
+                    
+            except Exception as e:
+                st.error(f"Error processing input: {str(e)}")
+                return []
+        else:
+            st.warning("Please enter at least one index value.")
+            return []
 
         for item in temp_id:
-            tax_id = virus_subset_merge.loc[item]["virus tax id"]
-            # print(tax_id)
+            try:
+                tax_id = virus_subset_merge.loc[item]["virus tax id"]
+                # print(tax_id)
 
-            # fetch tax id related proteins from Uniprot
-            # the link can be created from downloads option in uniprot
-            query_string = (
-                "https://rest.uniprot.org/uniprotkb/stream?fields=accession%2Creviewed%2Cid%2Cgene_names%2Corganism_name%2Clength%2Cgene_primary%2Cprotein_name&format=tsv&query=%28%28taxonomy_id%3A"
-                + str(tax_id)
-                + "%29+AND+%28reviewed%3Atrue%29%29"
-            )
+                # fetch tax id related proteins from Uniprot
+                # the link can be created from downloads option in uniprot
+                query_string = (
+                    "https://rest.uniprot.org/uniprotkb/stream?fields=accession%2Creviewed%2Cid%2Cgene_names%2Corganism_name%2Clength%2Cgene_primary%2Cprotein_name&format=tsv&query=%28%28taxonomy_id%3A"
+                    + str(tax_id)
+                    + "%29+AND+%28reviewed%3Atrue%29%29"
+                )
 
-            # query_string = 'https://rest.uniprot.org/uniprotkb/stream?fields=accession%2Creviewed%2Cid%2Cgene_names%2Corganism_name%2Clength%2Cgene_primary%2Cprotein_name&format=tsv&query=%28%28taxonomy_id%3A11676%29%29+AND+%28reviewed%3Atrue%29'
+                # query_string = 'https://rest.uniprot.org/uniprotkb/stream?fields=accession%2Creviewed%2Cid%2Cgene_names%2Corganism_name%2Clength%2Cgene_primary%2Cprotein_name&format=tsv&query=%28%28taxonomy_id%3A11676%29%29+AND+%28reviewed%3Atrue%29'
 
-            query_uniprot = requests.get(query_string)
-            query_uniprot = query_uniprot.text.split("\n")
+                query_uniprot = requests.get(query_string, timeout=30)
+                
+                if query_uniprot.status_code == 200:
+                    query_uniprot = query_uniprot.text.split("\n")
 
-            query_uniprot_df = pd.DataFrame(
-                [x.strip().split("\t") for x in query_uniprot]
-            )
-            cols = query_uniprot_df.iloc[0]
-            # print(cols)
-            query_uniprot_df = query_uniprot_df[1 : len(query_uniprot_df) - 1]
-            query_uniprot_df.columns = cols
-            temp = list(query_uniprot_df["Entry"])
-            # print(len(temp))
-            uprot_list.append(temp)
+                    query_uniprot_df = pd.DataFrame(
+                        [x.strip().split("\t") for x in query_uniprot]
+                    )
+                    
+                    if len(query_uniprot_df) > 1:  # Check if we have data beyond headers
+                        cols = query_uniprot_df.iloc[0]
+                        # print(cols)
+                        query_uniprot_df = query_uniprot_df[1 : len(query_uniprot_df) - 1]
+                        query_uniprot_df.columns = cols
+                        
+                        if 'Entry' in query_uniprot_df.columns:
+                            temp = list(query_uniprot_df["Entry"])
+                            # print(len(temp))
+                            uprot_list.append(temp)
+                        else:
+                            st.warning(f"No protein entries found for virus tax ID: {tax_id}")
+                    else:
+                        st.warning(f"No protein data found for virus tax ID: {tax_id}")
+                else:
+                    st.error(f"Failed to fetch data from UniProt for virus tax ID: {tax_id}. Status code: {query_uniprot.status_code}")
+                    
+            except requests.exceptions.RequestException as e:
+                st.error(f"Network error while fetching data for virus tax ID: {tax_id}. Error: {str(e)}")
+            except Exception as e:
+                st.error(f"Error processing virus tax ID: {tax_id}. Error: {str(e)}")
+                continue
 
         uprot_list = [item for sublist in uprot_list for item in sublist]
 
@@ -1184,6 +1279,8 @@ def GetViralProteins(query_disease):
         )
 
         return uprot_list
+    else:
+        return []
 
 
 def getProtfromKG(mainGraph):

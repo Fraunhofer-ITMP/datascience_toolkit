@@ -181,6 +181,15 @@ with col1:
             value=disease_df.iloc[0]["id"],
             key="disease_id",
         )
+        
+        disease_id_clean = disease_id.strip() if disease_id else ""
+        valid_disease_ids = disease_df["id"].tolist()
+        
+        if disease_id_clean not in valid_disease_ids:
+            st.error(f"Invalid disease ID: '{disease_id}'. Please select a valid ID from the search results table above.")
+            st.stop()        
+        if disease_id_clean != disease_id:
+            state["disease_id"] = disease_id_clean
 
 with col2:
     st.markdown(
@@ -205,7 +214,13 @@ st.markdown(
     + ":red[ and clinical trial phase:] "
     + str(state["ct_phase"])
 )
-state["viral_prot"] = kgg_utils.GetViralProteins(state["user_disease"])
+
+try:
+    viral_proteins = kgg_utils.GetViralProteins(state["user_disease"])
+    state["viral_prot"] = viral_proteins if viral_proteins is not None else []
+except Exception as e:
+    st.error(f"Error in viral protein identification: {str(e)}")
+    state["viral_prot"] = []
 
 # if "viral_prot" not in st.session_state:
 #     st.session_state["viral_prot"] = viral_prot
@@ -233,6 +248,7 @@ def callback():
 if st.button("Generate Base Knowledge Graph", on_click=callback) or state.get(
     "button_clicked", False
 ):
+    # The viral proteins are already processed above, just proceed with graph generation
     # st.write(state)
     #        st.write(state["user_disease"])
     #        st.write(state["disease_id"])
