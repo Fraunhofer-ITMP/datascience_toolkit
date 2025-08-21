@@ -157,7 +157,6 @@ def RetMech(chemblIds) -> list:
     :param chemblIds:
     :return:
     """
-    # Create a placeholder for displaying current progress
     getMech = new_client.mechanism
 
     mechList = []
@@ -274,7 +273,6 @@ def chembl2uniprot(chemblIDs) -> dict:
 
     chem2path = defaultdict(list)
 
-    # Loop to ensure it is a protein
     for chemblid in chemblIDs:
         chem = getTarget.filter(chembl_id=chemblid).only("target_components")
 
@@ -291,7 +289,6 @@ def chembl2uniprot(chemblIDs) -> dict:
 
     chemblIDs_filtered = [item for item in chemblIDs if item not in chemHasNoPath]
 
-    # Get gene symbol from ChEMBL and filtering the list for human proteins only
     for chemblid in chemblIDs_filtered:
         chem = getTarget.filter(chembl_id=chemblid).only("target_components")
         getGene = chem[0]["target_components"][0]["target_component_synonyms"]
@@ -308,7 +305,6 @@ def chembl2uniprot(chemblIDs) -> dict:
         item for item in chemblIDs_filtered if item not in chemNotprotein
     ]
 
-    # Extracting data for valid proteins only
     for chemblid in chemblIDs_filtered:
         chem = getTarget.filter(chembl_id=chemblid).only("target_components")
 
@@ -657,16 +653,10 @@ def searchDisease(keyword):
 
     variables = {"disname": disease_name}
 
-    # Set base URL of GraphQL API endpoint
     base_url = "https://api.platform.opentargets.org/api/v4/graphql"
 
-    # Perform POST request and check status code of response
     r = requests.post(base_url, json={"query": query_string, "variables": variables})
 
-    # Transform API response from JSON into Python dictionary and print in console
-    # if r is None:
-    #     st.error("Please resubmit the disease.")
-    #     st.stop()
     api_response = json.loads(r.text)
 
     df = pd.DataFrame(api_response["data"]["search"]["hits"])
@@ -698,19 +688,14 @@ def getDrugCount(disease_id):
 
     """
 
-    # Set variables object of arguments to be passed to endpoint
     variables = {"my_efo_id": efo_id}
 
-    # Set base URL of GraphQL API endpoint
     base_url = "https://api.platform.opentargets.org/api/v4/graphql"
 
-    # Perform POST request and check status code of response
     r = requests.post(base_url, json={"query": query_string, "variables": variables})
 
-    # Transform API response from JSON into Python dictionary and print in console
     api_response = json.loads(r.text)
 
-    # get the count value from api_repsonse dict
     api_response = api_response["data"]["disease"]["knownDrugs"]["count"]
     return api_response
 
@@ -744,26 +729,20 @@ def GetDiseaseAssociatedDrugs(disease_id, CT_phase):
     }
     """
 
-    # Set variables object of arguments to be passed to endpoint
     variables = {"my_efo_id": efo_id, "my_size": size}
 
-    # Set base URL of GraphQL API endpoint
     base_url = "https://api.platform.opentargets.org/api/v4/graphql"
 
-    # Perform POST request and check status code of response
     r = requests.post(base_url, json={"query": query_string, "variables": variables})
 
-    # Transform API response from JSON into Python dictionary and print in console
     api_response = json.loads(r.text)
 
-    # Check for GraphQL errors indicating invalid disease ID
     if "errors" in api_response:
         error_msg = api_response["errors"][0].get("message", "Unknown error")
         st.error(f"Invalid disease ID '{efo_id}': {error_msg}")
         st.error("Please check that you've entered a valid disease identifier from the search results above.")
         return pd.DataFrame()
     
-    # Check if disease data exists
     if not api_response.get("data") or not api_response["data"].get("disease"):
         st.error(f"No disease found for ID '{efo_id}'. This disease identifier does not exist in the OpenTargets database.")
         st.error("Please select a valid disease identifier from the search results above.")
@@ -784,7 +763,6 @@ def GetDiseaseAssociatedDrugs(disease_id, CT_phase):
 @st.cache_data(ttl=3600, show_spinner="Fetching protein data...")
 def GetDiseaseAssociatedProteins(efo_id):
     """Fixed version that properly handles cache invalidation"""
-    #    st.write(f"🔄 Disease Lookup: {efo_id}")
 
     if not efo_id:
         st.error("No disease ID provided")
@@ -1011,25 +989,20 @@ def ExtractFromUniProt(uniprot_id) -> dict:
         id["BioProcess"] = {}
         id["Gene"] = {}
 
-        # parse each line looking for info about disease, pathway, funcn, bp and so on
         for line in ret_uprot:
-            # parse lines with disease and extract disease names and omim ids
             if "-!- DISEASE:" in line:
                 if "[MIM:" in line:
                     dis = line.split(":")
                     id["Disease"].update({dis[1][1:-5]: dis[2][:-1]})
 
-            # extract reactome ids and names
             if "Reactome;" in line:
                 ract = line.split(";")
                 id["Reactome"].update({ract[2][1:-2]: ract[1][1:]})
 
-            # look for functions
             if " F:" in line:
                 fn = line.split(";")
                 id["Function"].update({fn[2][3:]: fn[1][1:]})
 
-            # look for biological processes
             if " P:" in line and "GO;" in line:
                 bp = line.split(";")
                 id["BioProcess"].update({bp[2][3:]: bp[1][1:]})
@@ -1116,7 +1089,6 @@ def GetViralProteins(query_disease):
 
         st.write("You selected:", virus_choice)
         
-        # If Yes, show text input for virus name
         if virus_choice == "Yes":
             virus_name = st.text_input(
                 "Please enter the virus name:",
@@ -1127,16 +1099,12 @@ def GetViralProteins(query_disease):
         else:
             virus_name = "no"
 
-        # virus_name = input(
-        #     'Do you want to look further for a specific virus? Please type its name or skip it by typing \'no\': ')
 
-        # subset df with virus name
         if virus_name.lower() != "no" and virus_name.strip():
             virus_subset_2 = virus[
                 virus["virus name"].str.contains(virus_name, na=False, case=False)
             ]
             
-            # Check if the virus search returned any results
             if virus_subset_2.empty:
                 st.warning(f"No viruses found matching '{virus_name}'. Please try a different virus name or select 'No' to use all disease-related viruses.")
                 st.write("Available viruses for this disease:")
@@ -1144,14 +1112,10 @@ def GetViralProteins(query_disease):
                 st.stop()
             else:
                 st.success(f"Found {len(virus_subset_2)} virus(es) matching '{virus_name}'")
-                # Use only the filtered virus results
                 virus_subset_merge = virus_subset_2
         else:
-            # Use all disease-related viruses when no specific virus is requested
             virus_subset_merge = virus_subset_1
 
-        # Remove the old merging logic that was causing confusion
-        # virus_subset_merge = pd.concat([virus_subset_1, virus_subset_2])
 
         virus_subset_merge = virus_subset_merge.drop_duplicates(keep="first")
 
@@ -1203,14 +1167,12 @@ def GetViralProteins(query_disease):
                         except ValueError:
                             invalid_inputs.append(x)
                 
-                # Display error messages for invalid inputs
                 if invalid_inputs:
                     st.error(f"Invalid input(s): {', '.join(invalid_inputs)}. Please enter only numbers.")
                 
                 if out_of_range_indices:
                     st.error(f"Index(es) out of range: {', '.join(out_of_range_indices)}. Available indices are 0 to {len(virus_subset_merge)-1}.")
                 
-                # Process only valid indices
                 temp_id = valid_indices
                 
                 if not temp_id:
@@ -1248,7 +1210,7 @@ def GetViralProteins(query_disease):
                         [x.strip().split("\t") for x in query_uniprot]
                     )
                     
-                    if len(query_uniprot_df) > 1:  # Check if we have data beyond headers
+                    if len(query_uniprot_df) > 1:
                         cols = query_uniprot_df.iloc[0]
                         # print(cols)
                         query_uniprot_df = query_uniprot_df[1 : len(query_uniprot_df) - 1]
@@ -1400,19 +1362,14 @@ def getAdverseEffectCount(chembl_id):
 
     """
 
-    # Set variables object of arguments to be passed to endpoint
     variables = {"chemblId": get_id}
 
-    # Set base URL of GraphQL API endpoint
     base_url = "https://api.platform.opentargets.org/api/v4/graphql"
 
-    # Perform POST request and check status code of response
     r = requests.post(base_url, json={"query": query_string, "variables": variables})
 
-    # Transform API response from JSON into Python dictionary and print in console
     api_response = json.loads(r.text)
 
-    # get the count value from api_repsonse dict
     api_response = api_response["data"]["drug"]["adverseEvents"]["count"]
     return api_response
 
@@ -1454,20 +1411,14 @@ def GetAdverseEvents(chem_list):
                 }
 
         """
-            # Set variables object of arguments to be passed to endpoint
             variables = {"chemblId": chembl_id, "size": count}
 
-            # Set base URL of GraphQL API endpoint
             base_url = "https://api.platform.opentargets.org/api/v4/graphql"
 
-            # Perform POST request and check status code of response
             r = requests.post(
                 base_url, json={"query": query_string, "variables": variables}
             )
-            # r = requests.post(base_url, json={"query": query_string})
-            # print(r.status_code)
 
-            # Transform API response from JSON into Python dictionary and print in console
             api_response_temp = json.loads(r.text)
 
             api_response_temp = api_response_temp["data"]["drug"]["adverseEvents"][
@@ -1531,7 +1482,6 @@ def chembl_annotation(graph):
 
 
 def chembl_name_annotation(graph, drugs_df):
-    # create a dict {'Metformin':'CHEMBL1431'} for adding node attributes
     drugName_chembl_dict = {}
     for v, k in drugs_df[["prefName", "drugId"]].values:
         # print(k,v)
@@ -1539,30 +1489,23 @@ def chembl_name_annotation(graph, drugs_df):
 
     molecule = new_client.molecule
 
-    # get all chemicals/drugs from kg
     chemblids = getNodeList("ChEMBL", graph)
 
     for chem in stqdm(chemblids, desc="Adding preferred names and trade names"):
-        # print(chem)
 
         trade_names = []
 
-        # fetch prefName and synonym from chembl
         getNames = molecule.filter(molecule_chembl_id=chem).only(
             ["pref_name", "molecule_synonyms"]
         )
 
-        # get preferred name #not preferred because it can be empty sometimes
-        # pref_name = getNames[0]['pref_name']
 
-        # get preferred name of a drug from openTarget diseaseAssociatedDrug file #always has a preferredName
         nx.set_node_attributes(
             graph,
             {Abundance(namespace="ChEMBL", name=chem): drugName_chembl_dict[chem]},
             "PreferredName",
         )
 
-        # get trade names and append to a list
         try:
             for item in getNames[0]["molecule_synonyms"]:
                 if item["syn_type"] == "TRADE_NAME":
@@ -1790,10 +1733,8 @@ def get_graph_summary(graph):
 
 
 def GetSmiles(drugs_df, colname):
-    # chembl ids can be antibodies which have sequence instead of smiles
 
     drugs = drugs_df
-    # drugs = pd.read_csv('data/kgs/metabolic diseases/t1dm/diseaseAssociatedDrugs.csv')
     drugs_list = set(list(drugs[colname]))
 
     molecule = new_client.molecule

@@ -78,7 +78,6 @@ st.header(
 )
 
 def disease_input_and_search():
-    # Resetting the key session variables if disease changes
     if "previous_disease" in state and state.user_disease != state.previous_disease:
         keys_to_clear = [
             "disease_df",
@@ -92,11 +91,9 @@ def disease_input_and_search():
                 del state[key]
         state.previous_disease = state.user_disease
 
-    # Initializing the session state
     if "user_disease" not in state:
         state["user_disease"] = ""
 
-    # Adding the button area with key so that it automatically synchronizes with the session state
     disease_name = st.text_input(
         "Enter the disease you are interested in generating a graph.",
         placeholder="e.g. AIDS",
@@ -125,11 +122,9 @@ def disease_input_and_search():
         return pd.DataFrame()
 
 def disease_input_component():
-    # Initializing the "user_disease" variable in session state
     if "user_disease" not in state:
         state["user_disease"] = "AIDS"
 
-    # Adding the button with key binding (This key will automatically synchronize with the session state)
     disease_name = st.text_input(
         "Enter the disease you are interested in generating a graph. Please hit the **Search for disease** button to search.",
         placeholder="e.g. AIDS",
@@ -140,10 +135,8 @@ def disease_input_component():
         st.stop()
 
 def disease_search_component():
-    # Initializing disease_df in session state
     if "disease_df" not in state:
         state["disease_df"] = pd.DataFrame()
-    # Adding the button with key binding (This key will automatically synchronize with the session state)
     search_button = st.button(
         "Search for disease",
         key="search_button",
@@ -248,7 +241,6 @@ def callback():
 if st.button("Generate Base Knowledge Graph", on_click=callback) or state.get(
     "button_clicked", False
 ):
-    # The viral proteins are already processed above, just proceed with graph generation
     # st.write(state)
     #        st.write(state["user_disease"])
     #        st.write(state["disease_id"])
