@@ -1,3 +1,3 @@
 #!/bin/bash
 
-streamlit run Main.py --server.port=8501 --server.address=0.0.0.0
+uvicorn kgg_api:app --host 0.0.0.0 --port 8080 --log-level info --reload

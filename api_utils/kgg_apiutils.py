@@ -945,7 +945,7 @@ def createKG(disease_id: str, clinical_trial_phase: int, protein_threshold: floa
     logger.info("Added Gene Ontology annotations to KG")
     kg = protein_annotation_druggability(kg)
     logger.info("Added druggability annotations to KG")
-    if dis2snp_df is not None and not dis2snp_df.empty:
+    if dis2snp_df is not None:
         kg = snp2gene_rel(dis2snp_df,kg)
         logger.info(f"Added SNP-gene relationships to KG with {len(kg.nodes())} nodes and {len(kg.edges())} edges")
     else:
