@@ -37,6 +37,7 @@ class KGGCreation(BaseModel):
     clinical_trial_phase: int = 3
     protein_threshold: float = 0.8
     created_kg: dict = None
+    limit_info: str = None
 
 class DiseaseID(BaseModel):
     disease_name: str = "cancer"
@@ -227,6 +228,9 @@ async def generate_kg(kgg_model: KGGCreation, request: Request, current_user: st
 
         logging.info("Knowledge Graph generation completed successfully.")
         kgg_model.created_kg = pybel.to_jgif_jsons(created_kg) if created_kg else None
+        kgg_model.limit_info = "Currently, the OpenTarget's API returns no dataframe when disease-drug count is > 10K. For this reason, no drugs are represented in the KG. We are working on this issue. For all the diseases with associated drug count below 10k, our API returns the corresponding results."
+
+        
         return JSONResponse(content=kgg_model.dict(), status_code=200)
     except HTTPException as http_exception:
         logging.error(f"HTTP Exception: {http_exception.detail}")
@@ -235,6 +239,6 @@ async def generate_kg(kgg_model: KGGCreation, request: Request, current_user: st
     except Exception as e:
         logging.error(f"An error occurred: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080, log_level="info")

@@ -88,6 +88,8 @@ def GetDiseaseAssociatedDrugs(disease_id,CT_phase):
     """
     variables = {"my_efo_id": efo_id, "my_size": size}
     base_url = "https://api.platform.opentargets.org/api/v4/graphql"
+    if size > 10000:
+        return None
     r = requests.post(base_url, json={"query": query_string, "variables": variables})
     api_response = json.loads(r.text)
     df = pd.DataFrame(api_response['data']['disease']['knownDrugs']['rows'])
@@ -100,7 +102,7 @@ def GetDiseaseAssociatedDrugs(disease_id,CT_phase):
         return None
 
 
-def GetDiseaseSNPs(disease_id):     
+def GetDiseaseSNPs(disease_id):
     """
     Returns a DataFrame of SNPs associated with a disease.
     Parameters:
@@ -902,7 +904,7 @@ def createKG(disease_id: str, clinical_trial_phase: int, protein_threshold: floa
     uprot_ext = ExtractFromUniProt(uprot_list)
     logger.info(f"Extracted UniProt data for {len(uprot_ext)} proteins")
 
-    if not drugs_df.empty:
+    if drugs_df is not None:
         logger.info("Processing drug data and mechanisms...")
         chembl2mech = RetMech(list(set(drugs_df['drugId'])))
         logger.info(f"Retrieved mechanisms for {len(chembl2mech)} drugs")
