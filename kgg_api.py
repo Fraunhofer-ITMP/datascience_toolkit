@@ -147,6 +147,7 @@ async def read_root():
                 2.2 Output Format:
                 <pre>
                 {
+                    "disease_name": "cancer"
                     "disease_ids": A list of dictionary containing disease IDs and other information.
                 }
                 </pre>
@@ -195,7 +196,9 @@ async def get_disease_ids(disease_model:DiseaseID, request: Request, current_use
         
         disease_ids_list = disease_ids.to_dict('records')       # Converting dataframe to a list of dictionaries so that it can be returned as JSON
         logging.info(f"Disease IDs: {disease_ids_list}")
-        return {"disease_ids": disease_ids_list}    
+        disease_model.disease_name = disease_name
+        disease_model.disease_ids = disease_ids_list
+        return JSONResponse(content=disease_model.dict(), status_code=200)
     except Exception as e:
         logging.error(f"An error occurred while fetching disease IDs: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -241,5 +244,5 @@ async def generate_kg(kgg_model: KGGCreation, request: Request, current_user: st
         logging.error(f"An error occurred: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8080, log_level="info")
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="0.0.0.0", port=8080, log_level="info")
