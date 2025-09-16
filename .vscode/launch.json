@@ -2,17 +2,30 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python:Streamlit",
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "python": "/home/operation/miniconda3/envs/venv2/bin/python3",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Streamlit: Run app.py",
             "type": "debugpy",
             "request": "launch",
             "module": "streamlit",
             "args": [
                 "run",
-                "5_Compound_space_visualizer.py",
-                "--server.port",
-                "2000"
+                "src/webapp/app.py"
             ],
-            "python": "${workspaceFolder}/venv/Scripts/python.exe"
+            "console": "integratedTerminal",
+            "python": "/home/operation/PatentAnalysis/patenv/bin/python3",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
         }
     ]
 }

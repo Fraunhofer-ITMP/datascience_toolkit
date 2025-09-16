@@ -875,13 +875,16 @@ def createKG(disease_id: str, clinical_trial_phase: int, protein_threshold: floa
     logger.info(f"Parameters - CT phase: {clinical_trial_phase}, protein threshold: {protein_threshold}")
     
     drugs_df = GetDiseaseAssociatedDrugs(disease_id=disease_id, CT_phase=clinical_trial_phase)
-    logger.info(f"Shape of drugs DataFrame: {drugs_df.shape}")
+    if drugs_df is not None:
+        logger.info(f"Shape of drugs DataFrame: {drugs_df.shape}")
     
     dis2prot_df = GetDiseaseAssociatedProteins(disease_id=disease_id)
-    logger.info(f"Shape of disease-associated proteins DataFrame: {dis2prot_df.shape}")
+    if drugs_df is not None:
+        logger.info(f"Shape of disease-associated proteins DataFrame: {dis2prot_df.shape}")
     
     dis2snp_df = GetDiseaseSNPs(disease_id=disease_id)
-    logger.info(f"Shape of disease-associated SNPs DataFrame: {dis2snp_df.shape}")
+    if dis2snp_df is not None:
+        logger.info(f"Shape of disease-associated SNPs DataFrame: {dis2snp_df.shape}")
     
     # Thresholding on dis2prot_df
     if dis2prot_df is not None:
