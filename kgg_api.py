@@ -131,7 +131,8 @@ async def read_root():
                     "disease_id": "MONDO_0004976",
                     "clinical_trial_phase": 3,
                     "protein_threshold": 0.8,
-                    "created_kg": { ... }  # JGIF JSON format of the generated Knowledge Graph. Please look at PyBel documentation (pybel.from_jgif_json) for more details on how to parse this format.
+                    "created_kg": { ... }  # JGIF JSON format of the generated Knowledge Graph. Please look at PyBel documentation (pybel.from_jgif_json) for more details on how to parse this format.,
+                    "limit_info": None | str      # Dependability issues from other APIs.
                 }
                 </pre>
 
