@@ -286,6 +286,22 @@ with tab2:
                     }
                 },
             )
+        with col3:
+            hasClicked = card(
+                title="AMES Mutagenicity Model",
+                text="Model for predicting potential mutagenicity of small molecules from SMILES.",
+                image=load_logo(
+                    "images/app_logos/ames_model.png"
+                ),
+                url="https://github.com/Fraunhofer-ITMP/ames-mutagenicity-app",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
+            )
 
     with st.expander(label=r"$\textsf{\Large Screening data preprocessing tools}$"):
         col1, col2, col3 = st.columns(3)
@@ -383,7 +399,7 @@ with tab2:
                 },
             )
 
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3, col4 = st.columns(4)
 
         with col1:
             card(
@@ -429,6 +445,22 @@ with tab2:
                     }
                 },
             )
+
+        with col4:
+            hasClicked = card(
+                title="SMILES feature generator",
+                text="In progress",
+                image=load_logo("images/app_logos/umap.png"),
+                url="/SMILES_Feature_Generator",
+                styles={
+                    "card": {
+                        "border-radius": "10px",
+                        "box-shadow": "0 0 4px rgba(0,0,0,0.5)",
+                        "margin": "0px",
+                    }
+                },
+            )
+
 
     with st.expander(
         label=r"$\textsf{\Large Findable, Accessible, Reusable, Interoperable (FAIR) endorsed tools}$"
