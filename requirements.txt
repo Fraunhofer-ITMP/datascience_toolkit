@@ -45,6 +45,7 @@ kaleido==0.1.0
 llvmlite==0.44.0
 MarkupSafe==3.0.2
 matplotlib-inline==0.1.7
+mhfp==1.9.6
 more-click==0.1.2
 more-itertools==10.7.0
 multisplitby==0.0.1
