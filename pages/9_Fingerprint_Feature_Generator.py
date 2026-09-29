@@ -15,7 +15,7 @@ from smiles_utils import (
 # 2. Page configuration and styling
 st.set_page_config(
     layout="wide",
-    page_title="SMILES Feature Generator",
+    page_title="Fingerprint Feature Generator",
     page_icon="🧪",
     initial_sidebar_state="collapsed",
 )
@@ -41,7 +41,7 @@ st.markdown(
 
 st.markdown(
     """
-    <h1 style="text-align: center; color: #149372;"> SMILES Feature Generator</h1> <br>""",
+    <h1 style="text-align: center; color: #149372;"> Fingerprint Feature Generator</h1> <br>""",
     unsafe_allow_html=True,
 )
 
@@ -49,8 +49,8 @@ st.markdown(
 
 # INTRODUCTION
 st.header(
-    "SMILES preprocessing and molecular feature generation",
-    anchor="smiles-feature-generator",
+    "SMILES preprocessing and fingerprint feature generation",
+    anchor="Fingerprint-feature-generator",
     divider="gray",
 )
 

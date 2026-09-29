@@ -448,10 +448,10 @@ with tab2:
 
         with col4:
             hasClicked = card(
-                title="SMILES feature generator",
+                title="Fingerprint feature generator",
                 text="In progress",
                 image=load_logo("images/app_logos/umap.png"),
-                url="/SMILES_Feature_Generator",
+                url="/Fingerprint_Feature_Generator",
                 styles={
                     "card": {
                         "border-radius": "10px",
